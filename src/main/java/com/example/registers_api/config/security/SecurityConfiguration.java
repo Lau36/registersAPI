@@ -20,6 +20,7 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(HttpMethod.POST,"/Test").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/ResearchLayer").permitAll()
                         .anyRequest().authenticated()
                 )
                 .build();

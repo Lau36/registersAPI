@@ -1,10 +1,11 @@
 package com.example.registers_api.services;
 
 import com.example.registers_api.dtos.ResearchLayerDTO;
+import com.example.registers_api.exceptions.NotEmptyFieldException;
 import com.example.registers_api.mappers.ResearchLayerMapper;
 import com.example.registers_api.models.ResearchLayerCollection;
 import com.example.registers_api.repository.ResearchLayerRepository;
-import lombok.AllArgsConstructor;
+import com.example.registers_api.utils.ExceptionConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,13 +16,15 @@ public class ResearchLayerService {
     private final ResearchLayerRepository researchLayerRepository;
     private final ResearchLayerMapper researchLayerMapper;
 
-    public String saveResearchLayer(ResearchLayerDTO researchLayerDTO) {
+
+    public ResearchLayerDTO saveResearchLayer(ResearchLayerDTO researchLayerDTO) {
         ResearchLayerCollection layerSaved = researchLayerRepository.save(researchLayerMapper.toCollection(researchLayerDTO));
-        if(layerSaved != null) {
-            return "Research Layer Saved";
+        if(researchLayerDTO.getNombreCapa().trim().isEmpty() || researchLayerDTO.getDescripcion().trim().isEmpty()
+                || researchLayerDTO.getJefeCapa().getNombre().isEmpty() || researchLayerDTO.getJefeCapa().getNumero_identificacion().isEmpty()){
+            throw new NotEmptyFieldException(ExceptionConstants.NOT_EMPTY_FIELDS);
         }
-        else {
-            return "Research Layer Not Saved";
+        else{
+            return researchLayerMapper.toDto(layerSaved);
         }
     }
 }
