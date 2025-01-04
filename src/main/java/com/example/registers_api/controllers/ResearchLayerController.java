@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,7 +37,7 @@ public class ResearchLayerController {
                     content = @Content)
     })
     @PostMapping
-    public ResponseEntity<BasicResponse> saveLayer(ResearchLayerDTO researchLayer) {
+    public ResponseEntity<BasicResponse> saveLayer(@RequestBody ResearchLayerDTO researchLayer) {
         BasicResponse response = new BasicResponse(Constants.RESEARCH_LAYER_CREATED);
         researchLayerService.saveResearchLayer(researchLayer);
         return ResponseEntity.ok(response);

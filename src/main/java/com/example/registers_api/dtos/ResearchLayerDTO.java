@@ -5,7 +5,6 @@ import lombok.*;
 @RequiredArgsConstructor
 @Getter
 @Setter
-@AllArgsConstructor
 public class ResearchLayerDTO {
 
     private final String nombreCapa;
