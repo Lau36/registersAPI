@@ -1,6 +1,5 @@
 package com.example.registers_api.controllers;
 
-import com.example.registers_api.dtos.ResearchLayerDTO;
 import com.example.registers_api.dtos.VariableDTO;
 import com.example.registers_api.response.BasicResponse;
 import com.example.registers_api.services.VariableService;
@@ -19,14 +18,19 @@ public class VariablesController {
     private final VariableService variableService;
 
     @PostMapping
-    public ResponseEntity<BasicResponse> saveLayer(@RequestBody VariableDTO variableDTO) {
+    public ResponseEntity<BasicResponse> saveVariable(@RequestBody VariableDTO variableDTO) {
         BasicResponse response = new BasicResponse(Constants.VARIABLE_CREATED);
         variableService.saveVariable(variableDTO);
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/ResearchLayerId")
+    public ResponseEntity<List<VariableDTO>> getVariablesByResearchLayerId(@RequestParam String researchLayerId) {
+        return ResponseEntity.ok(variableService.getAllVariablesById(researchLayerId));
+    }
+
     @GetMapping()
-    public ResponseEntity<VariableDTO> getResearchLayerById(@RequestParam String id) {
+    public ResponseEntity<VariableDTO> getVariableById(@RequestParam String id) {
         return ResponseEntity.ok(variableService.getVariableById(id));
     }
 

@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @RequiredArgsConstructor
 @Getter
 @Setter
-@Document(collection = "researchLayerView")
+@Document(collection = "variablesView")
 public class VariableCollection {
 
     @Id

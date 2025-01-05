@@ -28,6 +28,11 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST,"/ResearchLayer").permitAll()
                         .requestMatchers(HttpMethod.GET,"/ResearchLayer/GetAll").permitAll()
                         .requestMatchers(HttpMethod.GET,"/ResearchLayer").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/Variable").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/Variable/GetAll").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/Variable/ResearchLayerId").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/Variable").permitAll()
+
                         .anyRequest().authenticated()
                 )
                 .build();

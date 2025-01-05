@@ -41,6 +41,12 @@ public class VariableService {
         }
     }
 
+    public List<VariableDTO> getAllVariablesById(String idCapaInvestigacion) {
+        validateResearchLayerId(idCapaInvestigacion);
+        List<VariableCollection> variablesCollections = variableRepository.findAllByIdCapaInvestigacion(idCapaInvestigacion);
+        return variablesCollections.stream().map(variableMapper::toVariableDTO).toList();
+    }
+
     public VariableDTO getVariableById(String variableId) {
         VariableCollection variableCollection = variableRepository.findById(variableId).orElseThrow();
         return variableMapper.toVariableDTO(variableCollection);
