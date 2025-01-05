@@ -17,9 +17,39 @@ public class ControllerAdvisor {
     public ResponseEntity<ExceptionResponse> handleEmptyFieldException(NotEmptyFieldException e) {
         return ResponseEntity.badRequest().body(
                 new ExceptionResponse(
-                ExceptionConstants.NOT_EMPTY_FIELDS,
+                e.getMessage(),
                 HttpStatus.BAD_REQUEST.toString(),
                 LocalDateTime.now())
+        );
+    }
+
+    @ExceptionHandler(AlreadyExistsException.class)
+    public ResponseEntity<ExceptionResponse> handleAlreadyExistsException(AlreadyExistsException e) {
+        return ResponseEntity.badRequest().body(
+                new ExceptionResponse(
+                        e.getMessage(),
+                        HttpStatus.BAD_REQUEST.toString(),
+                        LocalDateTime.now())
+        );
+    }
+
+    @ExceptionHandler(MaxLengthExceededException.class)
+    public ResponseEntity<ExceptionResponse> handleMaxLengthExceededException(MaxLengthExceededException e) {
+        return ResponseEntity.badRequest().body(
+                new ExceptionResponse(
+                         e.getMessage(),
+                        HttpStatus.BAD_REQUEST.toString(),
+                        LocalDateTime.now())
+        );
+    }
+
+    @ExceptionHandler(DoesntExistsException.class)
+    public ResponseEntity<ExceptionResponse> handleDoesntExistsException(DoesntExistsException e) {
+        return ResponseEntity.badRequest().body(
+                new ExceptionResponse(
+                        e.getMessage(),
+                        HttpStatus.BAD_REQUEST.toString(),
+                        LocalDateTime.now())
         );
     }
 }
