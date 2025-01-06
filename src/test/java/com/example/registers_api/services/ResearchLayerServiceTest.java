@@ -38,7 +38,7 @@ class ResearchLayerServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        researchLayerDTO = new ResearchLayerDTO(); // Configura un DTO de ejemplo
+        researchLayerDTO = new ResearchLayerDTO();
         researchLayerDTO.setNombreCapa("Capa 1");
         researchLayerDTO.setDescripcion("Descripción válida");
         researchLayerDTO.setJefeCapa(new LayerBossDTO(123, "Juan", "ID123"));

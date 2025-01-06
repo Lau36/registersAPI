@@ -28,10 +28,14 @@ public class ResearchLayerController {
             description = SwaggerConstants.CREATE_RESEARCH_LAYER_DESCRIPTION
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = Constants.RESEARCH_LAYER_CREATED,
-                    content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ResearchLayerDTO.class)) }),
+            @ApiResponse(responseCode = "200", description = Constants.RESEARCH_LAYER_CREATED, content = @Content),
             @ApiResponse(responseCode = "400", description = SwaggerConstants.EMPTY_FIELDS,
+                    content = @Content),
+            @ApiResponse(responseCode = "400", description = SwaggerConstants.RESEARCH_LAYER_NAME_ALREADY_EXISTS,
+                    content = @Content),
+            @ApiResponse(responseCode = "400", description = SwaggerConstants.RESEARCH_LAYER_NAME_TOO_LONG,
+                    content = @Content),
+            @ApiResponse(responseCode = "400", description = SwaggerConstants.RESEARCH_LAYER_DESCRIPTION_TOO_LONG,
                     content = @Content)
     })
     @PostMapping
@@ -41,11 +45,25 @@ public class ResearchLayerController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(
+            summary = SwaggerConstants.GET_RESEARCH_LAYER,
+            description = SwaggerConstants.GET_RESEARCH_LAYER_DESCRIPTION
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResearchLayerDTO.class))),
+    })
     @GetMapping()
     public ResponseEntity<ResearchLayerDTO> getResearchLayerById(@RequestParam String id) {
         return ResponseEntity.ok(researchLayerService.getResearchLayerById(id));
     }
 
+    @Operation(
+            summary = SwaggerConstants.GET_RESEARCH_LAYERS,
+            description = SwaggerConstants.GET_RESEARCH_LAYERS_DESCRIPTION
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResearchLayerDTO.class))),
+    })
     @GetMapping("/GetAll")
     public ResponseEntity<List<ResearchLayerDTO>> getAllResearchLayers() {
         return ResponseEntity.ok(researchLayerService.getAllResearchLayers());
