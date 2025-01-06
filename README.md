@@ -1,6 +1,6 @@
 # Proyecto Registers API
 
-Registers API es una aplicación Spring Boot diseñada para gestionar registros en una base de datos MongoDB. Este README describe los pasos necesarios para configurar y ejecutar la aplicación, así como para probar sus endpoints utilizando Swagger.
+Registers API es una aplicación Spring Boot diseñada para la gestión de pacientes con epilepsia. Este README describe los pasos necesarios para configurar y ejecutar la aplicación, así como para probar sus endpoints utilizando Swagger.
 
 ---
 
