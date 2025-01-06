@@ -33,7 +33,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET,"/Variable/ResearchLayerId").permitAll()
                         .requestMatchers(HttpMethod.GET,"/Variable").permitAll()
 
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .build();
     }
