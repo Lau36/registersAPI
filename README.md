@@ -4,14 +4,6 @@ Registers API es una aplicación Spring Boot diseñada para la gestión de pacie
 
 ---
 
-## Requisitos
-
-- **Java 17**
-- **Docker** y **Docker Compose**
-- **Gradle**
-
----
-
 ## Pasos para Configurar y Ejecutar la Aplicación
 
 ### 1. Generar el Build de la Aplicación
