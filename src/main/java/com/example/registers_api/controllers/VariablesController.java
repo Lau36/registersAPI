@@ -13,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/Variable")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200")
 public class VariablesController {
 
     private final VariableService variableService;

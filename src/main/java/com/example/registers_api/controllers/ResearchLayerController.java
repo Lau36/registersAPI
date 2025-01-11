@@ -19,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/ResearchLayer")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200")
 public class ResearchLayerController {
 
     private final ResearchLayerService researchLayerService;
