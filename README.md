@@ -27,7 +27,7 @@ docker-compose up
 En otra terminal, accede al contenedor de MongoDB y crea un usuario con los permisos necesarios:
 
 ```bash
-docker exec -it mongo-db-registers mongosh --username root --password secret --authenticationDatabase admin
+docker exec -it mongo-db-registers mongosh --username apiUser --password userPassword123 --authenticationDatabase admin
 ```
 
 Una vez dentro del shell de MongoDB, ejecuta los siguientes comandos:
@@ -36,9 +36,9 @@ Una vez dentro del shell de MongoDB, ejecuta los siguientes comandos:
 use epilepsyRegister
 
 db.createUser({
-  user: "root",
-  pwd: "secret",
-  roles: [{ role: "readWrite", db: "epilepsyRegister" }]
+  user: "apiUser",
+  pwd: "userPassword123",
+  roles: [{ role: "readWrite", db: "epilepsyRegister" }]
 })
 ```
 
