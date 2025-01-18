@@ -12,6 +12,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
+
 public class SecurityConfiguration {
 
     @Bean
@@ -19,8 +20,20 @@ public class SecurityConfiguration {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html", "/swagger-ui/index.html").permitAll()
                         .requestMatchers(HttpMethod.POST,"/Test").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers(HttpMethod.POST,"/ResearchLayer").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/ResearchLayer/GetAll").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/ResearchLayer").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/Variable").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/Variable/GetAll").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/Variable/ResearchLayerId").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/Variable").permitAll()
+
+                        .anyRequest().permitAll()
                 )
                 .build();
     }
