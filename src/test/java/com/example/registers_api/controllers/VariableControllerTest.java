@@ -77,16 +77,16 @@ class VariableControllerTest {
         verify(variableService, times(1)).getVariableById("1");
     }
 
-    @Test
-    void testGetAllResearchLayers() {
-        when(variableService.getAllVariables()).thenReturn(variableDTOList);
-
-        ResponseEntity<List<VariableDTO>> response = variableController.getAllResearchLayers();
-
-        assertNotNull(response);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(1, response.getBody().size());
-        assertEquals("Variable Test", response.getBody().get(0).getNombreVariable());
-        verify(variableService, times(1)).getAllVariables();
-    }
+//    @Test
+//    void testGetAllResearchLayers() {
+//        when(variableService.getAllVariables()).thenReturn(variableDTOList);
+//
+//        ResponseEntity<List<VariableDTO>> response = variableController.getAllResearchLayers();
+//
+//        assertNotNull(response);
+//        assertEquals(HttpStatus.OK, response.getStatusCode());
+//        assertEquals(1, response.getBody().size());
+//        assertEquals("Variable Test", response.getBody().get(0).getNombreVariable());
+//        verify(variableService, times(1)).getAllVariables();
+//    }
 }

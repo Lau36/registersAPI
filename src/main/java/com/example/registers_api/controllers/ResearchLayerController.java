@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,6 +41,7 @@ public class ResearchLayerController {
                     content = @Content)
     })
     @PostMapping
+    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
     public ResponseEntity<BasicResponse> saveLayer(@RequestBody ResearchLayerDTO researchLayer) {
         BasicResponse response = new BasicResponse(Constants.RESEARCH_LAYER_CREATED);
         researchLayerService.saveResearchLayer(researchLayer);
@@ -54,6 +56,7 @@ public class ResearchLayerController {
             @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResearchLayerDTO.class))),
     })
     @GetMapping()
+    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "')")
     public ResponseEntity<ResearchLayerDTO> getResearchLayerById(@RequestParam String id) {
         return ResponseEntity.ok(researchLayerService.getResearchLayerById(id));
     }
@@ -66,6 +69,7 @@ public class ResearchLayerController {
             @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResearchLayerDTO.class))),
     })
     @GetMapping("/GetAll")
+    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "')")
     public ResponseEntity<List<ResearchLayerDTO>> getAllResearchLayers() {
         return ResponseEntity.ok(researchLayerService.getAllResearchLayers());
     }
