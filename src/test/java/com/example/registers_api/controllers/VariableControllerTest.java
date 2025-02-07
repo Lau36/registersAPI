@@ -2,7 +2,7 @@ package com.example.registers_api.controllers;
 
 import com.example.registers_api.dtos.VariableDTO;
 import com.example.registers_api.response.BasicResponse;
-import com.example.registers_api.services.VariableService;
+import com.example.registers_api.services.Impl.VariableService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

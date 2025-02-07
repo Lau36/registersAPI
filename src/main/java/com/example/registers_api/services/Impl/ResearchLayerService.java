@@ -1,4 +1,4 @@
-package com.example.registers_api.services;
+package com.example.registers_api.services.Impl;
 
 import com.example.registers_api.dtos.ResearchLayerDTO;
 import com.example.registers_api.exceptions.AlreadyExistsException;
@@ -7,6 +7,7 @@ import com.example.registers_api.exceptions.NotEmptyFieldException;
 import com.example.registers_api.mappers.ResearchLayerMapper;
 import com.example.registers_api.models.ResearchLayerCollection;
 import com.example.registers_api.repository.ResearchLayerRepository;
+import com.example.registers_api.services.IResearchLayerService;
 import com.example.registers_api.utils.ExceptionConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,12 +15,12 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ResearchLayerService {
+public class ResearchLayerService implements IResearchLayerService {
 
     private final ResearchLayerRepository researchLayerRepository;
     private final ResearchLayerMapper researchLayerMapper;
 
-
+    @Override
     public void saveResearchLayer(ResearchLayerDTO researchLayerDTO) {
         try {
             notEmptyValidations(researchLayerDTO);
@@ -34,11 +35,13 @@ public class ResearchLayerService {
         }
     }
 
+    @Override
     public ResearchLayerDTO getResearchLayerById(String researchLayerId) {
         ResearchLayerCollection layerCollection = researchLayerRepository.findById(researchLayerId).orElseThrow();
         return researchLayerMapper.toDto(layerCollection);
     }
 
+    @Override
     public List<ResearchLayerDTO> getAllResearchLayers() {
         List<ResearchLayerCollection> layerCollections = researchLayerRepository.findAll();
         return layerCollections.stream().map(researchLayerMapper::toDto).toList();

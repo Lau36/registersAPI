@@ -29,7 +29,7 @@ public class SecurityConfiguration {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html", "/swagger-ui/index.html").permitAll()
 
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .oauth2ResourceServer(oauth -> {
                             oauth.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter));

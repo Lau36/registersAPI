@@ -2,7 +2,8 @@ package com.example.registers_api.controllers;
 
 import com.example.registers_api.dtos.ResearchLayerDTO;
 import com.example.registers_api.response.BasicResponse;
-import com.example.registers_api.services.ResearchLayerService;
+import com.example.registers_api.services.IResearchLayerService;
+import com.example.registers_api.services.Impl.ResearchLayerService;
 import com.example.registers_api.utils.Constants;
 import com.example.registers_api.utils.SwaggerConstants;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,7 +24,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200")
 public class ResearchLayerController {
 
-    private final ResearchLayerService researchLayerService;
+    private final IResearchLayerService researchLayerService;
 
     @Operation(
             summary = SwaggerConstants.CREATE_RESEARCH_LAYER,

@@ -2,14 +2,14 @@ package com.example.registers_api.controllers;
 
 import com.example.registers_api.dtos.VariableDTO;
 import com.example.registers_api.response.BasicResponse;
-import com.example.registers_api.services.VariableService;
+import com.example.registers_api.services.IVariableService;
+import com.example.registers_api.services.Impl.VariableService;
 import com.example.registers_api.utils.Constants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.print.DocFlavor;
 import java.util.List;
 
 @RestController
@@ -18,7 +18,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200")
 public class VariablesController {
 
-    private final VariableService variableService;
+    private final IVariableService variableService;
 
     @PostMapping
     @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")

@@ -1,4 +1,4 @@
-package com.example.registers_api.services;
+package com.example.registers_api.services.Impl;
 
 import com.example.registers_api.dtos.VariableDTO;
 import com.example.registers_api.exceptions.AlreadyExistsException;
@@ -9,6 +9,7 @@ import com.example.registers_api.mappers.VariableMapper;
 import com.example.registers_api.models.VariableCollection;
 import com.example.registers_api.repository.ResearchLayerRepository;
 import com.example.registers_api.repository.VariableRepository;
+import com.example.registers_api.services.IVariableService;
 import com.example.registers_api.utils.ExceptionConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,12 +18,13 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class VariableService {
+public class VariableService implements IVariableService {
 
     private final VariableRepository variableRepository;
     private final ResearchLayerRepository layerRepository;
     private final VariableMapper variableMapper;
 
+    @Override
     public void saveVariable(VariableDTO variableDTO) {
         try {
             notEmptyValidations(variableDTO);
@@ -41,17 +43,20 @@ public class VariableService {
         }
     }
 
+    @Override
     public List<VariableDTO> getAllVariablesById(String idCapaInvestigacion) {
         validateResearchLayerId(idCapaInvestigacion);
         List<VariableCollection> variablesCollections = variableRepository.findAllByIdCapaInvestigacion(idCapaInvestigacion);
         return variablesCollections.stream().map(variableMapper::toVariableDTO).toList();
     }
 
+    @Override
     public VariableDTO getVariableById(String variableId) {
         VariableCollection variableCollection = variableRepository.findById(variableId).orElseThrow();
         return variableMapper.toVariableDTO(variableCollection);
     }
 
+    @Override
     public List<VariableDTO> getAllVariables() {
         List<VariableCollection> variablesCollection = variableRepository.findAll();
         return variablesCollection.stream().map(variableMapper::toVariableDTO).toList();

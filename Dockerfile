@@ -8,7 +8,7 @@ WORKDIR /app
 COPY build/libs/registers_api-0.0.1-SNAPSHOT.jar /app/registers_api.jar
 
 # Exponer el puerto en el que la aplicación Spring Boot escuchará
-EXPOSE 8080
+EXPOSE 9090
 
 # Comando para ejecutar la aplicación
 CMD ["java", "-jar", "/app/registers_api.jar"]

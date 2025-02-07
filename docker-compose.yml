@@ -21,13 +21,50 @@ services:
       dockerfile: Dockerfile
     container_name: spring-app-registers
     ports:
-      - "8080:8080"
+      - "9090:9090"
     environment:
       - SPRING_DATA_MONGODB_URI=mongodb://apiUser:userPassword123@mongo:27017/epilepsyRegister
 
-
     depends_on:
       - mongo
+
+  db-keycloak:
+    container_name: db-keycloak
+    image: postgres:15.2
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: db_keycloak
+      POSTGRES_USER: user_keycloak
+      POSTGRES_PASSWORD: user123
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U user_keycloak -d db_keycloak" ]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+
+  ### Keycloak
+  keycloak:
+    container_name: keycloak
+    image: quay.io/keycloak/keycloak:22.0.4
+    command: [ "start-dev" ]
+    ports:
+      - "8181:8181"
+    depends_on:
+      db-keycloak:
+        condition: service_healthy
+    environment:
+      KC_FEATURES: declarative-user-profile
+      KC_DB: postgres
+      KC_DB_URL_HOST: db-keycloak
+      KC_DB_URL_PORT: 5432
+      KC_DB_URL_DATABASE: db_keycloak
+      KC_DB_USERNAME: user_keycloak
+      KC_DB_PASSWORD: user123
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HTTP_PORT: 8181
 
 volumes:
   mongodb_data:

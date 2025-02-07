@@ -1,36 +1,40 @@
 package com.example.registers_api.controllers;
 
 import com.example.registers_api.dtos.UserDTO;
-import com.example.registers_api.services.UsersService;
-import com.example.registers_api.utils.Constants;
+import com.example.registers_api.services.IUserService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.List;
 
 @RestController
-@RequestMapping("/User")
-@PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
+@RequestMapping("/Users")
 @AllArgsConstructor
+//@PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
 public class UsersController {
 
-        private final UsersService usersService;
-
-        @GetMapping("/search")
-        public ResponseEntity<?> findAllUsers(){
-            return ResponseEntity.ok(usersService.findAllUsers());
-        }
+    private final IUserService userService;
 
 
-        @PostMapping("/create")
-        public ResponseEntity<?> createUser(@RequestBody UserDTO userDTO) throws URISyntaxException {
-            String response = usersService.createUser(userDTO);
-            return ResponseEntity.created(new URI("/keycloak/user/create")).body(response);
-        }
+    @GetMapping("/GetAll")
+    public List<UserRepresentation> findAllUsers(){
+        return userService.getAllUsers();
+    }
 
+    @PostMapping("/create/Doctor")
+    public String createDoctor(@RequestBody UserDTO user){
+        return userService.createDoctor(user);
+    }
 
+    @PostMapping("/create/Admin")
+    public String createAdmin(@RequestBody UserDTO user){
+        return userService.createAdmin(user);
+    }
+
+    @PostMapping("/create/Reseacher")
+    public String createReseacher(@RequestBody UserDTO user){
+        return userService.createReseacher(user);
+    }
 
 }

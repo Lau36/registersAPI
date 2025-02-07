@@ -13,5 +13,12 @@ public class Constants {
     public static final String DOCTOR_ROLE = "Doctor_client_role";
     public static final String RESEARCHER_ROLE = "Researcher_client_role";
 
+    public static final String ADMIN = "Admin";
+    public static final String DOCTOR = "Doctor";
+    public static final String RESEARCHER = "Researcher";
+
+    public static final String REALM_NAME = "registeUsersApiDev";
+
+
 
 }
