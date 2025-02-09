@@ -7,5 +7,6 @@ import java.util.Map;
 
 public interface IAuthService {
     ResponseEntity<Map> login(AuthDTO auth);
+    ResponseEntity<Map> refreshToken(String refreshToken);
     ResponseEntity<String> logout(String refreshToken);
 }

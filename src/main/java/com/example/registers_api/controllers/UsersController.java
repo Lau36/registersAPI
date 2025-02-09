@@ -4,6 +4,7 @@ import com.example.registers_api.dtos.UserDTO;
 import com.example.registers_api.services.IUserService;
 import lombok.AllArgsConstructor;
 import org.keycloak.representations.idm.UserRepresentation;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,6 +36,12 @@ public class UsersController {
     @PostMapping("/create/Reseacher")
     public String createReseacher(@RequestBody UserDTO user){
         return userService.createReseacher(user);
+    }
+
+    @DeleteMapping("/delete/{userId}")
+    public ResponseEntity<?> deleteUser(@PathVariable String userId){
+        userService.deleteUser(userId);
+        return ResponseEntity.noContent().build();
     }
 
 }

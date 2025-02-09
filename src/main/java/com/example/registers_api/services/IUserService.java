@@ -11,4 +11,5 @@ public interface IUserService {
     String createAdmin (UserDTO user);
     String createReseacher (UserDTO user);
     List<UserRepresentation> getAllUsers();
+    void deleteUser(String userId);
 }

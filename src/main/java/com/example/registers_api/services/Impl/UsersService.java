@@ -94,4 +94,10 @@ public class UsersService implements IUserService {
         return usersResource.list();
     }
 
+    @Override
+    public void deleteUser(String userId) {
+        UsersResource usersResource = keycloak.realm(REALM_NAME).users();
+        usersResource.get(userId).remove();
+    }
+
 }
