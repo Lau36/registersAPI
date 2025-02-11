@@ -5,8 +5,10 @@ import com.example.registers_api.services.IUserService;
 import jakarta.ws.rs.core.Response;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.RolesResource;
+import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
@@ -98,6 +100,26 @@ public class UsersService implements IUserService {
     public void deleteUser(String userId) {
         UsersResource usersResource = keycloak.realm(REALM_NAME).users();
         usersResource.get(userId).remove();
+    }
+
+    @Override
+    public void updateUser(String userId, UserDTO userDTO) {
+        CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
+        credentialRepresentation.setTemporary(false);
+        credentialRepresentation.setType(OAuth2Constants.PASSWORD);
+        credentialRepresentation.setValue(userDTO.getPassword());
+
+        UserRepresentation user = new UserRepresentation();
+        user.setUsername(userDTO.getUsername());
+        user.setFirstName(userDTO.getFirstName());
+        user.setLastName(userDTO.getLastName());
+        user.setEmail(userDTO.getEmail());
+        user.setEnabled(true);
+        user.setEmailVerified(true);
+        user.setCredentials(Collections.singletonList(credentialRepresentation));
+
+        UserResource usersResource = keycloak.realm(REALM_NAME).users().get(userId);
+        usersResource.update(user);
     }
 
 }

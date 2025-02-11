@@ -38,6 +38,12 @@ public class UsersController {
         return userService.createReseacher(user);
     }
 
+    @PutMapping("/update/{userId}")
+    public ResponseEntity<?> updateUser(@PathVariable String userId, @RequestBody UserDTO userDTO){
+        userService.updateUser(userId, userDTO);
+        return ResponseEntity.ok("User updated successfully");
+    }
+
     @DeleteMapping("/delete/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable String userId){
         userService.deleteUser(userId);
