@@ -1,5 +1,7 @@
 package com.example.registers_api.utils;
 
+import java.time.LocalDate;
+
 public class Constants {
     private Constants() {
     throw new IllegalStateException("Utility class");
@@ -18,6 +20,11 @@ public class Constants {
     public static final String RESEARCHER = "Researcher";
 
     public static final String REALM_NAME = "registeUsersApiDev";
+
+    public static final String DOCUMENT_TYPE = "documentType";
+    public static final String DOCUMENT_NUMBER = "documentNumber";
+    public static final String RESEARCH_LAYER = "researchLayerId";
+    public static final String BIRTHDATE = "birthDate";
 
 
 

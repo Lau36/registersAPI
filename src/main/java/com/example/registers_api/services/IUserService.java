@@ -7,9 +7,7 @@ import java.util.List;
 
 public interface IUserService {
 
-    String createDoctor (UserDTO user);
-    String createAdmin (UserDTO user);
-    String createReseacher (UserDTO user);
+    String createUser (UserDTO user);
     List<UserRepresentation> getAllUsers();
     void deleteUser(String userId);
     void updateUser(String userId, UserDTO userDTO);

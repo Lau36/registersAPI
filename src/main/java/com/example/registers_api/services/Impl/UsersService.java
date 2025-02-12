@@ -15,6 +15,7 @@ import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -31,21 +32,7 @@ public class UsersService implements IUserService {
     private final Keycloak keycloak;
 
     @Override
-    public String createAdmin(UserDTO user){
-        return saveUser(user, ADMIN);
-    }
-
-    @Override
-    public String createDoctor(UserDTO user){
-        return saveUser(user, DOCTOR);
-    }
-
-    @Override
-    public String createReseacher(UserDTO user){
-        return saveUser(user, RESEARCHER);
-    }
-
-    public String saveUser(UserDTO user, String role) {
+    public String createUser(UserDTO user){
 
         UsersResource usersResource = keycloak.realm(REALM_NAME).users();
 
@@ -64,8 +51,12 @@ public class UsersService implements IUserService {
         newUser.setCredentials(Collections.singletonList(credential));
 
         Map<String, List<String>> attributes = new HashMap<>();
-        attributes.put("IdentificationType", Collections.singletonList(user.getIdentificationType()));
-        attributes.put("identificationNumber", Collections.singletonList(user.getIdentificationNumber()));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        attributes.put(DOCUMENT_TYPE, Collections.singletonList(user.getIdentificationType()));
+        attributes.put(DOCUMENT_NUMBER, Collections.singletonList(user.getIdentificationNumber()));
+        attributes.put(RESEARCH_LAYER, Collections.singletonList(user.getResearchLayer()));
+        attributes.put(BIRTHDATE, Collections.singletonList(user.getBirthDate().format(formatter)));
         newUser.setAttributes(attributes);
 
         // Crear usuario en Keycloak
@@ -79,15 +70,16 @@ public class UsersService implements IUserService {
             RolesResource roleResource = keycloak.realm(REALM_NAME).roles();
 
             // Obtener el rol por nombre
-            RoleRepresentation defaultRole = roleResource.get(role).toRepresentation();
+            RoleRepresentation defaultRole = roleResource.get(user.getRole()).toRepresentation();
 
             // Asignar el rol al usuario recién creado
             keycloak.realm(REALM_NAME).users().get(userId).roles().realmLevel().add(Collections.singletonList(defaultRole));
+
+
             return "Usuario creado exitosamente" ;
         } else {
             return "Error al crear usuario: " + response.readEntity(String.class) + response.getStatus();
         }
-
     }
 
     @Override

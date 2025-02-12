@@ -23,19 +23,9 @@ public class UsersController {
         return userService.getAllUsers();
     }
 
-    @PostMapping("/create/Doctor")
-    public String createDoctor(@RequestBody UserDTO user){
-        return userService.createDoctor(user);
-    }
-
-    @PostMapping("/create/Admin")
-    public String createAdmin(@RequestBody UserDTO user){
-        return userService.createAdmin(user);
-    }
-
-    @PostMapping("/create/Reseacher")
-    public String createReseacher(@RequestBody UserDTO user){
-        return userService.createReseacher(user);
+    @PostMapping("/create")
+    public String create(@RequestBody UserDTO user){
+        return userService.createUser(user);
     }
 
     @PutMapping("/update/{userId}")
