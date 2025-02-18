@@ -8,7 +8,7 @@ import com.example.registers_api.mappers.ResearchLayerMapper;
 import com.example.registers_api.models.LayerBoss;
 import com.example.registers_api.models.ResearchLayerCollection;
 import com.example.registers_api.repository.ResearchLayerRepository;
-import com.example.registers_api.services.Impl.ResearchLayerService;
+import com.example.registers_api.services.impl.ResearchLayerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

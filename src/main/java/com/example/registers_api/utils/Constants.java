@@ -1,7 +1,5 @@
 package com.example.registers_api.utils;
 
-import java.time.LocalDate;
-
 public class Constants {
     private Constants() {
     throw new IllegalStateException("Utility class");
@@ -25,6 +23,28 @@ public class Constants {
     public static final String DOCUMENT_NUMBER = "documentNumber";
     public static final String RESEARCH_LAYER = "researchLayerId";
     public static final String BIRTHDATE = "birthDate";
+
+
+    public static final String USER_CREATED = "Usuario creado exitosamente";
+    public static final String USER_UPDATED = "Usuario actualizado exitosamente";
+    public static final String USER_DELETED = "Usuario eliminado exitosamente";
+    public static final String ERROR_WITH_USER_CREATED = "Error al crear usuario: ";
+    public static final String DATE = "yyyy-MM-dd";
+
+    public static final Integer STATUS_CODE_201 = 201;
+
+    public static final String ERROR_CREATING_USER = "Ocurrió un error, no se pudo crear el usuario";
+    public static final String ERROR_WITH_KEYCLOAK = "Error con servicio externo";
+    public static final String TOKEN = "/token";
+    public static final String GRANT_TYPE = "grant_type";
+    public static final String PASSWORD = "password";
+    public static final String USERNAME = "username";
+    public static final String LOGOUT = "/logout";
+    public static final String REFRESH_TOKEN = "refresh_token";
+    public static final String SESION_CLOSED = "Sesión cerrada exitosamente";
+    public static final String CLIENT_ID = "client_id";
+    public static final String CLIENT_SECRET = "client_secret";
+
 
 
 

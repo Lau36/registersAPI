@@ -9,7 +9,7 @@ import com.example.registers_api.mappers.VariableMapper;
 import com.example.registers_api.models.VariableCollection;
 import com.example.registers_api.repository.ResearchLayerRepository;
 import com.example.registers_api.repository.VariableRepository;
-import com.example.registers_api.services.Impl.VariableService;
+import com.example.registers_api.services.impl.VariableService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

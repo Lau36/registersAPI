@@ -3,7 +3,6 @@ package com.example.registers_api.controllers;
 import com.example.registers_api.dtos.VariableDTO;
 import com.example.registers_api.response.BasicResponse;
 import com.example.registers_api.services.IVariableService;
-import com.example.registers_api.services.Impl.VariableService;
 import com.example.registers_api.utils.Constants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

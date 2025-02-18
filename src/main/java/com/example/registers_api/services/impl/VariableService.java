@@ -1,4 +1,4 @@
-package com.example.registers_api.services.Impl;
+package com.example.registers_api.services.impl;
 
 import com.example.registers_api.dtos.VariableDTO;
 import com.example.registers_api.exceptions.AlreadyExistsException;

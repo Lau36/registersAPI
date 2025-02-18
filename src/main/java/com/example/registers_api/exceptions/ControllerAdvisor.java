@@ -52,4 +52,14 @@ public class ControllerAdvisor {
                         LocalDateTime.now())
         );
     }
+
+    @ExceptionHandler(ErrorWithKeycloakException.class)
+    public ResponseEntity<ExceptionResponse> handlErrorWithKeycloakException(ErrorWithKeycloakException e) {
+        return ResponseEntity.badRequest().body(
+                new ExceptionResponse(
+                        e.getMessage(),
+                        HttpStatus.INTERNAL_SERVER_ERROR.toString(),
+                        LocalDateTime.now())
+        );
+    }
 }

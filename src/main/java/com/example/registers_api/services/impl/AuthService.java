@@ -1,7 +1,8 @@
-package com.example.registers_api.services.Impl;
+package com.example.registers_api.services.impl;
 
 import com.example.registers_api.dtos.AuthDTO;
 import com.example.registers_api.services.IAuthService;
+import com.example.registers_api.utils.Constants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -11,26 +12,28 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 
+import static com.example.registers_api.utils.Constants.*;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService implements IAuthService {
 
     private final RestTemplate restTemplate = new RestTemplate();
     private static final String KEYCLOAK_SERVER_URL = "http://localhost:8181/realms/registeUsersApiDev/protocol/openid-connect";
-    private final String clientId = "registers-users-api-rest";
-    private final String clientSecret = "it9kVcNXDEYXoLnbR3ygY8QzaEgTQAw5";
+    private static final String CLIENT_ID = "registers-users-api-rest";
+    private static final String CLIENT_SECRET = "it9kVcNXDEYXoLnbR3ygY8QzaEgTQAw5";
 
     @Override
     public ResponseEntity<Map> login(AuthDTO auth) {
-        String tokenUrl = KEYCLOAK_SERVER_URL + "/token";
+        String tokenUrl = KEYCLOAK_SERVER_URL + TOKEN;
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        MultiValueMap<String, String> body = addBody(clientId, clientSecret);
-        body.add("grant_type", "password");
-        body.add("username", auth.getEmail());
-        body.add("password", auth.getPassword());
+        MultiValueMap<String, String> body = addBody();
+        body.add(GRANT_TYPE, PASSWORD);
+        body.add(USERNAME, auth.getEmail());
+        body.add(PASSWORD, auth.getPassword());
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
 
@@ -39,40 +42,40 @@ public class AuthService implements IAuthService {
 
     @Override
     public ResponseEntity<String> logout(String refreshToken) {
-        String logoutUrl = KEYCLOAK_SERVER_URL + "/logout";
+        String logoutUrl = KEYCLOAK_SERVER_URL + LOGOUT;
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        MultiValueMap<String, String> body = addBody(clientId, clientSecret);
-        body.add("refresh_token", refreshToken);
+        MultiValueMap<String, String> body = addBody();
+        body.add(REFRESH_TOKEN, refreshToken);
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
         restTemplate.postForEntity(logoutUrl, request, String.class);
 
-        return ResponseEntity.ok("Sesión cerrada exitosamente");
+        return ResponseEntity.ok(SESION_CLOSED);
     }
 
     @Override
     public ResponseEntity<Map> refreshToken(String refreshToken) {
-        String tokenUrl = KEYCLOAK_SERVER_URL + "/token";
+        String tokenUrl = KEYCLOAK_SERVER_URL + TOKEN;
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        MultiValueMap<String, String> body = addBody(clientId, clientSecret);
-        body.add("grant_type", "refresh_token");
-        body.add("refresh_token", refreshToken);
+        MultiValueMap<String, String> body = addBody();
+        body.add(GRANT_TYPE, REFRESH_TOKEN);
+        body.add(REFRESH_TOKEN, refreshToken);
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
 
         return restTemplate.exchange(tokenUrl, HttpMethod.POST, request, Map.class);
     }
 
-    private MultiValueMap<String, String> addBody(String client_id, String client_secret) {
+    private MultiValueMap<String, String> addBody() {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("client_id", client_id);
-        body.add("client_secret", client_secret);
+        body.add(Constants.CLIENT_ID, CLIENT_ID);
+        body.add(Constants.CLIENT_SECRET, CLIENT_SECRET);
         return body;
     }
 }
