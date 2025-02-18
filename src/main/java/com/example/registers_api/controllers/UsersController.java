@@ -28,9 +28,9 @@ public class UsersController {
         return userService.getAllUsers();
     }
 
-    @GetMapping("/get/{userId}")
-    public UserResource getUserById(@PathVariable String userId){
-        return userService.getUserById(userId);
+    @GetMapping()
+    public List<UserRepresentation> getUserByEmail(@RequestParam String email){
+        return userService.getUserByEmail(email);
     }
 
     @PostMapping("/create")
@@ -39,16 +39,30 @@ public class UsersController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/update/{userId}")
-    public ResponseEntity<BasicResponse> updateUser(@PathVariable String userId, @RequestBody UserDTO userDTO){
+    @PutMapping("/update/")
+    public ResponseEntity<BasicResponse> updateUser(@RequestParam String userId, @RequestBody UserDTO userDTO){
         userService.updateUser(userId, userDTO);
         BasicResponse response = new BasicResponse(USER_UPDATED);
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/delete/{userId}")
-    public ResponseEntity<BasicResponse> deleteUser(@PathVariable String userId){
+    @DeleteMapping("/delete")
+    public ResponseEntity<BasicResponse> deleteUser(@RequestParam String userId){
         userService.deleteUser(userId);
+        BasicResponse response = new BasicResponse(USER_DELETED);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/disableUser")
+    public ResponseEntity<BasicResponse> disableUser(@RequestParam String userId){
+        userService.disableOrEnableUser(userId, false);
+        BasicResponse response = new BasicResponse(USER_DELETED);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/enabledUser")
+    public ResponseEntity<BasicResponse> enabledUser(@RequestParam String userId){
+        userService.disableOrEnableUser(userId, true);
         BasicResponse response = new BasicResponse(USER_DELETED);
         return ResponseEntity.ok(response);
     }

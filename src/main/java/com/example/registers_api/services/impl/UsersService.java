@@ -15,6 +15,7 @@ import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
@@ -34,7 +35,7 @@ public class UsersService implements IUserService {
     private final Keycloak keycloak;
 
     @Override
-    public String createUser(UserDTO user){
+    public String createUser(@NonNull UserDTO user){
         try{
             UsersResource usersResource = keycloak.realm(REALM_NAME).users();
 
@@ -96,10 +97,10 @@ public class UsersService implements IUserService {
     }
 
     @Override
-    public UserResource getUserById(String userId) {
+    public List<UserRepresentation> getUserByEmail(String email) {
         try{
             UsersResource usersResource = keycloak.realm(REALM_NAME).users();
-            return usersResource.get(userId);
+            return usersResource.searchByEmail(email, true);
         }
         catch (Exception e){
             throw new ErrorWithKeycloakException(ERROR_WITH_KEYCLOAK);
@@ -111,6 +112,20 @@ public class UsersService implements IUserService {
         try{
             UsersResource usersResource = keycloak.realm(REALM_NAME).users();
             usersResource.get(userId).remove();
+        }
+        catch (Exception e){
+            throw new ErrorWithKeycloakException(ERROR_WITH_KEYCLOAK);
+        }
+
+    }
+
+    @Override
+    public void disableOrEnableUser(String userId, boolean isEnabled) {
+        try{
+            UserRepresentation user = new UserRepresentation();
+            user.setEnabled(isEnabled);
+            UserResource usersResource = keycloak.realm(REALM_NAME).users().get(userId);
+            usersResource.update(user);
         }
         catch (Exception e){
             throw new ErrorWithKeycloakException(ERROR_WITH_KEYCLOAK);
@@ -134,6 +149,15 @@ public class UsersService implements IUserService {
             user.setEnabled(true);
             user.setEmailVerified(true);
             user.setCredentials(Collections.singletonList(credentialRepresentation));
+
+            Map<String, List<String>> attributes = new HashMap<>();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE);
+
+            attributes.put(DOCUMENT_TYPE, Collections.singletonList(userDTO.getIdentificationType()));
+            attributes.put(DOCUMENT_NUMBER, Collections.singletonList(userDTO.getIdentificationNumber()));
+            attributes.put(RESEARCH_LAYER, Collections.singletonList(userDTO.getResearchLayer()));
+            attributes.put(BIRTHDATE, Collections.singletonList(userDTO.getBirthDate().format(formatter)));
+            user.setAttributes(attributes);
 
             UserResource usersResource = keycloak.realm(REALM_NAME).users().get(userId);
             usersResource.update(user);
