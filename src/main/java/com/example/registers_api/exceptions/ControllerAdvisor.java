@@ -18,7 +18,7 @@ public class ControllerAdvisor {
         return ResponseEntity.badRequest().body(
                 new ExceptionResponse(
                 e.getMessage(),
-                HttpStatus.BAD_REQUEST.toString(),
+                HttpStatus.BAD_REQUEST.value(),
                 LocalDateTime.now())
         );
     }
@@ -28,7 +28,7 @@ public class ControllerAdvisor {
         return ResponseEntity.badRequest().body(
                 new ExceptionResponse(
                         e.getMessage(),
-                        HttpStatus.BAD_REQUEST.toString(),
+                        HttpStatus.BAD_REQUEST.value(),
                         LocalDateTime.now())
         );
     }
@@ -38,7 +38,7 @@ public class ControllerAdvisor {
         return ResponseEntity.badRequest().body(
                 new ExceptionResponse(
                          e.getMessage(),
-                        HttpStatus.BAD_REQUEST.toString(),
+                        HttpStatus.BAD_REQUEST.value(),
                         LocalDateTime.now())
         );
     }
@@ -48,8 +48,19 @@ public class ControllerAdvisor {
         return ResponseEntity.badRequest().body(
                 new ExceptionResponse(
                         e.getMessage(),
-                        HttpStatus.BAD_REQUEST.toString(),
+                        HttpStatus.BAD_REQUEST.value(),
                         LocalDateTime.now())
+        );
+    }
+
+    @ExceptionHandler(ErrorUserCreation.class)
+    public ResponseEntity<ExceptionResponse> handleErrorUserCreation(ErrorUserCreation e) {
+        return ResponseEntity.status(e.getStatusCode()).body(
+                new ExceptionResponse(
+                        e.getMessage(),
+                        e.getStatusCode(),
+                        LocalDateTime.now()
+                )
         );
     }
 
@@ -58,7 +69,7 @@ public class ControllerAdvisor {
         return ResponseEntity.badRequest().body(
                 new ExceptionResponse(
                         e.getMessage(),
-                        HttpStatus.INTERNAL_SERVER_ERROR.toString(),
+                        HttpStatus.INTERNAL_SERVER_ERROR.value(),
                         LocalDateTime.now())
         );
     }

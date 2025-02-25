@@ -1,8 +1,10 @@
 package com.example.registers_api.services.impl;
 
 import com.example.registers_api.dtos.UserDTO;
+import com.example.registers_api.exceptions.ErrorUserCreation;
 import com.example.registers_api.exceptions.ErrorWithKeycloakException;
 import com.example.registers_api.services.IUserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.codemodel.JCatchBlock;
 import jakarta.ws.rs.core.Response;
 import lombok.AllArgsConstructor;
@@ -23,6 +25,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.example.registers_api.utils.Constants.*;
 
@@ -36,7 +40,10 @@ public class UsersService implements IUserService {
 
     @Override
     public String createUser(@NonNull UserDTO user){
-        try{
+            if (!identificationNumberExists(user.getIdentificationNumber())) {
+                throw new ErrorWithKeycloakException("El número de identificación ya está en uso.");
+            }
+
             UsersResource usersResource = keycloak.realm(REALM_NAME).users();
 
             CredentialRepresentation credential = new CredentialRepresentation();
@@ -57,7 +64,7 @@ public class UsersService implements IUserService {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE);
 
             attributes.put(DOCUMENT_TYPE, Collections.singletonList(user.getIdentificationType()));
-            attributes.put(DOCUMENT_NUMBER, Collections.singletonList(user.getIdentificationNumber()));
+            attributes.put(DOCUMENT_NUMBER, Collections.singletonList(user.getIdentificationNumber().toString()));
             attributes.put(RESEARCH_LAYER, Collections.singletonList(user.getResearchLayer()));
             attributes.put(BIRTHDATE, Collections.singletonList(user.getBirthDate().format(formatter)));
             newUser.setAttributes(attributes);
@@ -75,13 +82,32 @@ public class UsersService implements IUserService {
 
                 keycloak.realm(REALM_NAME).users().get(userId).roles().realmLevel().add(Collections.singletonList(defaultRole));
 
-                return USER_CREATED ;
+                return USER_CREATED;
             } else {
-                return ERROR_WITH_USER_CREATED + response.readEntity(String.class) + response.getStatus();
+
+                String message = getErrorMessage(response.readEntity(String.class));
+                throw new ErrorUserCreation(message, response.getStatus());
             }
-        } catch (Exception e) {
-            throw new ErrorWithKeycloakException(ERROR_CREATING_USER);
+
+    }
+
+    private boolean identificationNumberExists(Integer identificationNumber) {
+        List<UserRepresentation> users = keycloak.realm(REALM_NAME)
+                .users()
+                .search(null, null, null, identificationNumber.toString(), 0, 1);
+
+        return users.isEmpty();
+    }
+
+    public String getErrorMessage(String jsonError){
+
+
+        Pattern pattern = Pattern.compile("\"errorMessage\"\\s*:\\s*\"([^\"]+)\"");
+        Matcher matcher = pattern.matcher(jsonError);
+        if (matcher.find()) {
+            return matcher.group(1); // Extrae solo el mensaje
         }
+        return "Error desconocido";
     }
 
     @Override
@@ -111,9 +137,19 @@ public class UsersService implements IUserService {
     public void deleteUser(String userId) {
         try{
             UsersResource usersResource = keycloak.realm(REALM_NAME).users();
-            usersResource.get(userId).remove();
-        }
-        catch (Exception e){
+            UserResource userResource = usersResource.get(userId);
+
+            System.out.println("✅ usersResource: " + usersResource);
+            System.out.println("✅ userResource: " + userResource);
+
+            if (userResource == null) {
+                throw new RuntimeException("❌ userResource es null");
+            }
+
+            userResource.remove();
+            System.out.println("✅ Usuario eliminado exitosamente");
+        } catch (Exception e) {
+            e.printStackTrace();
             throw new ErrorWithKeycloakException(ERROR_WITH_KEYCLOAK);
         }
 
@@ -154,7 +190,7 @@ public class UsersService implements IUserService {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE);
 
             attributes.put(DOCUMENT_TYPE, Collections.singletonList(userDTO.getIdentificationType()));
-            attributes.put(DOCUMENT_NUMBER, Collections.singletonList(userDTO.getIdentificationNumber()));
+            attributes.put(DOCUMENT_NUMBER, Collections.singletonList(userDTO.getIdentificationNumber().toString()));
             attributes.put(RESEARCH_LAYER, Collections.singletonList(userDTO.getResearchLayer()));
             attributes.put(BIRTHDATE, Collections.singletonList(userDTO.getBirthDate().format(formatter)));
             user.setAttributes(attributes);

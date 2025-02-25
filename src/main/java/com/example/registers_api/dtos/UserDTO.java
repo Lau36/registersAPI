@@ -18,7 +18,7 @@ public class UserDTO {
     private String username;
     private String password;
     private String identificationType;
-    private String identificationNumber;
+    private Integer identificationNumber;
     private LocalDate birthDate;
     private String researchLayer;
     private String role;
