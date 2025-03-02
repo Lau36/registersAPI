@@ -91,6 +91,7 @@ public class UsersService implements IUserService {
 
     }
 
+
     private boolean identificationNumberExists(Integer identificationNumber) {
         List<UserRepresentation> users = keycloak.realm(REALM_NAME)
                 .users()

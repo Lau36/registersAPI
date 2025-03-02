@@ -17,11 +17,11 @@ public class SwaggerConstants {
     public static final String CREATE_VARIABLE = "Crear una capa de investigación";
     public static final String CREATE_VARIABLE_DESCRIPTION = "Servicio para crear una capa de investigación";
 
-    public static final String GET_VARIABLES = "Obtener todas las variables";
-    public static final String GET_VARIABLE_DESCRIPTION = "Servicio en donde se obtienen todas las variables existentes";
+    public static final String GET_VARIABLES = "Obtener todas las Variable";
+    public static final String GET_VARIABLE_DESCRIPTION = "Servicio en donde se obtienen todas las Variable existentes";
 
-    public static final String GET_VARIABLES_BY_RESEARCH_LAYER_ID = "Obtener todas las variables de una capa de investigación";
-    public static final String GET_VARIABLES_BY_RESEARCH_LAYER_ID_DESCRIPTION = "Servicio que por medio del id de la capa de investigación obtienen todas las variables que están asociadas a esta";
+    public static final String GET_VARIABLES_BY_RESEARCH_LAYER_ID = "Obtener todas las Variable de una capa de investigación";
+    public static final String GET_VARIABLES_BY_RESEARCH_LAYER_ID_DESCRIPTION = "Servicio que por medio del id de la capa de investigación obtienen todas las Variable que están asociadas a esta";
 
     public static final String VARIABLE_NAME_ALREADY_EXISTS = "El nombre ' ' ya existe";
     public static final String VARIABLE_NAME_TOO_LONG = "El nombre excede el limite de los 100 caracteres";

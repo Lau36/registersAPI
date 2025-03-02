@@ -8,6 +8,7 @@ public class Constants {
     public static final String RESEARCH_LAYER_CREATED = "Se creó la capa de investigación correctamente";
     public static final String VARIABLE_CREATED = "Se creó la variable correctamente";
     public static final String RESEACH_LAYER_NOT_CREATED = "Ocurrió un error al crear la capa de investigación";
+    public static final String REGISTER_CREATED = "Registro creado con éxito";
 
     public static final String ADMIN_ROLE = "Admin_client_role";
     public static final String DOCTOR_ROLE = "Doctor_client_role";
