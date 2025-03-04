@@ -62,6 +62,11 @@ public class VariableService implements IVariableService {
         return variablesCollection.stream().map(variableMapper::toVariableDTO).toList();
     }
 
+    @Override
+    public void deleteVariable(String variableId) {
+        variableRepository.deleteById(variableId);
+    }
+
     private void validateResearchLayerId(String researchLayerId) {
         boolean exists = layerRepository.existsById(researchLayerId);
         if (!exists) {

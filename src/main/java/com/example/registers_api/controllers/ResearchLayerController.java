@@ -74,4 +74,14 @@ public class ResearchLayerController {
         return ResponseEntity.ok(researchLayerService.getAllResearchLayers());
     }
 
+    @DeleteMapping()
+    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "')")
+    public ResponseEntity<BasicResponse> deletResearchLayerById(@RequestParam String id) {
+        BasicResponse response = new BasicResponse(Constants.RESEARCH_LAYER_DELETED);
+        researchLayerService.deleteResearchLayer(id);
+        return ResponseEntity.ok(response);
+    }
+
+
+
 }

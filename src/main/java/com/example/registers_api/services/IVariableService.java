@@ -13,4 +13,5 @@ public interface IVariableService {
     VariableDTO getVariableById(String variableId);
 
     List<VariableDTO> getAllVariables();
+    void deleteVariable(String variableId);
 }

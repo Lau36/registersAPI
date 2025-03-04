@@ -25,6 +25,7 @@ public class VariableCollection {
     @NonNull
     private String descripcion;
 
+
     @NonNull
     private String tipo;
 

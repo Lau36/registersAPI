@@ -47,6 +47,11 @@ public class ResearchLayerService implements IResearchLayerService {
         return layerCollections.stream().map(researchLayerMapper::toDto).toList();
     }
 
+    @Override
+    public void deleteResearchLayer(String researchLayerId) {
+        researchLayerRepository.deleteById(researchLayerId);
+    }
+
     private void notEmptyValidations(ResearchLayerDTO researchLayerDTO) {
         if (researchLayerDTO.getNombreCapa().trim().isEmpty()
                 || researchLayerDTO.getDescripcion().trim().isEmpty()

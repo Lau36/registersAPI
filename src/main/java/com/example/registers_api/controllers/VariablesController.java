@@ -14,7 +14,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/Variable")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
+
+
 public class VariablesController {
 
     private final IVariableService variableService;
@@ -24,6 +25,14 @@ public class VariablesController {
     public ResponseEntity<BasicResponse> saveVariable(@RequestBody VariableDTO variableDTO) {
         BasicResponse response = new BasicResponse(Constants.VARIABLE_CREATED);
         variableService.saveVariable(variableDTO);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping
+    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
+    public ResponseEntity<BasicResponse> deleteVariable(@RequestParam String variableId) {
+        BasicResponse response = new BasicResponse(Constants.VARIABLE_DELETED);
+        variableService.deleteVariable(variableId);
         return ResponseEntity.ok(response);
     }
 
