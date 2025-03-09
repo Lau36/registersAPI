@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/ResearchLayer")
+@RequestMapping("/api/v1/ResearchLayer")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
 public class ResearchLayerController {
@@ -45,6 +46,14 @@ public class ResearchLayerController {
     public ResponseEntity<BasicResponse> saveLayer(@RequestBody ResearchLayerDTO researchLayer) {
         BasicResponse response = new BasicResponse(Constants.RESEARCH_LAYER_CREATED);
         researchLayerService.saveResearchLayer(researchLayer);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PutMapping
+    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
+    public ResponseEntity<BasicResponse> updateLayer(@RequestParam String researchLayerId, @RequestBody ResearchLayerDTO researchLayer) {
+        BasicResponse response = new BasicResponse(Constants.RESEARCH_LAYER_CREATED);
+        researchLayerService.updateResearchLayer(researchLayerId, researchLayer);
         return ResponseEntity.ok(response);
     }
 
@@ -76,9 +85,9 @@ public class ResearchLayerController {
 
     @DeleteMapping()
     @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "')")
-    public ResponseEntity<BasicResponse> deletResearchLayerById(@RequestParam String id) {
+    public ResponseEntity<BasicResponse> deletResearchLayerById(@RequestParam String researchLayerId) {
         BasicResponse response = new BasicResponse(Constants.RESEARCH_LAYER_DELETED);
-        researchLayerService.deleteResearchLayer(id);
+        researchLayerService.deleteResearchLayer(researchLayerId);
         return ResponseEntity.ok(response);
     }
 

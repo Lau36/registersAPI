@@ -8,10 +8,13 @@ public interface IVariableService {
 
     void saveVariable(VariableDTO variableDTO);
 
+    void updateVariable(String variableId, VariableDTO variableDTO);
+
     List<VariableDTO> getAllVariablesById(String idCapaInvestigacion);
 
     VariableDTO getVariableById(String variableId);
 
     List<VariableDTO> getAllVariables();
+
     void deleteVariable(String variableId);
 }

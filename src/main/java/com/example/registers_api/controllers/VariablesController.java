@@ -5,6 +5,7 @@ import com.example.registers_api.response.BasicResponse;
 import com.example.registers_api.services.IVariableService;
 import com.example.registers_api.utils.Constants;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/Variable")
+@RequestMapping("/api/v1/Variable")
 @RequiredArgsConstructor
 
 
@@ -25,14 +26,15 @@ public class VariablesController {
     public ResponseEntity<BasicResponse> saveVariable(@RequestBody VariableDTO variableDTO) {
         BasicResponse response = new BasicResponse(Constants.VARIABLE_CREATED);
         variableService.saveVariable(variableDTO);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @DeleteMapping
+    @PutMapping
     @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
-    public ResponseEntity<BasicResponse> deleteVariable(@RequestParam String variableId) {
-        BasicResponse response = new BasicResponse(Constants.VARIABLE_DELETED);
-        variableService.deleteVariable(variableId);
+    public ResponseEntity<BasicResponse> updateVariable(@RequestParam String variableId,
+                                                        @RequestBody VariableDTO variableDTO) {
+        BasicResponse response = new BasicResponse(Constants.VARIABLE_UPDATED);
+        variableService.updateVariable(variableId, variableDTO);
         return ResponseEntity.ok(response);
     }
 
@@ -50,8 +52,16 @@ public class VariablesController {
 
     @GetMapping("/GetAll")
     @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "')")
-    public ResponseEntity<List<VariableDTO>> getAllResearchLayers() {
+    public ResponseEntity<List<VariableDTO>> getAllVariables() {
         return ResponseEntity.ok(variableService.getAllVariables());
+    }
+
+    @DeleteMapping
+//    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
+    public ResponseEntity<BasicResponse> deleteVariable(@RequestParam String variableId) {
+        BasicResponse response = new BasicResponse(Constants.VARIABLE_DELETED);
+        variableService.deleteVariable(variableId);
+        return ResponseEntity.ok(response);
     }
 
 }

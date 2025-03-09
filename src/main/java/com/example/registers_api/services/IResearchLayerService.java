@@ -14,4 +14,6 @@ public interface IResearchLayerService {
     List<ResearchLayerDTO> getAllResearchLayers();
 
     void deleteResearchLayer(String researchLayerId);
+
+    void updateResearchLayer(String researchLayerId, ResearchLayerDTO researchLayerDTO);
 }

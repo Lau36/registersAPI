@@ -1,15 +1,15 @@
 package com.example.registers_api.models;
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
 @RequiredArgsConstructor
-@Getter
-@Setter
+@Data
 @Document(collection = "variablesView")
 public class VariableCollection {
 
@@ -25,8 +25,15 @@ public class VariableCollection {
     @NonNull
     private String descripcion;
 
-
-    @NonNull
     private String tipo;
+
+    private Boolean tieneOpciones;
+
+    private List<String> opciones;
+
+    private LocalDateTime fechaCreacion;
+
+    private LocalDateTime fechaActualizacion;
+
 
 }

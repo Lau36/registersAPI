@@ -7,6 +7,8 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
+
 @RequiredArgsConstructor
 @Getter
 @Setter
@@ -23,5 +25,9 @@ public class ResearchLayerCollection {
 
     @NonNull
     private LayerBoss jefeCapa;
+
+    private LocalDateTime fechaCreacion;
+
+    private LocalDateTime fechaActualizacion;
 
 }

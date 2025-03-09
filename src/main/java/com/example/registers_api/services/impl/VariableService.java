@@ -10,11 +10,16 @@ import com.example.registers_api.models.VariableCollection;
 import com.example.registers_api.repository.ResearchLayerRepository;
 import com.example.registers_api.repository.VariableRepository;
 import com.example.registers_api.services.IVariableService;
+import com.example.registers_api.services.validatins.VariableServiceValidations;
 import com.example.registers_api.utils.ExceptionConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+
+import static com.example.registers_api.utils.Constants.VARIABLE_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -23,17 +28,19 @@ public class VariableService implements IVariableService {
     private final VariableRepository variableRepository;
     private final ResearchLayerRepository layerRepository;
     private final VariableMapper variableMapper;
+    private final VariableServiceValidations variableServiceValidations;
 
     @Override
     public void saveVariable(VariableDTO variableDTO) {
         try {
-            notEmptyValidations(variableDTO);
-            tooLongValidations(variableDTO);
-            validateResearchLayerId(variableDTO.getIdCapaInvestigacion());
-            alreadyExistsValidation(variableDTO);
+            variableServiceValidations.notEmptyValidations(variableDTO);
+            variableServiceValidations.tooLongValidations(variableDTO);
+            variableServiceValidations.validateResearchLayerId(variableDTO.getIdCapaInvestigacion());
+            variableServiceValidations.alreadyExistsValidation(variableDTO);
 
-            
             VariableCollection variableCollection = variableMapper.toVariableCollection(variableDTO);
+            variableCollection.setTieneOpciones(hasOptionsItem(variableDTO));
+            variableCollection.setFechaCreacion(LocalDateTime.now());
             
             variableRepository.save(variableCollection);
 
@@ -44,8 +51,26 @@ public class VariableService implements IVariableService {
     }
 
     @Override
+    public void updateVariable(String variableId, VariableDTO variableDTO) {
+        VariableCollection existsVariable = variableRepository.findById(variableId)
+                .orElseThrow( () ->
+                        new DoesntExistsException(String.format(VARIABLE_NOT_FOUND, variableDTO.getId()))
+        );
+        variableServiceValidations.validateResearchLayerId(variableDTO.getIdCapaInvestigacion());
+        variableServiceValidations.alreadyExistsValidation(variableDTO);
+
+        existsVariable.setNombreVariable(variableDTO.getNombreVariable());
+        existsVariable.setDescripcion(variableDTO.getDescripcion());
+        existsVariable.setOpciones(variableDTO.getOpciones());
+        existsVariable.setIdCapaInvestigacion(variableDTO.getIdCapaInvestigacion());
+        existsVariable.setTieneOpciones(hasOptionsItem(variableDTO));
+        existsVariable.setFechaActualizacion(LocalDateTime.now());
+        variableRepository.save(existsVariable);
+    }
+
+    @Override
     public List<VariableDTO> getAllVariablesById(String idCapaInvestigacion) {
-        validateResearchLayerId(idCapaInvestigacion);
+        variableServiceValidations.validateResearchLayerId(idCapaInvestigacion);
         List<VariableCollection> variablesCollections = variableRepository.findAllByIdCapaInvestigacion(idCapaInvestigacion);
         return variablesCollections.stream().map(variableMapper::toVariableDTO).toList();
     }
@@ -67,36 +92,9 @@ public class VariableService implements IVariableService {
         variableRepository.deleteById(variableId);
     }
 
-    private void validateResearchLayerId(String researchLayerId) {
-        boolean exists = layerRepository.existsById(researchLayerId);
-        if (!exists) {
-            throw new DoesntExistsException(String.format(ExceptionConstants.DOESNT_EXIST, researchLayerId));
-        }
+    public boolean hasOptionsItem(VariableDTO variableDTO) {
+        return !variableDTO.getOpciones().isEmpty();
     }
 
-    private void notEmptyValidations(VariableDTO variableDTO) {
-        if (variableDTO.getNombreVariable().trim().isEmpty()
-                || variableDTO.getIdCapaInvestigacion().trim().isEmpty()
-                || variableDTO.getDescripcion().trim().isEmpty()
-                || variableDTO.getTipo().trim().isEmpty()) {
-            throw new NotEmptyFieldException(ExceptionConstants.NOT_EMPTY_FIELDS);
-          }
-        }
 
-    private void alreadyExistsValidation(VariableDTO variableDTO) {
-       boolean exists = variableRepository.existsByNombreVariable(variableDTO.getNombreVariable());
-
-       if (exists) {
-           throw new AlreadyExistsException(String.format(ExceptionConstants.ALREADY_VARIABLE_NAME_EXIST_EXCEPTION, variableDTO.getNombreVariable()));
-         }
-       }
-
-    private void tooLongValidations(VariableDTO variableDTO) {
-       if (variableDTO.getNombreVariable().length() > 90) {
-           throw new MaxLengthExceededException(String.format(ExceptionConstants.MAX_LENGTH_EXCEEDED, "nombre variable", 90));
-       }
-       else if (variableDTO.getDescripcion().length() > 200) {
-           throw new MaxLengthExceededException(String.format(ExceptionConstants.MAX_LENGTH_EXCEEDED, "descripcion", 200));
-       }
-    }
 }
