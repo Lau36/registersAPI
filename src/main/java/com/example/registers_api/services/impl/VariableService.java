@@ -1,21 +1,16 @@
 package com.example.registers_api.services.impl;
 
 import com.example.registers_api.dtos.VariableDTO;
-import com.example.registers_api.exceptions.AlreadyExistsException;
 import com.example.registers_api.exceptions.DoesntExistsException;
-import com.example.registers_api.exceptions.MaxLengthExceededException;
-import com.example.registers_api.exceptions.NotEmptyFieldException;
 import com.example.registers_api.mappers.VariableMapper;
 import com.example.registers_api.models.VariableCollection;
 import com.example.registers_api.repository.ResearchLayerRepository;
 import com.example.registers_api.repository.VariableRepository;
 import com.example.registers_api.services.IVariableService;
-import com.example.registers_api.services.validatins.VariableServiceValidations;
-import com.example.registers_api.utils.ExceptionConstants;
+import com.example.registers_api.services.validations.VariableServiceValidations;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 

@@ -1,17 +1,13 @@
 package com.example.registers_api.services.impl;
 
 import com.example.registers_api.dtos.ResearchLayerDTO;
-import com.example.registers_api.exceptions.AlreadyExistsException;
 import com.example.registers_api.exceptions.DoesntExistsException;
-import com.example.registers_api.exceptions.MaxLengthExceededException;
-import com.example.registers_api.exceptions.NotEmptyFieldException;
 import com.example.registers_api.mappers.ResearchLayerMapper;
 import com.example.registers_api.models.LayerBoss;
 import com.example.registers_api.models.ResearchLayerCollection;
 import com.example.registers_api.repository.ResearchLayerRepository;
 import com.example.registers_api.services.IResearchLayerService;
-import com.example.registers_api.services.validatins.ResearchLayerServiceValidations;
-import com.example.registers_api.utils.ExceptionConstants;
+import com.example.registers_api.services.validations.ResearchLayerServiceValidations;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +15,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.example.registers_api.utils.Constants.RESEARCH_LAYER_NOT_FOUND;
-import static com.example.registers_api.utils.Constants.VARIABLE_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor

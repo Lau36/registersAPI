@@ -7,5 +7,6 @@ import java.util.Optional;
 
 public interface ResearchLayerRepository extends MongoRepository<ResearchLayerCollection, String> {
     boolean existsByNombreCapa(String nombreCapa);
+    boolean existsById(String id);
     Optional<ResearchLayerCollection> findById(String id);
 }

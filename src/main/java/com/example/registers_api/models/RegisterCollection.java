@@ -17,6 +17,7 @@ public class RegisterCollection {
     @Id
     private String id;
     private LocalDateTime registerDate;
+    private LocalDateTime updateRegisterDate;
     private List<Variable> variables;
     private Patient patientBasicInfo;
     private Caregiver caregiver;

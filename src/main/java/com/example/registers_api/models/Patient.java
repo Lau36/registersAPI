@@ -28,6 +28,5 @@ public class Patient {
     private String currentCity;
     private String firstCrisisDate;
     private String crisisStatus;
-    private String registerDate;
 
 }

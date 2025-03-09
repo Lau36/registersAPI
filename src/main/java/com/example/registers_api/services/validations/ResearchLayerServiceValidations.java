@@ -1,4 +1,4 @@
-package com.example.registers_api.services.validatins;
+package com.example.registers_api.services.validations;
 
 import com.example.registers_api.dtos.ResearchLayerDTO;
 import com.example.registers_api.exceptions.AlreadyExistsException;

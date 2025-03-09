@@ -7,7 +7,7 @@ import lombok.*;
 @Getter
 @Builder
 public class Variable{
-    private String variableId;
+    private String id;
     private String name;
     private Object value;
     private String type;

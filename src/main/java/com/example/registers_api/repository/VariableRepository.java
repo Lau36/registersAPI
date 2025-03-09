@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public interface VariableRepository extends MongoRepository<VariableCollection, String> {
     boolean existsByNombreVariable(String name);
+    boolean existsById(String id);
     List<VariableCollection> findAllByIdCapaInvestigacion(String idCapaInvestigacion);
 
     Optional<VariableCollection> findById(String IdVariable);

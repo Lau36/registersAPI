@@ -7,8 +7,10 @@ import com.example.registers_api.request.PaginationRequest;
 import com.example.registers_api.request.RegisterRequest;
 import com.example.registers_api.response.PaginatedResponse;
 import com.example.registers_api.services.IRegisterService;
+import com.example.registers_api.services.validations.RegistersServiceValidations;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,6 +23,7 @@ import static com.example.registers_api.utils.ExceptionConstants.REGISTER_NOT_FO
 @Service
 public class RegisterService implements IRegisterService {
     private final RegisterRepository registerRepository;
+    private final RegistersServiceValidations registersServiceValidations;
 
     @Override
     public void saveRegister(RegisterRequest register) {
@@ -29,6 +32,8 @@ public class RegisterService implements IRegisterService {
         Patient patient = register.getPatient();
         Caregiver caregiver = register.getCaregiver();
         HealtProfessional healtProfessional = register.getHealtProfessional();
+
+        registersServiceValidations.validateVariablesAndResearchLayers(register);
 
         RegisterCollection registerCollection = RegisterCollection.builder()
                 .registerDate(LocalDateTime.now())
@@ -43,8 +48,8 @@ public class RegisterService implements IRegisterService {
 
     @Override
     public PaginatedResponse getAllRegistersPaginated(PaginationRequest paginationRequest) {
-//        Sort sort = Sort.by(Sort.Direction.fromString(paginationRequest.getSortDirection().name()), paginationRequest.getSort());
-        PageRequest pageable = PageRequest.of(paginationRequest.getPage(), paginationRequest.getSize());
+        Sort sort = Sort.by(Sort.Direction.fromString(paginationRequest.getSortDirection().name()), paginationRequest.getSort());
+        PageRequest pageable = PageRequest.of(paginationRequest.getPage(), paginationRequest.getSize(), sort);
 
         long totalElements = registerRepository.count();
         int totalPages = (int) Math.ceil(totalElements / (double) paginationRequest.getSize());
@@ -64,12 +69,14 @@ public class RegisterService implements IRegisterService {
                         String.format(REGISTER_NOT_FOUND, registerId)
                 ));
 
+        registersServiceValidations.validateVariablesAndResearchLayers(register);
+
         existingRegister.setVariables(register.getVariables());
         existingRegister.setPatientBasicInfo(register.getPatient());
         existingRegister.setCaregiver(register.getCaregiver());
         existingRegister.setHealtProfessional(register.getHealtProfessional());
+        existingRegister.setUpdateRegisterDate(LocalDateTime.now());
 
-        //validate exists variables
         registerRepository.save(existingRegister);
     }
 }
