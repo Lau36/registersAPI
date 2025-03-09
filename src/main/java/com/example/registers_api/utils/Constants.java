@@ -13,6 +13,7 @@ public class Constants {
     public static final String VARIABLE_DELETED = "Se eliminó la variable correctamente";
     public static final String RESEARCH_LAYER_DELETED = "Se eliminó la capa de investigación correctamente";
     public static final String REGISTER_CREATED = "Registro creado con éxito";
+    public static final String REGISTER_UPDATED = "Registro actualizado con éxito";
     public static final String VARIABLE_NOT_FOUND = "No se encontró una variable con el id: '%s'";
     public static final String RESEARCH_LAYER_NOT_FOUND = "No se encontró una capa de investigación con el id: '%s'";
 

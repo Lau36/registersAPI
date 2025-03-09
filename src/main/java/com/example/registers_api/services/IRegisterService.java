@@ -7,5 +7,6 @@ import com.example.registers_api.response.PaginatedResponse;
 public interface IRegisterService {
     void saveRegister(RegisterRequest register);
     PaginatedResponse getAllRegistersPaginated(PaginationRequest paginationRequest);
+    void updateRegister(String registerId, RegisterRequest register);
 
 }

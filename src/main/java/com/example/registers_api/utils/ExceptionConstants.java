@@ -11,4 +11,5 @@ public class ExceptionConstants {
     public static final String LAYER_DESCRIPTION_LENGTH_EXCEEDED = "La descripción de la capa de investigación no puede exceder los 250 caracteres";
     public static final String MAX_LENGTH_EXCEEDED = "El campo %s no puede exceder los %s caracteres";
     public static final String DOESNT_EXIST = "El campo %s no existe";
+    public static final String REGISTER_NOT_FOUND = "No existe un registro con el id: '%s'";
 }

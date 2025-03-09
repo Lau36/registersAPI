@@ -44,4 +44,14 @@ public class RegisterController {
         PaginatedResponse response = registerService.getAllRegistersPaginated(request);
         return ResponseEntity.ok(response);
     }
+
+    @PutMapping
+//    @PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "')")
+    public ResponseEntity<BasicResponse> updateRegister(@RequestParam String registerId, @RequestBody RegisterRequest registerRequest) {
+        BasicResponse response = new BasicResponse(Constants.REGISTER_UPDATED);
+        registerService.updateRegister(registerId, registerRequest);
+        return ResponseEntity.ok(response);
+    }
+
+
 }
