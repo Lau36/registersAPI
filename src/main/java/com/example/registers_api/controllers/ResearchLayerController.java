@@ -42,7 +42,7 @@ public class ResearchLayerController {
                     content = @Content)
     })
     @PostMapping
-    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
+//    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
     public ResponseEntity<BasicResponse> saveLayer(@RequestBody ResearchLayerDTO researchLayer) {
         BasicResponse response = new BasicResponse(Constants.RESEARCH_LAYER_CREATED);
         researchLayerService.saveResearchLayer(researchLayer);
@@ -50,9 +50,9 @@ public class ResearchLayerController {
     }
 
     @PutMapping
-    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
+//    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
     public ResponseEntity<BasicResponse> updateLayer(@RequestParam String researchLayerId, @RequestBody ResearchLayerDTO researchLayer) {
-        BasicResponse response = new BasicResponse(Constants.RESEARCH_LAYER_CREATED);
+        BasicResponse response = new BasicResponse(Constants.RESEARCH_LAYER_UPDATED);
         researchLayerService.updateResearchLayer(researchLayerId, researchLayer);
         return ResponseEntity.ok(response);
     }
@@ -65,7 +65,7 @@ public class ResearchLayerController {
             @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResearchLayerDTO.class))),
     })
     @GetMapping()
-    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "')")
+//    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "')")
     public ResponseEntity<ResearchLayerDTO> getResearchLayerById(@RequestParam String id) {
         return ResponseEntity.ok(researchLayerService.getResearchLayerById(id));
     }
@@ -78,13 +78,13 @@ public class ResearchLayerController {
             @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResearchLayerDTO.class))),
     })
     @GetMapping("/GetAll")
-    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "')")
+//    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "')")
     public ResponseEntity<List<ResearchLayerDTO>> getAllResearchLayers() {
         return ResponseEntity.ok(researchLayerService.getAllResearchLayers());
     }
 
     @DeleteMapping()
-    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "')")
+//    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "')")
     public ResponseEntity<BasicResponse> deletResearchLayerById(@RequestParam String researchLayerId) {
         BasicResponse response = new BasicResponse(Constants.RESEARCH_LAYER_DELETED);
         researchLayerService.deleteResearchLayer(researchLayerId);

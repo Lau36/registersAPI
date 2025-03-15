@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Builder
-public class HealtProfessional {
+public class HealthProfessional {
     private String id;
     private String name;
     private Integer identificationNumber;

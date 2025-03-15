@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import static com.example.registers_api.utils.ExceptionConstants.REGISTER_NOT_FOUND;
 
@@ -31,16 +30,17 @@ public class RegisterService implements IRegisterService {
         List<Variable> variables = register.getVariables();
         Patient patient = register.getPatient();
         Caregiver caregiver = register.getCaregiver();
-        HealtProfessional healtProfessional = register.getHealtProfessional();
+        HealthProfessional healthProfessional = register.getHealthProfessional();
 
-        registersServiceValidations.validateVariablesAndResearchLayers(register);
+        registersServiceValidations.validateRegisterFields(register);
+        registersServiceValidations.validateVariablesAndResearchLayer(register);
 
         RegisterCollection registerCollection = RegisterCollection.builder()
                 .registerDate(LocalDateTime.now())
                 .variables(variables)
                 .patientBasicInfo(patient)
                 .caregiver(caregiver)
-                .healtProfessional(healtProfessional)
+                .healthProfessional(healthProfessional)
                 .build();
 
         registerRepository.save(registerCollection);
@@ -69,12 +69,13 @@ public class RegisterService implements IRegisterService {
                         String.format(REGISTER_NOT_FOUND, registerId)
                 ));
 
-        registersServiceValidations.validateVariablesAndResearchLayers(register);
+        registersServiceValidations.validateRegisterFields(register);
+        registersServiceValidations.validateVariablesAndResearchLayer(register);
 
         existingRegister.setVariables(register.getVariables());
         existingRegister.setPatientBasicInfo(register.getPatient());
         existingRegister.setCaregiver(register.getCaregiver());
-        existingRegister.setHealtProfessional(register.getHealtProfessional());
+        existingRegister.setHealthProfessional(register.getHealthProfessional());
         existingRegister.setUpdateRegisterDate(LocalDateTime.now());
 
         registerRepository.save(existingRegister);

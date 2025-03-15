@@ -21,7 +21,7 @@ public class RegisterCollection {
     private List<Variable> variables;
     private Patient patientBasicInfo;
     private Caregiver caregiver;
-    private HealtProfessional healtProfessional;
+    private HealthProfessional healthProfessional;
 
 
 }

@@ -21,7 +21,7 @@ services:
       dockerfile: Dockerfile
     container_name: spring-app-registers
     ports:
-      - "9090:9090"
+      - "8080:8080"
     environment:
       - SPRING_DATA_MONGODB_URI=mongodb://apiUser:userPassword123@mongo:27017/epilepsyRegister
 

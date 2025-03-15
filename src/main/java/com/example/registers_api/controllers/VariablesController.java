@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/Variable")
+@CrossOrigin(origins = "http://localhost:4200")
 @RequiredArgsConstructor
 
 
@@ -22,7 +23,7 @@ public class VariablesController {
     private final IVariableService variableService;
 
     @PostMapping
-    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
+//    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
     public ResponseEntity<BasicResponse> saveVariable(@RequestBody VariableDTO variableDTO) {
         BasicResponse response = new BasicResponse(Constants.VARIABLE_CREATED);
         variableService.saveVariable(variableDTO);
@@ -30,7 +31,7 @@ public class VariablesController {
     }
 
     @PutMapping
-    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
+//    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
     public ResponseEntity<BasicResponse> updateVariable(@RequestParam String variableId,
                                                         @RequestBody VariableDTO variableDTO) {
         BasicResponse response = new BasicResponse(Constants.VARIABLE_UPDATED);
@@ -39,19 +40,19 @@ public class VariablesController {
     }
 
     @GetMapping("/ResearchLayerId")
-    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "')")
+//    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "')")
     public ResponseEntity<List<VariableDTO>> getVariablesByResearchLayerId(@RequestParam String researchLayerId) {
         return ResponseEntity.ok(variableService.getAllVariablesById(researchLayerId));
     }
 
     @GetMapping()
-    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "')")
+//    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "')")
     public ResponseEntity<VariableDTO> getVariableById(@RequestParam String id) {
         return ResponseEntity.ok(variableService.getVariableById(id));
     }
 
     @GetMapping("/GetAll")
-    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "')")
+//    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "')")
     public ResponseEntity<List<VariableDTO>> getAllVariables() {
         return ResponseEntity.ok(variableService.getAllVariables());
     }

@@ -21,7 +21,7 @@ public class AuthService implements IAuthService {
     private final RestTemplate restTemplate = new RestTemplate();
     private static final String KEYCLOAK_SERVER_URL = "http://localhost:8181/realms/registeUsersApiDev/protocol/openid-connect";
     private static final String CLIENT_ID = "registers-users-api-rest";
-    private static final String CLIENT_SECRET = "it9kVcNXDEYXoLnbR3ygY8QzaEgTQAw5";
+    private static final String CLIENT_SECRET = "tcXpKI56sJVDEkRzRBUyGKI7Rz4ho1Q7";
 
     @Override
     public ResponseEntity<Map> login(AuthDTO auth) {

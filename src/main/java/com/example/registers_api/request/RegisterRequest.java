@@ -1,9 +1,10 @@
 package com.example.registers_api.request;
 
 import com.example.registers_api.models.Caregiver;
-import com.example.registers_api.models.HealtProfessional;
+import com.example.registers_api.models.HealthProfessional;
 import com.example.registers_api.models.Patient;
 import com.example.registers_api.models.Variable;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,8 +17,9 @@ import java.util.List;
 @Data
 @Builder
 public class RegisterRequest {
+    @NotNull(message = "Las variables no puede")
     private List<Variable> variables;
     private Patient patient;
     private Caregiver caregiver;
-    private HealtProfessional healtProfessional;
+    private HealthProfessional healthProfessional;
 }

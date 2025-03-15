@@ -10,5 +10,5 @@ public class LayerBoss {
 
     private int id;
     private String nombre;
-    private String numero_identificacion;
+    private String numeroIdentificacion;
 }
