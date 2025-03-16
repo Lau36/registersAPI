@@ -3,9 +3,13 @@ package com.example.registers_api.services.impl;
 import com.example.registers_api.exceptions.DoesntExistsException;
 import com.example.registers_api.models.*;
 import com.example.registers_api.repository.RegisterRepository;
+import com.example.registers_api.repository.ResearchLayerRepository;
+import com.example.registers_api.repository.VariableRepository;
 import com.example.registers_api.request.PaginationRequest;
 import com.example.registers_api.request.RegisterRequest;
 import com.example.registers_api.response.PaginatedResponse;
+import com.example.registers_api.response.RegistersResponse;
+import com.example.registers_api.response.VariableResponse;
 import com.example.registers_api.services.IRegisterService;
 import com.example.registers_api.services.validations.RegistersServiceValidations;
 import lombok.AllArgsConstructor;
@@ -14,7 +18,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.example.registers_api.utils.ExceptionConstants.REGISTER_NOT_FOUND;
 
@@ -22,6 +28,8 @@ import static com.example.registers_api.utils.ExceptionConstants.REGISTER_NOT_FO
 @Service
 public class RegisterService implements IRegisterService {
     private final RegisterRepository registerRepository;
+    private final VariableRepository variableRepository;
+    private final ResearchLayerRepository researchLayerRepository;
     private final RegistersServiceValidations registersServiceValidations;
 
     @Override
@@ -54,8 +62,10 @@ public class RegisterService implements IRegisterService {
         long totalElements = registerRepository.count();
         int totalPages = (int) Math.ceil(totalElements / (double) paginationRequest.getSize());
 
+        List<RegistersResponse> registers = getRegister(registerRepository.findAllBy(pageable));
+
         return PaginatedResponse.builder()
-                .registers(registerRepository.findAllBy(pageable))
+                .registers(registers)
                 .currentPage(paginationRequest.getPage())
                 .totalPages(totalPages)
                 .totalElements(totalElements)
@@ -79,5 +89,43 @@ public class RegisterService implements IRegisterService {
         existingRegister.setUpdateRegisterDate(LocalDateTime.now());
 
         registerRepository.save(existingRegister);
+    }
+
+    public List<RegistersResponse> getRegister(List<RegisterCollection> registerCollection) {
+        return registerCollection.stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+    public RegistersResponse mapToResponse(RegisterCollection register) {
+        RegistersResponse response = new RegistersResponse();
+        response.setRegisterId(register.getId());
+        response.setRegisterDate(register.getRegisterDate());
+        response.setUpdateRegisterDate(register.getUpdateRegisterDate());
+        response.setPatientBasicInfo(register.getPatientBasicInfo());
+        response.setCaregiver(register.getCaregiver());
+        response.setHealthProfessional(register.getHealthProfessional());
+
+        List<VariableResponse> variableResponses = register.getVariables().stream().map(variable -> {
+            String variableName = variableRepository.findById(variable.getId())
+                    .map(VariableCollection::getNombreVariable)
+                    .orElse("Unknown");
+
+            String researchLayerName = researchLayerRepository.findById(variable.getResearchLayerId())
+                    .map(ResearchLayerCollection::getNombreCapa)
+                    .orElse("Unknown");
+
+            return new VariableResponse(
+                    variable.getId(),
+                    variableName,
+                    variable.getValue(),
+                    variable.getType(),
+                    variable.getResearchLayerId(),
+                    researchLayerName
+            );
+        }).collect(Collectors.toList());
+
+        response.setVariablesRegister(variableResponses);
+        return response;
     }
 }

@@ -8,11 +8,9 @@ import lombok.*;
 @Builder
 public class Variable{
     private String id;
-    private String name;
     private Object value;
     private String type;
     private String researchLayerId;
-    private String researchLayerName;
 
     public void setValue(Object value) {
         if ("number".equals(this.type) && !(value instanceof Integer)) {
@@ -25,6 +23,6 @@ public class Variable{
     }
 
     public String toString() {
-        return "Variable{name='" + name + "', value=" + value + ", type='" + type + ", researchLayerId=' " + researchLayerId + ", researchLayerName='" + researchLayerName + "}";
+        return "Variable{id='" + id + "', value=" + value + ", type='" + type + ", researchLayerId=' " + researchLayerId + "}";
     }
 }

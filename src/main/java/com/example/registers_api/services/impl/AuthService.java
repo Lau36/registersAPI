@@ -19,9 +19,9 @@ import static com.example.registers_api.utils.Constants.*;
 public class AuthService implements IAuthService {
 
     private final RestTemplate restTemplate = new RestTemplate();
-    private static final String KEYCLOAK_SERVER_URL = "http://localhost:8181/realms/registeUsersApiDev/protocol/openid-connect";
+    private static final String KEYCLOAK_SERVER_URL = "http://keycloak:8181/realms/registeUsersApiDev/protocol/openid-connect/token";
     private static final String CLIENT_ID = "registers-users-api-rest";
-    private static final String CLIENT_SECRET = "tcXpKI56sJVDEkRzRBUyGKI7Rz4ho1Q7";
+    private static final String CLIENT_SECRET = "D8u3ColBJDAjfxkxwxy2v4DPH5ftmgKx";
 
     @Override
     public ResponseEntity<Map> login(AuthDTO auth) {

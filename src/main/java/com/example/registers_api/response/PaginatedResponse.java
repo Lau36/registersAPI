@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 @Builder
 public class PaginatedResponse {
-    private List<RegisterCollection> registers;
+    private List<RegistersResponse> registers;
     private int currentPage;
     private int totalPages;
     private long totalElements;

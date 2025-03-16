@@ -27,14 +27,8 @@ public class RegistersServiceValidations {
         List<Variable> variables = registerRequest.getVariables();
 
         for (Variable variable : variables) {
-            if(!researchLayerRepository.existsByNombreCapa(variable.getResearchLayerName())){
-                throw (new DoesntExistsException(String.format(RESEARCH_LAYER_NAME_NOT_FOUND, variable.getResearchLayerName())));
-            }
             if (!researchLayerRepository.existsById(variable.getResearchLayerId())) {
                 throw (new DoesntExistsException(String.format(RESEARCH_LAYER_ID_NOT_FOUND, variable.getResearchLayerId())));
-            }
-            if(!variableRepository.existsByNombreVariable(variable.getName())){
-                throw (new DoesntExistsException(String.format(VARIABLE_NAME_NOT_FOUND, variable.getName())));
             }
             if (!variableRepository.existsById(variable.getId())) {
                 throw (new DoesntExistsException(String.format(VARIABLE_ID_NOT_FOUND, variable.getId())));
