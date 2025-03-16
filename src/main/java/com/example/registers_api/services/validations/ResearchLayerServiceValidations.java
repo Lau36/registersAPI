@@ -20,7 +20,7 @@ public class ResearchLayerServiceValidations {
                 || researchLayerDTO.getDescripcion().trim().isEmpty()
                 || researchLayerDTO.getJefeCapa().getNombre().trim().isEmpty()
                 || researchLayerDTO.getJefeCapa().getId() == 0
-                || researchLayerDTO.getJefeCapa().getNumero_identificacion().trim().isEmpty()) {
+                || researchLayerDTO.getJefeCapa().getNumeroIdentificacion().trim().isEmpty()) {
             throw new NotEmptyFieldException(ExceptionConstants.NOT_EMPTY_FIELDS);
         }
     }

@@ -73,7 +73,7 @@ public class ResearchLayerService implements IResearchLayerService {
         LayerBoss layerBoss = LayerBoss.builder()
                 .id(researchLayerDTO.getJefeCapa().getId())
                 .nombre(researchLayerDTO.getJefeCapa().getNombre())
-                .numeroIdentificacion(researchLayerDTO.getJefeCapa().getNumero_identificacion())
+                .numeroIdentificacion(researchLayerDTO.getJefeCapa().getNumeroIdentificacion())
                 .build();
 
         existsResearchLayer.setJefeCapa(layerBoss);

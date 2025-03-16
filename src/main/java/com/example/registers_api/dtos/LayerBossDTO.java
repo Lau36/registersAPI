@@ -10,5 +10,5 @@ import lombok.Setter;
 public class LayerBossDTO {
     private final int id;
     private final String nombre;
-    private final String numero_identificacion;
+    private final String numeroIdentificacion;
 }
