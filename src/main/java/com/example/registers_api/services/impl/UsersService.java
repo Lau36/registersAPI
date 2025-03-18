@@ -4,8 +4,6 @@ import com.example.registers_api.dtos.UserDTO;
 import com.example.registers_api.exceptions.ErrorUserCreation;
 import com.example.registers_api.exceptions.ErrorWithKeycloakException;
 import com.example.registers_api.services.IUserService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.codemodel.JCatchBlock;
 import jakarta.ws.rs.core.Response;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -63,8 +61,8 @@ public class UsersService implements IUserService {
             Map<String, List<String>> attributes = new HashMap<>();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE);
 
-            attributes.put(DOCUMENT_TYPE, Collections.singletonList(user.getIdentificationType()));
-            attributes.put(DOCUMENT_NUMBER, Collections.singletonList(user.getIdentificationNumber().toString()));
+            attributes.put(IDENTIFICATION_TYPE, Collections.singletonList(user.getIdentificationType()));
+            attributes.put(IDENTIFICATION_NUMBER, Collections.singletonList(user.getIdentificationNumber().toString()));
             attributes.put(RESEARCH_LAYER, Collections.singletonList(user.getResearchLayer()));
             attributes.put(BIRTHDATE, Collections.singletonList(user.getBirthDate().format(formatter)));
             newUser.setAttributes(attributes);
@@ -190,8 +188,8 @@ public class UsersService implements IUserService {
             Map<String, List<String>> attributes = new HashMap<>();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE);
 
-            attributes.put(DOCUMENT_TYPE, Collections.singletonList(userDTO.getIdentificationType()));
-            attributes.put(DOCUMENT_NUMBER, Collections.singletonList(userDTO.getIdentificationNumber().toString()));
+            attributes.put(IDENTIFICATION_TYPE, Collections.singletonList(userDTO.getIdentificationType()));
+            attributes.put(IDENTIFICATION_NUMBER, Collections.singletonList(userDTO.getIdentificationNumber().toString()));
             attributes.put(RESEARCH_LAYER, Collections.singletonList(userDTO.getResearchLayer()));
             attributes.put(BIRTHDATE, Collections.singletonList(userDTO.getBirthDate().format(formatter)));
             user.setAttributes(attributes);

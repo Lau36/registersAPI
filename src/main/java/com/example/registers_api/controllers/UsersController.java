@@ -3,10 +3,12 @@ package com.example.registers_api.controllers;
 import com.example.registers_api.dtos.UserDTO;
 import com.example.registers_api.response.BasicResponse;
 import com.example.registers_api.services.IUserService;
+import com.example.registers_api.utils.Constants;
 import lombok.AllArgsConstructor;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,10 +16,10 @@ import java.util.List;
 import static com.example.registers_api.utils.Constants.*;
 
 @RestController
-@RequestMapping("/Users")
+@RequestMapping("/api/v1/users")
 @AllArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
-//@PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
+@PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
 public class UsersController {
 
     private final IUserService userService;

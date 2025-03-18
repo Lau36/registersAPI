@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class Beans {
-    private static final String SERVER_URL = "http://localhost:8181/";
+    private static final String SERVER_URL = "http://keycloak:8181/";
     private static final String REALM_MASTER = "master";
     private static final String ADMIN_CLI = "admin-cli";
     private static final String USERNAME = "admin"; // Admin console user

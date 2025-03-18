@@ -27,8 +27,8 @@ public class Constants {
 
     public static final String REALM_NAME = "registeUsersApiDev";
 
-    public static final String DOCUMENT_TYPE = "documentType";
-    public static final String DOCUMENT_NUMBER = "documentNumber";
+    public static final String IDENTIFICATION_TYPE = "identificationType";
+    public static final String IDENTIFICATION_NUMBER = "identificationNumber";
     public static final String RESEARCH_LAYER = "researchLayerId";
     public static final String BIRTHDATE = "birthDate";
 
