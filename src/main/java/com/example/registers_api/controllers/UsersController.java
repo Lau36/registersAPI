@@ -41,7 +41,7 @@ public class UsersController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/update/")
+    @PutMapping("/update")
     public ResponseEntity<BasicResponse> updateUser(@RequestParam String userId, @RequestBody UserDTO userDTO){
         userService.updateUser(userId, userDTO);
         BasicResponse response = new BasicResponse(USER_UPDATED);

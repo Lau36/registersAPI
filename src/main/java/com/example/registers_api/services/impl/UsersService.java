@@ -197,7 +197,7 @@ public class UsersService implements IUserService {
             user.setAttributes(attributes);
 
             UserResource usersResource = keycloak.realm(REALM_NAME).users().get(userId);
-
+            usersResource.update(user);
         }
         catch (Exception e){
             throw new ErrorWithKeycloakException(ERROR_WITH_KEYCLOAK);
