@@ -31,6 +31,7 @@ public class Constants {
     public static final String IDENTIFICATION_NUMBER = "identificationNumber";
     public static final String RESEARCH_LAYER = "researchLayerId";
     public static final String BIRTHDATE = "birthDate";
+    public static final String ROLE = "role";
 
 
     public static final String USER_CREATED = "Usuario creado exitosamente";

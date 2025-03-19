@@ -65,6 +65,7 @@ public class UsersService implements IUserService {
             attributes.put(IDENTIFICATION_NUMBER, Collections.singletonList(user.getIdentificationNumber().toString()));
             attributes.put(RESEARCH_LAYER, Collections.singletonList(user.getResearchLayer()));
             attributes.put(BIRTHDATE, Collections.singletonList(user.getBirthDate().format(formatter)));
+            attributes.put(ROLE, Collections.singletonList(user.getRole()));
             newUser.setAttributes(attributes);
 
 
