@@ -193,10 +193,11 @@ public class UsersService implements IUserService {
             attributes.put(IDENTIFICATION_NUMBER, Collections.singletonList(userDTO.getIdentificationNumber().toString()));
             attributes.put(RESEARCH_LAYER, Collections.singletonList(userDTO.getResearchLayer()));
             attributes.put(BIRTHDATE, Collections.singletonList(userDTO.getBirthDate().format(formatter)));
+            attributes.put(ROLE, Collections.singletonList(userDTO.getRole()));
             user.setAttributes(attributes);
 
             UserResource usersResource = keycloak.realm(REALM_NAME).users().get(userId);
-            usersResource.update(user);
+
         }
         catch (Exception e){
             throw new ErrorWithKeycloakException(ERROR_WITH_KEYCLOAK);
