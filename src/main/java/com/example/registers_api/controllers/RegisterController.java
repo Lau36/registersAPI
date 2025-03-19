@@ -1,6 +1,5 @@
 package com.example.registers_api.controllers;
 
-import com.example.registers_api.dtos.ResearchLayerDTO;
 import com.example.registers_api.request.PaginationRequest;
 import com.example.registers_api.request.RegisterRequest;
 import com.example.registers_api.request.SortDirection;
@@ -17,12 +16,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/registers")
 @AllArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
+@PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "')")
 public class RegisterController {
 
     private IRegisterService registerService;
 
     @PostMapping
-//    @PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "')")
     public ResponseEntity<BasicResponse> saveRegister(@RequestBody RegisterRequest registerRequest) {
         BasicResponse response = new BasicResponse(Constants.REGISTER_CREATED);
         registerService.saveRegister(registerRequest);
@@ -30,7 +29,6 @@ public class RegisterController {
     }
 
     @GetMapping("/all")
-//    @PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "')")
     public ResponseEntity<PaginatedResponse> getAllRegisters(@RequestParam int page,
                                                              @RequestParam int size,
                                                              @RequestParam String sort,
@@ -46,7 +44,6 @@ public class RegisterController {
     }
 
     @PutMapping
-//    @PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "')")
     public ResponseEntity<BasicResponse> updateRegister(@RequestParam String registerId, @RequestBody RegisterRequest registerRequest) {
         BasicResponse response = new BasicResponse(Constants.REGISTER_UPDATED);
         registerService.updateRegister(registerId, registerRequest);
