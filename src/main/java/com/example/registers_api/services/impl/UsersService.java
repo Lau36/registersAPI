@@ -197,6 +197,14 @@ public class UsersService implements IUserService {
             user.setAttributes(attributes);
 
             UserResource usersResource = keycloak.realm(REALM_NAME).users().get(userId);
+
+
+            RolesResource roleResource = keycloak.realm(REALM_NAME).roles();
+
+            RoleRepresentation defaultRole = roleResource.get(userDTO.getRole()).toRepresentation();
+
+            keycloak.realm(REALM_NAME).users().get(userId).roles().realmLevel().add(Collections.singletonList(defaultRole));
+
             usersResource.update(user);
         }
         catch (Exception e){

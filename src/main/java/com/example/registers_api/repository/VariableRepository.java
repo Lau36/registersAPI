@@ -12,5 +12,6 @@ public interface VariableRepository extends MongoRepository<VariableCollection, 
     List<VariableCollection> findAllByIdCapaInvestigacion(String idCapaInvestigacion);
 
     Optional<VariableCollection> findById(String IdVariable);
+    Optional<VariableCollection> findByNombreVariable(String name);
 }
 

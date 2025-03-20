@@ -9,4 +9,5 @@ public interface ResearchLayerRepository extends MongoRepository<ResearchLayerCo
     boolean existsByNombreCapa(String nombreCapa);
     boolean existsById(String id);
     Optional<ResearchLayerCollection> findById(String id);
+    Optional<ResearchLayerCollection> findByNombreCapa(String name);
 }

@@ -61,11 +61,14 @@ public class ResearchLayerService implements IResearchLayerService {
 
     @Override
     public void updateResearchLayer(String researchLayerId, ResearchLayerDTO researchLayerDTO) {
+        researchLayerDTO.setId(researchLayerId);
+
         ResearchLayerCollection existsResearchLayer = researchLayerRepository.findById(researchLayerId)
                 .orElseThrow( () ->
                         new DoesntExistsException(String.format(RESEARCH_LAYER_NOT_FOUND, researchLayerDTO.getId()))
                 );
-        researchLayerServiceValidations.alreadyExistsResearchLayerValidation(researchLayerDTO);
+
+        researchLayerServiceValidations.alreadyExistsResearchLayerValidationUpdate(researchLayerDTO, existsResearchLayer);
 
         existsResearchLayer.setDescripcion(researchLayerDTO.getDescripcion());
         existsResearchLayer.setNombreCapa(researchLayerDTO.getNombreCapa());

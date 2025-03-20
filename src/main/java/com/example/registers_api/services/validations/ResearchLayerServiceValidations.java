@@ -4,6 +4,7 @@ import com.example.registers_api.dtos.ResearchLayerDTO;
 import com.example.registers_api.exceptions.AlreadyExistsException;
 import com.example.registers_api.exceptions.MaxLengthExceededException;
 import com.example.registers_api.exceptions.NotEmptyFieldException;
+import com.example.registers_api.models.ResearchLayerCollection;
 import com.example.registers_api.repository.ResearchLayerRepository;
 import com.example.registers_api.utils.ExceptionConstants;
 import lombok.AllArgsConstructor;
@@ -30,6 +31,18 @@ public class ResearchLayerServiceValidations {
         if (exists) {
             throw new AlreadyExistsException(String.format(ExceptionConstants.ALREADY_RESEARCH_LAYER_NAME_EXIST_EXCEPTION, researchLayerDTO.getNombreCapa()));
         }
+    }
+
+    public void alreadyExistsResearchLayerValidationUpdate(ResearchLayerDTO researchLayerDTO, ResearchLayerCollection existingResearchLayerCollection) {
+
+        researchLayerRepository.findByNombreCapa(researchLayerDTO.getNombreCapa())
+                .ifPresent(existingLayer -> {
+                    if (!existingLayer.getId().equals(existingResearchLayerCollection.getId())) {
+                        throw new AlreadyExistsException(
+                                String.format(ExceptionConstants.ALREADY_RESEARCH_LAYER_NAME_EXIST_EXCEPTION, researchLayerDTO.getNombreCapa())
+                        );
+                    }
+                });
     }
 
     public void tooLongValidations(ResearchLayerDTO researchLayerDTO) {

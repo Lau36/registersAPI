@@ -47,12 +47,13 @@ public class VariableService implements IVariableService {
 
     @Override
     public void updateVariable(String variableId, VariableDTO variableDTO) {
+        variableDTO.setId(variableId);
         VariableCollection existsVariable = variableRepository.findById(variableId)
                 .orElseThrow( () ->
                         new DoesntExistsException(String.format(VARIABLE_NOT_FOUND, variableDTO.getId()))
         );
         variableServiceValidations.validateResearchLayerId(variableDTO.getIdCapaInvestigacion());
-        variableServiceValidations.alreadyExistsValidation(variableDTO);
+        variableServiceValidations.alreadyExistsValidationUpdate(variableDTO, existsVariable);
 
         existsVariable.setNombreVariable(variableDTO.getNombreVariable());
         existsVariable.setDescripcion(variableDTO.getDescripcion());
