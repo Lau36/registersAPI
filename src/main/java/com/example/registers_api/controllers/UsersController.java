@@ -19,28 +19,31 @@ import static com.example.registers_api.utils.Constants.*;
 @RequestMapping("/api/v1/users")
 @AllArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
-@PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
 public class UsersController {
 
     private final IUserService userService;
 
-
+    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
     @GetMapping("/GetAll")
     public List<UserRepresentation> findAllUsers(){
         return userService.getAllUsers();
     }
 
+    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
     @GetMapping()
     public List<UserRepresentation> getUserByEmail(@RequestParam String email){
         return userService.getUserByEmail(email);
     }
 
+    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
     @PostMapping("/create")
     public ResponseEntity<BasicResponse> create(@RequestBody UserDTO user){
         BasicResponse response = new BasicResponse(userService.createUser(user));
         return ResponseEntity.ok(response);
     }
 
+
+    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "')")
     @PutMapping("/update")
     public ResponseEntity<BasicResponse> updateUser(@RequestParam String userId, @RequestBody UserDTO userDTO){
         userService.updateUser(userId, userDTO);
@@ -48,6 +51,7 @@ public class UsersController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
     @DeleteMapping("/delete")
     public ResponseEntity<BasicResponse> deleteUser(@RequestParam String userId){
         userService.deleteUser(userId);
@@ -55,6 +59,7 @@ public class UsersController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
     @PostMapping("/disableUser")
     public ResponseEntity<BasicResponse> disableUser(@RequestParam String userId){
         userService.disableOrEnableUser(userId, false);
@@ -62,6 +67,7 @@ public class UsersController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
     @PostMapping("/enabledUser")
     public ResponseEntity<BasicResponse> enabledUser(@RequestParam String userId){
         userService.disableOrEnableUser(userId, true);
