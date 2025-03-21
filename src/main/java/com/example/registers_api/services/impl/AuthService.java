@@ -3,11 +3,14 @@ package com.example.registers_api.services.impl;
 import com.example.registers_api.dtos.AuthDTO;
 import com.example.registers_api.services.IAuthService;
 import com.example.registers_api.utils.Constants;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
@@ -37,7 +40,20 @@ public class AuthService implements IAuthService {
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
 
-        return restTemplate.exchange(tokenUrl, HttpMethod.POST, request, Map.class);
+        try {
+            return restTemplate.exchange(tokenUrl, HttpMethod.POST, request, Map.class);
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+
+                Map<String, String> error = Map.of(
+                        "error", "invalid_credentials",
+                        "message", "Correo o contraseña incorrectos"
+                );
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+            }
+            Map<String, String> genericError = Map.of("error", "Unexpected error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(genericError);
+        }
     }
 
     @Override

@@ -7,8 +7,10 @@ import com.example.registers_api.services.IUserService;
 import jakarta.ws.rs.core.Response;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.resource.RoleMappingResource;
 import org.keycloak.admin.client.resource.RolesResource;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
@@ -172,40 +174,13 @@ public class UsersService implements IUserService {
     @Override
     public void updateUser(String userId, UserDTO userDTO) {
         try{
-            CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
-            credentialRepresentation.setTemporary(false);
-            credentialRepresentation.setType(OAuth2Constants.PASSWORD);
-            credentialRepresentation.setValue(userDTO.getPassword());
 
-            UserRepresentation user = new UserRepresentation();
-            user.setUsername(userDTO.getUsername());
-            user.setFirstName(userDTO.getFirstName());
-            user.setLastName(userDTO.getLastName());
-            user.setEmail(userDTO.getEmail());
-            user.setEnabled(true);
-            user.setEmailVerified(true);
-            user.setCredentials(Collections.singletonList(credentialRepresentation));
+            UserRepresentation user = setUsersAtributes(userDTO, userDTO.getPassword().isEmpty());
+            updateRole(userId, userDTO.getRole());
 
-            Map<String, List<String>> attributes = new HashMap<>();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE);
+            UserResource userResource = keycloak.realm(REALM_NAME).users().get(userId);
 
-            attributes.put(IDENTIFICATION_TYPE, Collections.singletonList(userDTO.getIdentificationType()));
-            attributes.put(IDENTIFICATION_NUMBER, Collections.singletonList(userDTO.getIdentificationNumber().toString()));
-            attributes.put(RESEARCH_LAYER, Collections.singletonList(userDTO.getResearchLayer()));
-            attributes.put(BIRTHDATE, Collections.singletonList(userDTO.getBirthDate().format(formatter)));
-            attributes.put(ROLE, Collections.singletonList(userDTO.getRole()));
-            user.setAttributes(attributes);
-
-            UserResource usersResource = keycloak.realm(REALM_NAME).users().get(userId);
-
-
-            RolesResource roleResource = keycloak.realm(REALM_NAME).roles();
-
-            RoleRepresentation defaultRole = roleResource.get(userDTO.getRole()).toRepresentation();
-
-            keycloak.realm(REALM_NAME).users().get(userId).roles().realmLevel().add(Collections.singletonList(defaultRole));
-
-            usersResource.update(user);
+            userResource.update(user);
         }
         catch (Exception e){
             throw new ErrorWithKeycloakException(ERROR_WITH_KEYCLOAK);
@@ -213,4 +188,62 @@ public class UsersService implements IUserService {
 
     }
 
+    public CredentialRepresentation setUserCredentials(UserDTO userDTO) {
+        CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
+        credentialRepresentation.setTemporary(false);
+        credentialRepresentation.setType(OAuth2Constants.PASSWORD);
+        credentialRepresentation.setValue(userDTO.getPassword());
+
+        return credentialRepresentation;
+    }
+
+    public UserRepresentation setUsersAtributes(UserDTO userDTO, boolean isPasswordFieldEmpty) {
+        UserRepresentation user = new UserRepresentation();
+        user.setFirstName(userDTO.getFirstName());
+        user.setLastName(userDTO.getLastName());
+        user.setEmail(userDTO.getEmail());
+        user.setEnabled(true);
+        user.setEmailVerified(true);
+
+        if(!isPasswordFieldEmpty){
+            CredentialRepresentation credentials = setUserCredentials(userDTO);
+            user.setCredentials(Collections.singletonList(credentials));
+        }
+
+        Map<String, List<String>> attributes = new HashMap<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE);
+
+        attributes.put(IDENTIFICATION_TYPE, Collections.singletonList(userDTO.getIdentificationType()));
+        attributes.put(IDENTIFICATION_NUMBER, Collections.singletonList(userDTO.getIdentificationNumber().toString()));
+        attributes.put(RESEARCH_LAYER, Collections.singletonList(userDTO.getResearchLayer()));
+        attributes.put(BIRTHDATE, Collections.singletonList(userDTO.getBirthDate().format(formatter)));
+        attributes.put(ROLE, Collections.singletonList(userDTO.getRole()));
+        user.setAttributes(attributes);
+
+        return user;
+    }
+
+    public void updateRole(String userId, String newRoleName) {
+        final String DEFAULT_ROLE = "default-roles-registeusersapidev";
+
+        UserResource userResource = keycloak.realm(REALM_NAME).users().get(userId);
+        RoleMappingResource roleMappingResource = userResource.roles();
+
+        List<RoleRepresentation> currentRoles = roleMappingResource.realmLevel().listAll();
+
+        RoleRepresentation currentCustomRole = currentRoles.stream()
+                .filter(role -> !role.getName().equals(DEFAULT_ROLE))
+                .findFirst()
+                .orElse(null);
+
+        if (currentCustomRole == null || !currentCustomRole.getName().equals(newRoleName)) {
+            if (currentCustomRole != null) {
+                roleMappingResource.realmLevel().remove(Collections.singletonList(currentCustomRole));
+            }
+            RoleRepresentation newRole = keycloak.realm(REALM_NAME)
+                    .roles().get(newRoleName).toRepresentation();
+
+            roleMappingResource.realmLevel().add(Collections.singletonList(newRole));
+        }
+    }
 }
