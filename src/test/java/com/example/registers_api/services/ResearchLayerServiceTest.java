@@ -40,9 +40,9 @@ class ResearchLayerServiceTest {
 //        MockitoAnnotations.openMocks(this);
 //
 //        researchLayerDTO = new ResearchLayerDTO();
-//        researchLayerDTO.setNombreCapa("Capa 1");
-//        researchLayerDTO.setDescripcion("Descripción válida");
-//        researchLayerDTO.setJefeCapa(new LayerBossDTO(123, "Juan", "ID123"));
+//        researchLayerDTO.setLayerName("Capa 1");
+//        researchLayerDTO.setDescription("Descripción válida");
+//        researchLayerDTO.setLayerBoss(new LayerBossDTO(123, "Juan", "ID123"));
 //
 //        LayerBoss layerBoss = new LayerBoss(123, "Juan", "ID123");
 //        researchLayerCollection = new ResearchLayerCollection("Capa 1", "Descripcion válida", layerBoss);
@@ -66,18 +66,18 @@ class ResearchLayerServiceTest {
 //        AlreadyExistsException exception = assertThrows(AlreadyExistsException.class,
 //                () -> researchLayerService.saveResearchLayer(researchLayerDTO));
 //
-//        assertEquals("Ya existe una capa de investigación con el nombre 'Capa 1'", exception.getMessage());
+//        assertEquals("Ya existe una capa de investigación con el name 'Capa 1'", exception.getMessage());
 //        verify(researchLayerRepository, never()).save(any());
 //    }
 //
 //    @Test
 //    void saveResearchLayer_TooLongFields_ThrowsException() {
-//        researchLayerDTO.setDescripcion("x".repeat(201));
+//        researchLayerDTO.setDescription("x".repeat(201));
 //
 //        MaxLengthExceededException exception = assertThrows(MaxLengthExceededException.class,
 //                () -> researchLayerService.saveResearchLayer(researchLayerDTO));
 //
-//        assertEquals("El campo descripcion no puede exceder los 200 caracteres", exception.getMessage());
+//        assertEquals("El campo description no puede exceder los 200 caracteres", exception.getMessage());
 //    }
 //
 //    @Test
@@ -89,7 +89,7 @@ class ResearchLayerServiceTest {
 //        ResearchLayerDTO result = researchLayerService.getResearchLayerById("1");
 //
 //        assertNotNull(result);
-//        assertEquals("Capa 1", result.getNombreCapa());
+//        assertEquals("Capa 1", result.getLayerName());
 //    }
 //
 //    @Test
@@ -110,6 +110,6 @@ class ResearchLayerServiceTest {
 //
 //        assertNotNull(result);
 //        assertEquals(1, result.size());
-//        assertEquals("Capa 1", result.get(0).getNombreCapa());
+//        assertEquals("Capa 1", result.get(0).getLayerName());
 //    }
 }

@@ -9,7 +9,6 @@ import com.example.registers_api.models.VariableCollection;
 import com.example.registers_api.repository.ResearchLayerRepository;
 import com.example.registers_api.repository.VariableRepository;
 import com.example.registers_api.utils.ExceptionConstants;
-import jakarta.ws.rs.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -28,34 +27,34 @@ public class VariableServiceValidations {
     }
 
     public void notEmptyValidations(VariableDTO variableDTO) {
-        if (variableDTO.getNombreVariable().trim().isEmpty()
-                || variableDTO.getIdCapaInvestigacion().trim().isEmpty()
-                || variableDTO.getDescripcion().trim().isEmpty()
-                || variableDTO.getTipo().trim().isEmpty()) {
+        if (variableDTO.getVariableName().trim().isEmpty()
+                || variableDTO.getResearchLayerId().trim().isEmpty()
+                || variableDTO.getDescription().trim().isEmpty()
+                || variableDTO.getType().trim().isEmpty()) {
             throw new NotEmptyFieldException(ExceptionConstants.NOT_EMPTY_FIELDS);
         }
     }
 
     public void alreadyExistsValidation(VariableDTO variableDTO) {
-        boolean exists = variableRepository.existsByNombreVariable(variableDTO.getNombreVariable());
+        boolean exists = variableRepository.existsByVariableNameAndIsEnabled(variableDTO.getVariableName(), true);
 
         if (exists) {
             throw new AlreadyExistsException(
                     String.format(
-                            ExceptionConstants.ALREADY_VARIABLE_NAME_EXIST_EXCEPTION, variableDTO.getNombreVariable())
+                            ExceptionConstants.ALREADY_VARIABLE_NAME_EXIST_EXCEPTION, variableDTO.getVariableName())
             );
         }
     }
 
     public void alreadyExistsValidationUpdate(VariableDTO currentVariable, VariableCollection existingVariable) {
 
-        variableRepository.findByNombreVariable(currentVariable.getNombreVariable())
+        variableRepository.findByVariableName(currentVariable.getVariableName())
                 .ifPresent(foundVariable -> {
                     if (!foundVariable.getId().equals(existingVariable.getId())) {
                         throw new AlreadyExistsException(
                                 String.format(
                                         ExceptionConstants.ALREADY_VARIABLE_NAME_EXIST_EXCEPTION,
-                                        currentVariable.getNombreVariable()
+                                        currentVariable.getVariableName()
                                 )
                         );
                     }
@@ -64,11 +63,11 @@ public class VariableServiceValidations {
     }
 
     public void tooLongValidations(VariableDTO variableDTO) {
-        if (variableDTO.getNombreVariable().length() > 90) {
-            throw new MaxLengthExceededException(String.format(ExceptionConstants.MAX_LENGTH_EXCEEDED, "nombre variable", 90));
+        if (variableDTO.getVariableName().length() > 90) {
+            throw new MaxLengthExceededException(String.format(ExceptionConstants.MAX_LENGTH_EXCEEDED, "name variable", 90));
         }
-        else if (variableDTO.getDescripcion().length() > 200) {
-            throw new MaxLengthExceededException(String.format(ExceptionConstants.MAX_LENGTH_EXCEEDED, "descripcion", 200));
+        else if (variableDTO.getDescription().length() > 200) {
+            throw new MaxLengthExceededException(String.format(ExceptionConstants.MAX_LENGTH_EXCEEDED, "description", 200));
         }
     }
 }

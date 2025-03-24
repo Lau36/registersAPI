@@ -8,7 +8,7 @@ import lombok.*;
 public class ResearchLayerDTO {
 
     private String id;
-    private String nombreCapa;
-    private String descripcion;
-    private LayerBossDTO jefeCapa;
+    private String layerName;
+    private String description;
+    private LayerBossDTO layerBoss;
 }

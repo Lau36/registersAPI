@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/registers")
 @AllArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
-@PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "')")
+//@PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "')")
 public class RegisterController {
 
     private IRegisterService registerService;
@@ -49,6 +49,56 @@ public class RegisterController {
         registerService.updateRegister(registerId, registerRequest);
         return ResponseEntity.ok(response);
     }
+
+//    @GetMapping("/all/recent")
+//    public ResponseEntity<PaginatedResponse> getAllRegistersRecent(@RequestParam int page,
+//                                                             @RequestParam int size,
+//                                                             @RequestParam String sort,
+//                                                             @RequestParam String sortDirection) {
+//        PaginationRequest request = PaginationRequest.builder()
+//                .page(page)
+//                .size(size)
+//                .sort(sort)
+//                .sortDirection(SortDirection.valueOf(sortDirection.toUpperCase()))
+//                .build();
+//        PaginatedResponse response = registerService.getAllRegistersRecentPaginated(request);
+//        return ResponseEntity.ok(response);
+//    }
+
+    @GetMapping("/all/by/patient")
+    public ResponseEntity<PaginatedResponse> getAllRegistersByPatient(
+              @RequestParam int patientIdentificationNumber,
+              @RequestParam int page,
+              @RequestParam int size,
+              @RequestParam String sort,
+              @RequestParam String sortDirection) {
+        PaginationRequest request = PaginationRequest.builder()
+                .page(page)
+                .size(size)
+                .sort(sort)
+                .sortDirection(SortDirection.valueOf(sortDirection.toUpperCase()))
+                .build();
+        PaginatedResponse response = registerService.getAllRegistersByPatientPaginated(request, patientIdentificationNumber);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/all/by/healtProfesional")
+    public ResponseEntity<PaginatedResponse> getAllRegistersByHealthProfesional(
+            @RequestParam int healthProfesionalIdentificationNumber,
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam String sort,
+            @RequestParam String sortDirection) {
+        PaginationRequest request = PaginationRequest.builder()
+                .page(page)
+                .size(size)
+                .sort(sort)
+                .sortDirection(SortDirection.valueOf(sortDirection.toUpperCase()))
+                .build();
+        PaginatedResponse response = registerService.getAllRegistersByHealthProfesionalPaginated(request, healthProfesionalIdentificationNumber);
+        return ResponseEntity.ok(response);
+    }
+
 
 
 }

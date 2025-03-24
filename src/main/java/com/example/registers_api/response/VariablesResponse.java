@@ -1,40 +1,23 @@
-package com.example.registers_api.models;
+package com.example.registers_api.response;
 
 import lombok.*;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
-@Document(collection = "variablesView")
-public class VariableCollection {
-
-    @Id
+@Builder
+public class VariablesResponse {
     private String id;
-
-    @NonNull
     private String researchLayerId;
-
-    @NonNull
     private String variableName;
-
-    @NonNull
     private String description;
-
     private String type;
-
     private Boolean hasOptions;
-
     private Boolean isEnabled;
-
     private List<String> options;
-
     private LocalDateTime createdAt;
-
     private LocalDateTime updatedAt;
-
-
 }

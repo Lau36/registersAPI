@@ -19,6 +19,8 @@ public class RegistersResponse {
     private String registerId;
     private LocalDateTime registerDate;
     private LocalDateTime updateRegisterDate;
+    private Integer patientIdentificationNumber;
+    private String patientIdentificationType;
     private List<VariableResponse> variablesRegister;
     private Patient patientBasicInfo;
     private Caregiver caregiver;

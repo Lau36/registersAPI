@@ -10,8 +10,8 @@ public class SwaggerConstants {
     public static final String GET_RESEARCH_LAYER_DESCRIPTION = "Servicio en donde se obtiene solo una capa de investigación con el id de ella";
 
     public static final String EMPTY_FIELDS = "No se pueden ingresar valores vacios";
-    public static final String RESEARCH_LAYER_NAME_ALREADY_EXISTS = "El nombre ' ' ya existe";
-    public static final String RESEARCH_LAYER_NAME_TOO_LONG = "El nombre excede el limite de los 100 caracteres";
+    public static final String RESEARCH_LAYER_NAME_ALREADY_EXISTS = "El name ' ' ya existe";
+    public static final String RESEARCH_LAYER_NAME_TOO_LONG = "El name excede el limite de los 100 caracteres";
     public static final String RESEARCH_LAYER_DESCRIPTION_TOO_LONG = "La descripción excede el limite de los 200 caracteres";
 
     public static final String CREATE_VARIABLE = "Crear una capa de investigación";
@@ -23,8 +23,8 @@ public class SwaggerConstants {
     public static final String GET_VARIABLES_BY_RESEARCH_LAYER_ID = "Obtener todas las Variable de una capa de investigación";
     public static final String GET_VARIABLES_BY_RESEARCH_LAYER_ID_DESCRIPTION = "Servicio que por medio del id de la capa de investigación obtienen todas las Variable que están asociadas a esta";
 
-    public static final String VARIABLE_NAME_ALREADY_EXISTS = "El nombre ' ' ya existe";
-    public static final String VARIABLE_NAME_TOO_LONG = "El nombre excede el limite de los 100 caracteres";
+    public static final String VARIABLE_NAME_ALREADY_EXISTS = "El name ' ' ya existe";
+    public static final String VARIABLE_NAME_TOO_LONG = "El name excede el limite de los 100 caracteres";
     public static final String VARIABLE_DESCRIPTION_TOO_LONG = "La descripción excede el limite de los 200 caracteres";
     public static final String VARIABLE_RESEARCH_LAYER_ID_DOESNT_EXISTS = "El id de esa capa de investigación no existe";
 }

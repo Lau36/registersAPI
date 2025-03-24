@@ -2,10 +2,12 @@ package com.example.registers_api.services.impl;
 
 import com.example.registers_api.dtos.VariableDTO;
 import com.example.registers_api.exceptions.DoesntExistsException;
+import com.example.registers_api.exceptions.NotEnabledException;
 import com.example.registers_api.mappers.VariableMapper;
 import com.example.registers_api.models.VariableCollection;
-import com.example.registers_api.repository.ResearchLayerRepository;
+import com.example.registers_api.repository.RegisterRepository;
 import com.example.registers_api.repository.VariableRepository;
+import com.example.registers_api.response.VariablesResponse;
 import com.example.registers_api.services.IVariableService;
 import com.example.registers_api.services.validations.VariableServiceValidations;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +15,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
+import static com.example.registers_api.utils.Constants.VARIABLE_NOT_ENABLED;
 import static com.example.registers_api.utils.Constants.VARIABLE_NOT_FOUND;
 
 @Service
@@ -21,23 +25,36 @@ import static com.example.registers_api.utils.Constants.VARIABLE_NOT_FOUND;
 public class VariableService implements IVariableService {
 
     private final VariableRepository variableRepository;
-    private final ResearchLayerRepository layerRepository;
     private final VariableMapper variableMapper;
     private final VariableServiceValidations variableServiceValidations;
+    private final RegisterRepository registerRepository;
 
     @Override
     public void saveVariable(VariableDTO variableDTO) {
         try {
             variableServiceValidations.notEmptyValidations(variableDTO);
             variableServiceValidations.tooLongValidations(variableDTO);
-            variableServiceValidations.validateResearchLayerId(variableDTO.getIdCapaInvestigacion());
+            variableServiceValidations.validateResearchLayerId(variableDTO.getResearchLayerId());
             variableServiceValidations.alreadyExistsValidation(variableDTO);
 
-            VariableCollection variableCollection = variableMapper.toVariableCollection(variableDTO);
-            variableCollection.setTieneOpciones(hasOptionsItem(variableDTO));
-            variableCollection.setFechaCreacion(LocalDateTime.now());
-            
-            variableRepository.save(variableCollection);
+            Optional<VariableCollection> existing = variableRepository.findByVariableName(variableDTO.getVariableName());
+
+            if (existing.isPresent()) {
+                VariableCollection existingVariable = existing.get();
+                if (!existingVariable.getIsEnabled()) {
+                    existingVariable.setIsEnabled(true);
+                    existingVariable.setUpdatedAt(LocalDateTime.now());
+                    variableRepository.save(existingVariable);
+                } else {
+                    throw new RuntimeException("La variable ya existe y está habilitada.");
+                }
+            } else {
+                VariableCollection variableCollection = variableMapper.toVariableCollection(variableDTO);
+                variableCollection.setHasOptions(hasOptionsItem(variableDTO));
+                variableCollection.setCreatedAt(LocalDateTime.now());
+                variableCollection.setIsEnabled(true); 
+                variableRepository.save(variableCollection);
+            }
 
         } catch (Exception e) {
             System.out.println("Excepción capturada: " + e.getMessage());
@@ -47,49 +64,75 @@ public class VariableService implements IVariableService {
 
     @Override
     public void updateVariable(String variableId, VariableDTO variableDTO) {
-        variableDTO.setId(variableId);
-        VariableCollection existsVariable = variableRepository.findById(variableId)
-                .orElseThrow( () ->
-                        new DoesntExistsException(String.format(VARIABLE_NOT_FOUND, variableDTO.getId()))
-        );
-        variableServiceValidations.validateResearchLayerId(variableDTO.getIdCapaInvestigacion());
-        variableServiceValidations.alreadyExistsValidationUpdate(variableDTO, existsVariable);
-
-        existsVariable.setNombreVariable(variableDTO.getNombreVariable());
-        existsVariable.setDescripcion(variableDTO.getDescripcion());
-        existsVariable.setOpciones(variableDTO.getOpciones());
-        existsVariable.setIdCapaInvestigacion(variableDTO.getIdCapaInvestigacion());
-        existsVariable.setTieneOpciones(hasOptionsItem(variableDTO));
-        existsVariable.setFechaActualizacion(LocalDateTime.now());
-        variableRepository.save(existsVariable);
-    }
-
-    @Override
-    public List<VariableDTO> getAllVariablesById(String idCapaInvestigacion) {
-        variableServiceValidations.validateResearchLayerId(idCapaInvestigacion);
-        List<VariableCollection> variablesCollections = variableRepository.findAllByIdCapaInvestigacion(idCapaInvestigacion);
-        return variablesCollections.stream().map(variableMapper::toVariableDTO).toList();
-    }
-
-    @Override
-    public VariableDTO getVariableById(String variableId) {
         VariableCollection variableCollection = variableRepository.findById(variableId).orElseThrow();
-        return variableMapper.toVariableDTO(variableCollection);
+        if(variableCollection.getIsEnabled()) {
+            variableDTO.setId(variableId);
+            VariableCollection existsVariable = variableRepository.findById(variableId)
+                    .orElseThrow(() ->
+                            new DoesntExistsException(String.format(VARIABLE_NOT_FOUND, variableDTO.getId()))
+                    );
+            variableServiceValidations.validateResearchLayerId(variableDTO.getResearchLayerId());
+            variableServiceValidations.alreadyExistsValidationUpdate(variableDTO, existsVariable);
+
+            setAtributtesAndSave(existsVariable, variableDTO);
+        }
+        else{
+            throw new NotEnabledException(String.format(VARIABLE_NOT_ENABLED, variableDTO.getId()));
+        }
     }
 
     @Override
-    public List<VariableDTO> getAllVariables() {
-        List<VariableCollection> variablesCollection = variableRepository.findAll();
-        return variablesCollection.stream().map(variableMapper::toVariableDTO).toList();
+    public List<VariablesResponse> getAllVariablesById(String idCapaInvestigacion) {
+        variableServiceValidations.validateResearchLayerId(idCapaInvestigacion);
+        List<VariableCollection> variablesCollections =
+                variableRepository.findAllByResearchLayerIdAndIsEnabled(idCapaInvestigacion, true);
+        return variablesCollections.stream().map(variableMapper::toVariableResponse).toList();
+    }
+
+    @Override
+    public VariablesResponse getVariableById(String variableId) {
+        VariableCollection variableCollection = variableRepository.findByIdAndIsEnabled(variableId, true)
+                .orElseThrow(() ->
+                        new DoesntExistsException(String.format(VARIABLE_NOT_FOUND, variableId))
+                );
+        return variableMapper.toVariableResponse(variableCollection);
+    }
+
+    @Override
+    public List<VariablesResponse> getAllVariables() {
+        List<VariableCollection> variablesCollection = variableRepository.findAllByIsEnabled(true);
+        return variablesCollection.stream().map(variableMapper::toVariableResponse).toList();
     }
 
     @Override
     public void deleteVariable(String variableId) {
-        variableRepository.deleteById(variableId);
+
+        boolean existsRegister = registerRepository.existsByVariableId(variableId);
+        if(existsRegister){
+            VariableCollection variableCollection = variableRepository.findById(variableId).orElseThrow(() ->
+                    new DoesntExistsException(String.format(VARIABLE_NOT_FOUND, variableId))
+            );
+            variableCollection.setIsEnabled(false);
+            variableRepository.save(variableCollection);
+        }
+        else{
+            variableRepository.deleteById(variableId);
+        }
     }
 
     public boolean hasOptionsItem(VariableDTO variableDTO) {
-        return !variableDTO.getOpciones().isEmpty();
+        return !variableDTO.getOptions().isEmpty();
+    }
+
+    public void setAtributtesAndSave(VariableCollection existsVariable, VariableDTO variableDTO) {
+        existsVariable.setVariableName(variableDTO.getVariableName());
+        existsVariable.setDescription(variableDTO.getDescription());
+        existsVariable.setOptions(variableDTO.getOptions());
+        existsVariable.setResearchLayerId(variableDTO.getResearchLayerId());
+        existsVariable.setHasOptions(hasOptionsItem(variableDTO));
+        existsVariable.setUpdatedAt(LocalDateTime.now());
+        existsVariable.setIsEnabled(true);
+        variableRepository.save(existsVariable);
     }
 
 

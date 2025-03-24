@@ -14,10 +14,10 @@ public class Variable{
 
     public void setValue(Object value) {
         if ("number".equals(this.type) && !(value instanceof Integer)) {
-            throw new IllegalArgumentException("El valor debe ser un Integer cuando el tipo es 'number'.");
+            throw new IllegalArgumentException("El valor debe ser un Integer cuando el type es 'number'.");
         }
         if ("text".equals(this.type) && !(value instanceof String)) {
-            throw new IllegalArgumentException("El valor debe ser un String cuando el tipo es 'text'.");
+            throw new IllegalArgumentException("El valor debe ser un String cuando el type es 'text'.");
         }
         this.value = value;
     }

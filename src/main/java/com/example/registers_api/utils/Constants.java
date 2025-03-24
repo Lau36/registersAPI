@@ -15,6 +15,8 @@ public class Constants {
     public static final String REGISTER_CREATED = "Registro creado con éxito";
     public static final String REGISTER_UPDATED = "Registro actualizado con éxito";
     public static final String VARIABLE_NOT_FOUND = "No se encontró una variable con el id: '%s'";
+    public static final String VARIABLE_NOT_ENABLED = "No está habilitada la variables con el id: '%s'";
+    public static final String RESEARCH_LAYER_NOT_ENABLED = "No está habilitada la capa de investigación con el id: '%s'";
     public static final String RESEARCH_LAYER_NOT_FOUND = "No se encontró una capa de investigación con el id: '%s'";
 
     public static final String ADMIN_ROLE = "Admin_client_role";

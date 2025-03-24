@@ -13,14 +13,8 @@ import java.time.LocalDate;
 @Data
 @Builder
 public class Patient {
-    @NotNull(message = "El nombre no puede ser nulo")
+    @NotNull(message = "El name no puede ser nulo")
     private String name;
-
-    @NotNull(message = "El tipo de identificación no puede ser nulo")
-    private String identificationType;
-
-    @NotNull(message = "El número de identificación no puede ser nulo")
-    private Integer identificationNumber;
 
     @NotNull(message = "El sexo no puede ser nulo")
     private String sex;

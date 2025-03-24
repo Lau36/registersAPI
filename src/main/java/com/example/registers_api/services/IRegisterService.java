@@ -8,5 +8,10 @@ public interface IRegisterService {
     void saveRegister(RegisterRequest register);
     PaginatedResponse getAllRegistersPaginated(PaginationRequest paginationRequest);
     void updateRegister(String registerId, RegisterRequest register);
+    PaginatedResponse getAllRegistersRecentPaginated(PaginationRequest paginationRequest);
+    PaginatedResponse getAllRegistersByPatientPaginated(
+            PaginationRequest paginationRequest, Integer patientIdentificationNumber);
+    PaginatedResponse getAllRegistersByHealthProfesionalPaginated(
+            PaginationRequest paginationRequest, Integer healthProfesionalIdentificationNumber);
 
 }

@@ -42,20 +42,20 @@ class VariableServiceTest {
 //    void setUp() {
 //        MockitoAnnotations.openMocks(this);
 //        variableDTO = new VariableDTO();
-//        variableDTO.setIdCapaInvestigacion("idCapaInvestigacion");
-//        variableDTO.setNombreVariable("nombreVariable");
-//        variableDTO.setDescripcion("descripcion");
-//        variableDTO.setTipo("tipo");
+//        variableDTO.setResearchLayerId("researchLayerId");
+//        variableDTO.setVariableName("variableName");
+//        variableDTO.setDescription("description");
+//        variableDTO.setType("type");
 //
-//        variableCollection = new VariableCollection("idCapaInvestigacion", "nombreVariable", "descripcion", "tipo");
+//        variableCollection = new VariableCollection("researchLayerId", "variableName", "description", "type");
 //
 //    }
 //
 //    @Test
 //    void saveVariable_susccessfully(){
 //        when(variableMapper.toVariableCollection(variableDTO)).thenReturn(variableCollection);
-//        when(variableRepository.existsByNombreVariable(variableDTO.getNombreVariable())).thenReturn(false);
-//        when(researchLayerRepository.existsById(variableDTO.getIdCapaInvestigacion())).thenReturn(true);
+//        when(variableRepository.existsByNombreVariable(variableDTO.getVariableName())).thenReturn(false);
+//        when(researchLayerRepository.existsById(variableDTO.getResearchLayerId())).thenReturn(true);
 //
 //        variableService.saveVariable(variableDTO);
 //
@@ -64,74 +64,74 @@ class VariableServiceTest {
 //
 //    @Test
 //    void saveVariable_AlreadyExists(){
-//        when(variableRepository.existsByNombreVariable(variableDTO.getNombreVariable())).thenReturn(true);
-//        when(researchLayerRepository.existsById(variableDTO.getIdCapaInvestigacion())).thenReturn(true);
+//        when(variableRepository.existsByNombreVariable(variableDTO.getVariableName())).thenReturn(true);
+//        when(researchLayerRepository.existsById(variableDTO.getResearchLayerId())).thenReturn(true);
 //
 //        AlreadyExistsException exception = assertThrows(AlreadyExistsException.class, () -> variableService.saveVariable(variableDTO));
 //
-//        assertEquals("Ya existe una variable con el nombre 'nombreVariable'", exception.getMessage());
+//        assertEquals("Ya existe una variable con el name 'variableName'", exception.getMessage());
 //        verify(variableRepository, never()).save(variableCollection);
 //    }
 //
 //    @Test
 //    void saveVariable_doesNotExistsResearchLayerId(){
-//        when(variableRepository.existsByNombreVariable(variableDTO.getNombreVariable())).thenReturn(false);
-//        when(researchLayerRepository.existsById(variableDTO.getIdCapaInvestigacion())).thenReturn(false);
+//        when(variableRepository.existsByNombreVariable(variableDTO.getVariableName())).thenReturn(false);
+//        when(researchLayerRepository.existsById(variableDTO.getResearchLayerId())).thenReturn(false);
 //
 //        DoesntExistsException exception = assertThrows(DoesntExistsException.class, () -> variableService.saveVariable(variableDTO));
 //
-//        assertEquals("El campo idCapaInvestigacion no existe", exception.getMessage());
+//        assertEquals("El campo researchLayerId no existe", exception.getMessage());
 //        verify(variableRepository, never()).save(variableCollection);
 //    }
 //
 //    @Test
 //    void saveVariable_TooLongFields_description(){
-//        variableDTO.setDescripcion("a".repeat(201));
-//        maxLengthEsceeded_exception("El campo descripcion no puede exceder los 200 caracteres");
+//        variableDTO.setDescription("a".repeat(201));
+//        maxLengthEsceeded_exception("El campo description no puede exceder los 200 caracteres");
 //    }
 //
 //    @Test
 //    void saveVariable_TooLongFields_name(){
-//        variableDTO.setNombreVariable("a".repeat(201));
-//        maxLengthEsceeded_exception("El campo nombre variable no puede exceder los 90 caracteres");
+//        variableDTO.setVariableName("a".repeat(201));
+//        maxLengthEsceeded_exception("El campo name variable no puede exceder los 90 caracteres");
 //    }
 //
 //    @Test
 //    void saveVariable_NotEmptyFields_description(){
-//        variableDTO.setDescripcion(" ");
+//        variableDTO.setDescription(" ");
 //        emptyFields_exception();
 //    }
 //
 //    @Test
 //    void saveVariable_NotEmptyFields_name(){
-//        variableDTO.setNombreVariable(" ");
+//        variableDTO.setVariableName(" ");
 //        emptyFields_exception();
 //    }
 //
 //    @Test
 //    void saveVariable_NotEmptyFields_researchLayerId(){
-//        variableDTO.setIdCapaInvestigacion(" ");
+//        variableDTO.setResearchLayerId(" ");
 //        emptyFields_exception();
 //    }
 //
 //    @Test
 //    void saveVariable_NotEmptyFields_type(){
-//        variableDTO.setTipo(" ");
+//        variableDTO.setType(" ");
 //        emptyFields_exception();
 //    }
 //
 //    @Test
 //    void getVariableByResearchLayerId(){
-//        when(variableRepository.findAllByIdCapaInvestigacion(variableDTO.getIdCapaInvestigacion())).thenReturn(List.of(variableCollection));
-//        when(researchLayerRepository.existsById(variableDTO.getIdCapaInvestigacion())).thenReturn(true);
+//        when(variableRepository.findAllByIdCapaInvestigacion(variableDTO.getResearchLayerId())).thenReturn(List.of(variableCollection));
+//        when(researchLayerRepository.existsById(variableDTO.getResearchLayerId())).thenReturn(true);
 //        when(variableMapper.toVariableDTO(variableCollection)).thenReturn(variableDTO);
 //
-//        List<VariableDTO> result = variableService.getAllVariablesById(variableDTO.getIdCapaInvestigacion());
+//        List<VariableDTO> result = variableService.getAllVariablesById(variableDTO.getResearchLayerId());
 //
 //        assertNotNull(result);
 //        assertEquals(1, result.size());
-//        assertEquals(variableDTO.getNombreVariable(), result.get(0).getNombreVariable());
-//        verify(variableRepository, times(1)).findAllByIdCapaInvestigacion(variableDTO.getIdCapaInvestigacion());
+//        assertEquals(variableDTO.getVariableName(), result.get(0).getVariableName());
+//        verify(variableRepository, times(1)).findAllByIdCapaInvestigacion(variableDTO.getResearchLayerId());
 //    }
 //
 //    @Test
@@ -142,7 +142,7 @@ class VariableServiceTest {
 //        VariableDTO result = variableService.getVariableById(variableDTO.getId());
 //
 //        assertNotNull(result);
-//        assertEquals(variableDTO.getNombreVariable(), result.getNombreVariable());
+//        assertEquals(variableDTO.getVariableName(), result.getVariableName());
 //        verify(variableRepository, times(1)).findById(variableDTO.getId());
 //    }
 //
@@ -155,7 +155,7 @@ class VariableServiceTest {
 //
 //        assertNotNull(result);
 //        assertEquals(1, result.size());
-//        assertEquals(variableDTO.getNombreVariable(), result.get(0).getNombreVariable());
+//        assertEquals(variableDTO.getVariableName(), result.get(0).getVariableName());
 //        verify(variableRepository, times(1)).findAll();
 //    }
 //
@@ -167,7 +167,7 @@ class VariableServiceTest {
 //    }
 //
 //    private void maxLengthEsceeded_exception(String message){
-//        when(researchLayerRepository.existsById(variableDTO.getIdCapaInvestigacion())).thenReturn(true);
+//        when(researchLayerRepository.existsById(variableDTO.getResearchLayerId())).thenReturn(true);
 //
 //        MaxLengthExceededException exception = assertThrows(MaxLengthExceededException.class, () -> variableService.saveVariable(variableDTO));
 //

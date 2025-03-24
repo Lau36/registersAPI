@@ -34,7 +34,7 @@ class VariableControllerTest {
 //        MockitoAnnotations.openMocks(this);
 //        variableDTO = new VariableDTO();
 //        variableDTO.setId("1");
-//        variableDTO.setNombreVariable("Variable Test");
+//        variableDTO.setVariableName("Variable Test");
 //
 //        variableDTOList = new ArrayList<>();
 //        variableDTOList.add(variableDTO);
@@ -61,7 +61,7 @@ class VariableControllerTest {
 //        assertNotNull(response);
 //        assertEquals(HttpStatus.OK, response.getStatusCode());
 //        assertEquals(1, response.getBody().size());
-//        assertEquals("Variable Test", response.getBody().get(0).getNombreVariable());
+//        assertEquals("Variable Test", response.getBody().get(0).getVariableName());
 //        verify(variableService, times(1)).getAllVariablesById("123");
 //    }
 //
@@ -73,7 +73,7 @@ class VariableControllerTest {
 //
 //        assertNotNull(response);
 //        assertEquals(HttpStatus.OK, response.getStatusCode());
-//        assertEquals("Variable Test", response.getBody().getNombreVariable());
+//        assertEquals("Variable Test", response.getBody().getVariableName());
 //        verify(variableService, times(1)).getVariableById("1");
 //    }
 //
@@ -86,7 +86,7 @@ class VariableControllerTest {
 ////        assertNotNull(response);
 ////        assertEquals(HttpStatus.OK, response.getStatusCode());
 ////        assertEquals(1, response.getBody().size());
-////        assertEquals("Variable Test", response.getBody().get(0).getNombreVariable());
+////        assertEquals("Variable Test", response.getBody().get(0).getVariableName());
 ////        verify(variableService, times(1)).getAllVariables();
 ////    }
 }

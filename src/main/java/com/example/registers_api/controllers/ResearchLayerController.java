@@ -2,6 +2,7 @@ package com.example.registers_api.controllers;
 
 import com.example.registers_api.dtos.ResearchLayerDTO;
 import com.example.registers_api.response.BasicResponse;
+import com.example.registers_api.response.ResearchLayerResponse;
 import com.example.registers_api.services.IResearchLayerService;
 import com.example.registers_api.utils.Constants;
 import com.example.registers_api.utils.SwaggerConstants;
@@ -66,7 +67,7 @@ public class ResearchLayerController {
     })
     @GetMapping()
     @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "')")
-    public ResponseEntity<ResearchLayerDTO> getResearchLayerById(@RequestParam String id) {
+    public ResponseEntity<ResearchLayerResponse> getResearchLayerById(@RequestParam String id) {
         return ResponseEntity.ok(researchLayerService.getResearchLayerById(id));
     }
 
@@ -79,7 +80,7 @@ public class ResearchLayerController {
     })
     @GetMapping("/GetAll")
     @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "')")
-    public ResponseEntity<List<ResearchLayerDTO>> getAllResearchLayers() {
+    public ResponseEntity<List<ResearchLayerResponse>> getAllResearchLayers() {
         return ResponseEntity.ok(researchLayerService.getAllResearchLayers());
     }
 

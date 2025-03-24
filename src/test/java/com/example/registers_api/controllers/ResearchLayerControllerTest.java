@@ -35,9 +35,9 @@ class ResearchLayerControllerTest {
 //        MockitoAnnotations.openMocks(this);
 //
 //        researchLayerDTO = new ResearchLayerDTO();
-//        researchLayerDTO.setNombreCapa("Capa 1");
-//        researchLayerDTO.setDescripcion("Descripción válida");
-//        researchLayerDTO.setJefeCapa(new LayerBossDTO(123, "Juan", "ID123"));
+//        researchLayerDTO.setLayerName("Capa 1");
+//        researchLayerDTO.setDescription("Descripción válida");
+//        researchLayerDTO.setLayerBoss(new LayerBossDTO(123, "Juan", "ID123"));
 //
 //    }
 //

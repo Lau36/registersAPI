@@ -18,16 +18,18 @@ public class ResearchLayerCollection {
     private String id;
 
     @NonNull
-    private String nombreCapa;
+    private String layerName;
 
     @NonNull
-    private String descripcion;
+    private String description;
 
     @NonNull
-    private LayerBoss jefeCapa;
+    private LayerBoss layerBoss;
 
-    private LocalDateTime fechaCreacion;
+    private Boolean isEnabled;
 
-    private LocalDateTime fechaActualizacion;
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
 
 }

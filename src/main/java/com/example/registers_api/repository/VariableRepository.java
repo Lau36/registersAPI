@@ -7,11 +7,14 @@ import java.util.List;
 import java.util.Optional;
 
 public interface VariableRepository extends MongoRepository<VariableCollection, String> {
-    boolean existsByNombreVariable(String name);
+    boolean existsByVariableNameAndIsEnabled(String name, boolean isEnabled);
     boolean existsById(String id);
-    List<VariableCollection> findAllByIdCapaInvestigacion(String idCapaInvestigacion);
+    List<VariableCollection> findAllByResearchLayerIdAndIsEnabled(String idCapaInvestigacion, boolean isEnabled);
+    List<VariableCollection> findAllByIsEnabled( boolean isEnabled);
 
-    Optional<VariableCollection> findById(String IdVariable);
-    Optional<VariableCollection> findByNombreVariable(String name);
+
+    Optional<VariableCollection> findByIdAndIsEnabled(String IdVariable, boolean isEnabled);
+    Optional<VariableCollection> findByVariableNameAndIsEnabled(String name, boolean isEnabled);
+    Optional<VariableCollection> findByVariableName(String name);
 }
 

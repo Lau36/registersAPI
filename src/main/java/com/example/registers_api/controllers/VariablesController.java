@@ -2,6 +2,7 @@ package com.example.registers_api.controllers;
 
 import com.example.registers_api.dtos.VariableDTO;
 import com.example.registers_api.response.BasicResponse;
+import com.example.registers_api.response.VariablesResponse;
 import com.example.registers_api.services.IVariableService;
 import com.example.registers_api.utils.Constants;
 import lombok.RequiredArgsConstructor;
@@ -39,24 +40,6 @@ public class VariablesController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/ResearchLayerId")
-    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "')")
-    public ResponseEntity<List<VariableDTO>> getVariablesByResearchLayerId(@RequestParam String researchLayerId) {
-        return ResponseEntity.ok(variableService.getAllVariablesById(researchLayerId));
-    }
-
-    @GetMapping()
-    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "')")
-    public ResponseEntity<VariableDTO> getVariableById(@RequestParam String id) {
-        return ResponseEntity.ok(variableService.getVariableById(id));
-    }
-
-    @GetMapping("/GetAll")
-    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "')")
-    public ResponseEntity<List<VariableDTO>> getAllVariables() {
-        return ResponseEntity.ok(variableService.getAllVariables());
-    }
-
     @DeleteMapping
     @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
     public ResponseEntity<BasicResponse> deleteVariable(@RequestParam String variableId) {
@@ -64,5 +47,25 @@ public class VariablesController {
         variableService.deleteVariable(variableId);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/ResearchLayerId")
+    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.RESEARCHER_ROLE + "')")
+    public ResponseEntity<List<VariablesResponse>> getVariablesByResearchLayerId(@RequestParam String researchLayerId) {
+        return ResponseEntity.ok(variableService.getAllVariablesById(researchLayerId));
+    }
+
+    @GetMapping()
+    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.RESEARCHER_ROLE + "')")
+    public ResponseEntity<VariablesResponse> getVariableById(@RequestParam String id) {
+        return ResponseEntity.ok(variableService.getVariableById(id));
+    }
+
+    @GetMapping("/GetAll")
+    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.RESEARCHER_ROLE + "')")
+    public ResponseEntity<List<VariablesResponse>> getAllVariables() {
+        return ResponseEntity.ok(variableService.getAllVariables());
+    }
+
+
 
 }

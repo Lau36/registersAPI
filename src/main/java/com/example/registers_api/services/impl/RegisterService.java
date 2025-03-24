@@ -18,7 +18,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,6 +44,8 @@ public class RegisterService implements IRegisterService {
 
         RegisterCollection registerCollection = RegisterCollection.builder()
                 .registerDate(LocalDateTime.now())
+                .patientIdentificationNumber(register.getPatientIdentificationNumber())
+                .patientIdentificationType(register.getPatientIdentificationType())
                 .variables(variables)
                 .patientBasicInfo(patient)
                 .caregiver(caregiver)
@@ -91,10 +92,52 @@ public class RegisterService implements IRegisterService {
         registerRepository.save(existingRegister);
     }
 
+    @Override
+    public PaginatedResponse getAllRegistersRecentPaginated(PaginationRequest paginationRequest) {
+        return null;
+    }
+
+    @Override
+    public PaginatedResponse getAllRegistersByPatientPaginated(PaginationRequest paginationRequest, Integer patientIdentificationNumber) {
+        Sort sort = Sort.by(Sort.Direction.fromString(paginationRequest.getSortDirection().name()), paginationRequest.getSort());
+        PageRequest pageable = PageRequest.of(paginationRequest.getPage(), paginationRequest.getSize(), sort);
+
+        List<RegistersResponse> registers = getRegister(registerRepository
+                .findAllByPatientIdentificationNumber(patientIdentificationNumber, pageable));
+        long totalElements = registerRepository.countByPatientIdentificationNumber(patientIdentificationNumber);
+        int totalPages = (int) Math.ceil(totalElements / (double) paginationRequest.getSize());
+
+        return PaginatedResponse.builder()
+                .registers(registers)
+                .currentPage(paginationRequest.getPage())
+                .totalPages(totalPages)
+                .totalElements(totalElements)
+                .build();
+    }
+
+    @Override
+    public PaginatedResponse getAllRegistersByHealthProfesionalPaginated(PaginationRequest paginationRequest, Integer healthProfesionalIdentificationNumber) {
+        Sort sort = Sort.by(Sort.Direction.fromString(paginationRequest.getSortDirection().name()), paginationRequest.getSort());
+        PageRequest pageable = PageRequest.of(paginationRequest.getPage(), paginationRequest.getSize(), sort);
+
+        List<RegistersResponse> registers = getRegister(registerRepository.
+                findAllByHealthProfessionalIdentificationNumber(healthProfesionalIdentificationNumber, pageable));
+        long totalElements = registerRepository.countByHealthProfessionalIdentificationNumber(healthProfesionalIdentificationNumber);
+        int totalPages = (int) Math.ceil(totalElements / (double) paginationRequest.getSize());
+
+        return PaginatedResponse.builder()
+                .registers(registers)
+                .currentPage(paginationRequest.getPage())
+                .totalPages(totalPages)
+                .totalElements(totalElements)
+                .build();
+    }
+
+
     public List<RegistersResponse> getRegister(List<RegisterCollection> registerCollection) {
         return registerCollection.stream()
                 .map(this::mapToResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public RegistersResponse mapToResponse(RegisterCollection register) {
@@ -102,17 +145,19 @@ public class RegisterService implements IRegisterService {
         response.setRegisterId(register.getId());
         response.setRegisterDate(register.getRegisterDate());
         response.setUpdateRegisterDate(register.getUpdateRegisterDate());
+        response.setPatientIdentificationNumber(register.getPatientIdentificationNumber());
+        response.setPatientIdentificationType(register.getPatientIdentificationType());
         response.setPatientBasicInfo(register.getPatientBasicInfo());
         response.setCaregiver(register.getCaregiver());
         response.setHealthProfessional(register.getHealthProfessional());
 
         List<VariableResponse> variableResponses = register.getVariables().stream().map(variable -> {
             String variableName = variableRepository.findById(variable.getId())
-                    .map(VariableCollection::getNombreVariable)
+                    .map(VariableCollection::getVariableName)
                     .orElse("Unknown");
 
             String researchLayerName = researchLayerRepository.findById(variable.getResearchLayerId())
-                    .map(ResearchLayerCollection::getNombreCapa)
+                    .map(ResearchLayerCollection::getLayerName)
                     .orElse("Unknown");
 
             return new VariableResponse(
@@ -123,7 +168,7 @@ public class RegisterService implements IRegisterService {
                     variable.getResearchLayerId(),
                     researchLayerName
             );
-        }).collect(Collectors.toList());
+        }).toList();
 
         response.setVariablesRegister(variableResponses);
         return response;

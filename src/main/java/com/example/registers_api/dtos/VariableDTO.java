@@ -12,11 +12,11 @@ import java.util.List;
 public class VariableDTO {
 
     private String id;
-    private String idCapaInvestigacion;
-    private String nombreVariable;
-    private String descripcion;
-    private String tipo;
-    private List<String> opciones;
+    private String researchLayerId;
+    private String variableName;
+    private String description;
+    private String type;
+    private List<String> options;
 
 
 }

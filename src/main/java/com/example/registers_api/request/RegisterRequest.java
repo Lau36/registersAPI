@@ -17,8 +17,10 @@ import java.util.List;
 @Data
 @Builder
 public class RegisterRequest {
-    @NotNull(message = "Las variables no puede")
+    @NotNull(message = "Las variables no pueden ser nulas")
     private List<Variable> variables;
+    private Integer patientIdentificationNumber;
+    private String patientIdentificationType;
     private Patient patient;
     private Caregiver caregiver;
     private HealthProfessional healthProfessional;

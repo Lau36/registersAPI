@@ -9,6 +9,6 @@ import lombok.*;
 public class LayerBoss {
 
     private int id;
-    private String nombre;
-    private String numeroIdentificacion;
+    private String name;
+    private String identificationNumber;
 }

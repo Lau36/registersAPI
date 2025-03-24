@@ -73,4 +73,14 @@ public class ControllerAdvisor {
                         LocalDateTime.now())
         );
     }
+
+    @ExceptionHandler(NotEnabledException.class)
+    public ResponseEntity<ExceptionResponse> handleNotEnabledException(NotEnabledException e) {
+        return ResponseEntity.badRequest().body(
+                new ExceptionResponse(
+                        e.getMessage(),
+                        HttpStatus.BAD_REQUEST.value(),
+                        LocalDateTime.now())
+        );
+    }
 }

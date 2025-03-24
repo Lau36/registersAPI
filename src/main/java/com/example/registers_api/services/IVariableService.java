@@ -1,6 +1,7 @@
 package com.example.registers_api.services;
 
 import com.example.registers_api.dtos.VariableDTO;
+import com.example.registers_api.response.VariablesResponse;
 
 import java.util.List;
 
@@ -10,11 +11,11 @@ public interface IVariableService {
 
     void updateVariable(String variableId, VariableDTO variableDTO);
 
-    List<VariableDTO> getAllVariablesById(String idCapaInvestigacion);
+    List<VariablesResponse> getAllVariablesById(String idCapaInvestigacion);
 
-    VariableDTO getVariableById(String variableId);
+    VariablesResponse getVariableById(String variableId);
 
-    List<VariableDTO> getAllVariables();
+    List<VariablesResponse> getAllVariables();
 
     void deleteVariable(String variableId);
 }
