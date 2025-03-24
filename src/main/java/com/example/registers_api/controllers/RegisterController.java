@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/registers")
 @AllArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
-//@PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "')")
+@PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "')")
 public class RegisterController {
 
     private IRegisterService registerService;
