@@ -77,7 +77,7 @@ public class VariableService implements IVariableService {
             setAtributtesAndSave(existsVariable, variableDTO);
         }
         else{
-            throw new NotEnabledException(String.format(VARIABLE_NOT_ENABLED, variableDTO.getId()));
+            throw new NotEnabledException(String.format(VARIABLE_NOT_ENABLED, variableId));
         }
     }
 
@@ -130,6 +130,7 @@ public class VariableService implements IVariableService {
         existsVariable.setOptions(variableDTO.getOptions());
         existsVariable.setResearchLayerId(variableDTO.getResearchLayerId());
         existsVariable.setHasOptions(hasOptionsItem(variableDTO));
+        existsVariable.setType(variableDTO.getType());
         existsVariable.setUpdatedAt(LocalDateTime.now());
         existsVariable.setIsEnabled(true);
         variableRepository.save(existsVariable);

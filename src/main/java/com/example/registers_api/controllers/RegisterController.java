@@ -16,19 +16,20 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/registers")
 @AllArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
-@PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "')")
 public class RegisterController {
 
     private IRegisterService registerService;
 
     @PostMapping
-    public ResponseEntity<BasicResponse> saveRegister(@RequestBody RegisterRequest registerRequest) {
+    @PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
+    public ResponseEntity<BasicResponse> saveRegister(@RequestParam String userEmail, @RequestBody RegisterRequest registerRequest) {
         BasicResponse response = new BasicResponse(Constants.REGISTER_CREATED);
-        registerService.saveRegister(registerRequest);
+        registerService.saveRegister(registerRequest, userEmail);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/all")
+    @GetMapping()
+    @PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.RESEARCHER_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
     public ResponseEntity<PaginatedResponse> getAllRegisters(@RequestParam int page,
                                                              @RequestParam int size,
                                                              @RequestParam String sort,
@@ -44,28 +45,23 @@ public class RegisterController {
     }
 
     @PutMapping
-    public ResponseEntity<BasicResponse> updateRegister(@RequestParam String registerId, @RequestBody RegisterRequest registerRequest) {
+    @PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
+    public ResponseEntity<BasicResponse> updateRegister(@RequestParam String registerId, @RequestParam String userEmail, @RequestBody RegisterRequest registerRequest) {
         BasicResponse response = new BasicResponse(Constants.REGISTER_UPDATED);
-        registerService.updateRegister(registerId, registerRequest);
+        registerService.updateRegister(registerId, userEmail, registerRequest);
         return ResponseEntity.ok(response);
     }
 
-//    @GetMapping("/all/recent")
-//    public ResponseEntity<PaginatedResponse> getAllRegistersRecent(@RequestParam int page,
-//                                                             @RequestParam int size,
-//                                                             @RequestParam String sort,
-//                                                             @RequestParam String sortDirection) {
-//        PaginationRequest request = PaginationRequest.builder()
-//                .page(page)
-//                .size(size)
-//                .sort(sort)
-//                .sortDirection(SortDirection.valueOf(sortDirection.toUpperCase()))
-//                .build();
-//        PaginatedResponse response = registerService.getAllRegistersRecentPaginated(request);
-//        return ResponseEntity.ok(response);
-//    }
+    @DeleteMapping()
+    @PreAuthorize("hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
+    public ResponseEntity<BasicResponse> deleteRegisterById(@RequestParam String registerId) {
+        BasicResponse response = new BasicResponse(Constants.REGISTER_DELETED);
+        registerService.deleteRegister(registerId);
+        return ResponseEntity.ok(response);
+    }
 
-    @GetMapping("/all/by/patient")
+    @GetMapping("/allByPatient")
+    @PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
     public ResponseEntity<PaginatedResponse> getAllRegistersByPatient(
               @RequestParam int patientIdentificationNumber,
               @RequestParam int page,
@@ -82,7 +78,8 @@ public class RegisterController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/all/by/healtProfesional")
+    @GetMapping("/allByHealtProfessional")
+    @PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
     public ResponseEntity<PaginatedResponse> getAllRegistersByHealthProfesional(
             @RequestParam int healthProfesionalIdentificationNumber,
             @RequestParam int page,
@@ -98,6 +95,26 @@ public class RegisterController {
         PaginatedResponse response = registerService.getAllRegistersByHealthProfesionalPaginated(request, healthProfesionalIdentificationNumber);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/allByResearchLayer")
+    @PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.RESEARCHER_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
+    public ResponseEntity<PaginatedResponse> getAllRegistersByResearchLayer(
+            @RequestParam String researchLayerId,
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam String sort,
+            @RequestParam String sortDirection) {
+        PaginationRequest request = PaginationRequest.builder()
+                .page(page)
+                .size(size)
+                .sort(sort)
+                .sortDirection(SortDirection.valueOf(sortDirection.toUpperCase()))
+                .build();
+        PaginatedResponse response = registerService.getAllRegistersByResearchLayerPaginated(request, researchLayerId);
+        return ResponseEntity.ok(response);
+    }
+
+
 
 
 

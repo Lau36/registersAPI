@@ -1,19 +1,27 @@
 package com.example.registers_api.services.validations;
 
 import com.example.registers_api.exceptions.DoesntExistsException;
+import com.example.registers_api.exceptions.DoesntHavePermissions;
 import com.example.registers_api.exceptions.NotEmptyFieldException;
+import com.example.registers_api.exceptions.NotEnabledException;
 import com.example.registers_api.models.HealthProfessional;
 import com.example.registers_api.models.Patient;
 import com.example.registers_api.models.Variable;
 import com.example.registers_api.repository.ResearchLayerRepository;
 import com.example.registers_api.repository.VariableRepository;
 import com.example.registers_api.request.RegisterRequest;
+import jakarta.ws.rs.NotFoundException;
 import lombok.AllArgsConstructor;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.resource.UsersResource;
+import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
+import static com.example.registers_api.utils.Constants.*;
 import static com.example.registers_api.utils.ExceptionConstants.*;
 
 @AllArgsConstructor
@@ -22,6 +30,7 @@ public class RegistersServiceValidations {
 
     private final VariableRepository variableRepository;
     private final ResearchLayerRepository researchLayerRepository;
+    private final Keycloak keycloak;
 
     public void validateVariablesAndResearchLayer(RegisterRequest registerRequest) {
         List<Variable> variables = registerRequest.getVariables();
@@ -46,6 +55,39 @@ public class RegistersServiceValidations {
         if (Objects.isNull(healthProfessional)) {
             throw new NotEmptyFieldException(NOT_EMPTY_VARIABLES);
         }
+
+    }
+
+    public void validateResearchLayer(String userEmail, RegisterRequest registerRequest) {
+        String userResearchLayerId = getUserResearchLayer(userEmail);
+
+        for (Variable variable : registerRequest.getVariables()) {
+            if (!variable.getResearchLayerId().equals(userResearchLayerId)) {
+                throw new DoesntHavePermissions(DOESNT_HAVE_PERMISSIONS);
+            }
+        }
+
+    }
+
+    public String getUserResearchLayer(String userEmail) {
+        UsersResource usersResource = keycloak.realm(REALM_NAME).users();
+
+        List<UserRepresentation> users = usersResource.searchByEmail(userEmail, true);
+
+        if (users.isEmpty()) {
+            throw new NotFoundException(String.format(USER_NOT_FOUND_BY_EMAIL, userEmail));
+        }
+
+        UserRepresentation user = users.get(0);
+        Map<String, List<String>> atributos = user.getAttributes();
+
+        if (atributos != null && atributos.containsKey(RESEARCH_LAYER)) {
+            return atributos.get(RESEARCH_LAYER).get(0);
+        }
+        else{
+            throw new NotEnabledException("Los atributos del usuario son null");
+        }
+
 
     }
 

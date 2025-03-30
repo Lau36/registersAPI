@@ -83,4 +83,14 @@ public class ControllerAdvisor {
                         LocalDateTime.now())
         );
     }
+
+    @ExceptionHandler(DoesntHavePermissions.class)
+    public ResponseEntity<ExceptionResponse> handleDoesntHavePermissions(DoesntHavePermissions e) {
+        return ResponseEntity.badRequest().body(
+                new ExceptionResponse(
+                        e.getMessage(),
+                        HttpStatus.BAD_REQUEST.value(),
+                        LocalDateTime.now())
+        );
+    }
 }

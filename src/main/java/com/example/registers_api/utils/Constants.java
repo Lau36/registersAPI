@@ -14,6 +14,7 @@ public class Constants {
     public static final String RESEARCH_LAYER_DELETED = "Se eliminó la capa de investigación correctamente";
     public static final String REGISTER_CREATED = "Registro creado con éxito";
     public static final String REGISTER_UPDATED = "Registro actualizado con éxito";
+    public static final String REGISTER_DELETED = "Registro eliminado con éxito";
     public static final String VARIABLE_NOT_FOUND = "No se encontró una variable con el id: '%s'";
     public static final String VARIABLE_NOT_ENABLED = "No está habilitada la variables con el id: '%s'";
     public static final String RESEARCH_LAYER_NOT_ENABLED = "No está habilitada la capa de investigación con el id: '%s'";
@@ -22,6 +23,7 @@ public class Constants {
     public static final String ADMIN_ROLE = "Admin_client_role";
     public static final String DOCTOR_ROLE = "Doctor_client_role";
     public static final String RESEARCHER_ROLE = "Researcher_client_role";
+    public static final String SUPER_ADMIN_ROLE = "SuperAdmin_client_role";
 
     public static final String ADMIN = "Admin";
     public static final String DOCTOR = "Doctor";
@@ -38,6 +40,7 @@ public class Constants {
 
     public static final String USER_CREATED = "Usuario creado exitosamente";
     public static final String USER_UPDATED = "Usuario actualizado exitosamente";
+    public static final String USER_NOT_FOUND_BY_EMAIL = "El usuario con email %s no existe";
     public static final String USER_DELETED = "Usuario eliminado exitosamente";
     public static final String ERROR_WITH_USER_CREATED = "Error al crear usuario: ";
     public static final String DATE = "yyyy-MM-dd";

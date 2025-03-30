@@ -5,7 +5,6 @@ import com.example.registers_api.response.BasicResponse;
 import com.example.registers_api.services.IUserService;
 import com.example.registers_api.utils.Constants;
 import lombok.AllArgsConstructor;
-import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -67,7 +66,7 @@ public class UsersController {
     }
 
     @PostMapping("/enabledUser")
-    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
+   @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
     public ResponseEntity<BasicResponse> enabledUser(@RequestParam String userId){
         userService.disableOrEnableUser(userId, true);
         BasicResponse response = new BasicResponse(USER_DELETED);

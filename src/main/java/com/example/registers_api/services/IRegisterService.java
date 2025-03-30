@@ -5,13 +5,18 @@ import com.example.registers_api.request.RegisterRequest;
 import com.example.registers_api.response.PaginatedResponse;
 
 public interface IRegisterService {
-    void saveRegister(RegisterRequest register);
+    void saveRegister(RegisterRequest register, String userEmail);
+    void updateRegister(String registerId, String userEmail, RegisterRequest register);
+    void deleteRegister(String registerId);
+
     PaginatedResponse getAllRegistersPaginated(PaginationRequest paginationRequest);
-    void updateRegister(String registerId, RegisterRequest register);
-    PaginatedResponse getAllRegistersRecentPaginated(PaginationRequest paginationRequest);
     PaginatedResponse getAllRegistersByPatientPaginated(
             PaginationRequest paginationRequest, Integer patientIdentificationNumber);
+
     PaginatedResponse getAllRegistersByHealthProfesionalPaginated(
             PaginationRequest paginationRequest, Integer healthProfesionalIdentificationNumber);
+
+    PaginatedResponse getAllRegistersByResearchLayerPaginated(PaginationRequest paginationRequest, String researchLayerId);
+
 
 }

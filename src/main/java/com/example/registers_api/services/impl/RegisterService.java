@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.example.registers_api.utils.ExceptionConstants.REGISTER_NOT_FOUND;
 
@@ -32,13 +31,14 @@ public class RegisterService implements IRegisterService {
     private final RegistersServiceValidations registersServiceValidations;
 
     @Override
-    public void saveRegister(RegisterRequest register) {
+    public void saveRegister(RegisterRequest register,  String userEmail) {
 
         List<Variable> variables = register.getVariables();
         Patient patient = register.getPatient();
         Caregiver caregiver = register.getCaregiver();
         HealthProfessional healthProfessional = register.getHealthProfessional();
 
+        registersServiceValidations.validateResearchLayer(userEmail, register);
         registersServiceValidations.validateRegisterFields(register);
         registersServiceValidations.validateVariablesAndResearchLayer(register);
 
@@ -74,12 +74,13 @@ public class RegisterService implements IRegisterService {
     }
 
     @Override
-    public void updateRegister(String registerId, RegisterRequest register) {
+    public void updateRegister(String registerId, String userEmail, RegisterRequest register) {
         RegisterCollection existingRegister = registerRepository.findById(registerId)
                 .orElseThrow(() -> new DoesntExistsException(
                         String.format(REGISTER_NOT_FOUND, registerId)
                 ));
 
+        registersServiceValidations.validateResearchLayer(userEmail, register);
         registersServiceValidations.validateRegisterFields(register);
         registersServiceValidations.validateVariablesAndResearchLayer(register);
 
@@ -90,11 +91,6 @@ public class RegisterService implements IRegisterService {
         existingRegister.setUpdateRegisterDate(LocalDateTime.now());
 
         registerRepository.save(existingRegister);
-    }
-
-    @Override
-    public PaginatedResponse getAllRegistersRecentPaginated(PaginationRequest paginationRequest) {
-        return null;
     }
 
     @Override
@@ -131,6 +127,32 @@ public class RegisterService implements IRegisterService {
                 .totalPages(totalPages)
                 .totalElements(totalElements)
                 .build();
+    }
+
+    @Override
+    public PaginatedResponse getAllRegistersByResearchLayerPaginated(PaginationRequest paginationRequest, String researchLayerId) {
+        Sort sort = Sort.by(Sort.Direction.fromString(paginationRequest.getSortDirection().name()), paginationRequest.getSort());
+        PageRequest pageable = PageRequest.of(paginationRequest.getPage(), paginationRequest.getSize(), sort);
+
+        List<RegistersResponse> registers = getRegister(registerRepository.
+                findAllByVariablesResearchLayerId(researchLayerId, pageable));
+        long totalElements = registerRepository.countByVariablesResearchLayerId(researchLayerId);
+        int totalPages = (int) Math.ceil(totalElements / (double) paginationRequest.getSize());
+
+        return PaginatedResponse.builder()
+                .registers(registers)
+                .currentPage(paginationRequest.getPage())
+                .totalPages(totalPages)
+                .totalElements(totalElements)
+                .build();
+    }
+
+    @Override
+    public void deleteRegister(String registerId) {
+        registerRepository.findById(registerId).orElseThrow(() -> new DoesntExistsException(
+                String.format(REGISTER_NOT_FOUND, registerId)
+        ));
+        registerRepository.deleteById(registerId);
     }
 
 

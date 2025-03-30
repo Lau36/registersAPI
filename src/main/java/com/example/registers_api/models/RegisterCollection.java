@@ -1,6 +1,5 @@
 package com.example.registers_api.models;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -26,6 +25,7 @@ public class RegisterCollection {
     private String id;
     private LocalDateTime registerDate;
     private LocalDateTime updateRegisterDate;
+    private String researchLayerIdVariables;
     private List<Variable> variables;
     private Integer patientIdentificationNumber;
     private String patientIdentificationType;
