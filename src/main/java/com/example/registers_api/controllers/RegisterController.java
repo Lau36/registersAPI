@@ -1,5 +1,6 @@
 package com.example.registers_api.controllers;
 
+import com.example.registers_api.models.FileCollection;
 import com.example.registers_api.request.PaginationRequest;
 import com.example.registers_api.request.RegisterRequest;
 import com.example.registers_api.request.SortDirection;
@@ -8,9 +9,11 @@ import com.example.registers_api.response.PaginatedResponse;
 import com.example.registers_api.services.IRegisterService;
 import com.example.registers_api.utils.Constants;
 import lombok.AllArgsConstructor;
+import org.bson.types.Binary;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1/registers")
@@ -113,6 +116,23 @@ public class RegisterController {
         PaginatedResponse response = registerService.getAllRegistersByResearchLayerPaginated(request, researchLayerId);
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping
+    public ResponseEntity<?> subirConsentimiento(@RequestParam("patientIdentification") int patientIdentification, @RequestParam("file") MultipartFile archivo) {
+        try {
+            FileCollection consentimiento = new FileCollection();
+            consentimiento.setIdentifyPatient(patientIdentification);
+            consentimiento.setTipoMime(archivo.getContentType());
+            consentimiento.setContenido(new Binary(archivo.getBytes()));
+
+            registerService.saveFile(consentimiento);
+
+            return ResponseEntity.ok("Archivo guardado correctamente");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error al guardar el archivo");
+        }
+    }
+
 
 
 

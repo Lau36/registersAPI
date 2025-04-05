@@ -62,7 +62,7 @@ public class VariableServiceValidations {
 
     }
 
-    public void tooLongValidations(VariableDTO variableDTO) {
+    public void lengthValidations(VariableDTO variableDTO) {
         if (variableDTO.getVariableName().length() > 90) {
             throw new MaxLengthExceededException(String.format(ExceptionConstants.MAX_LENGTH_EXCEEDED, "name variable", 90));
         }

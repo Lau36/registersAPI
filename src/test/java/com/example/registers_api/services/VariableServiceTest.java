@@ -1,15 +1,14 @@
 package com.example.registers_api.services;
 
 import com.example.registers_api.dtos.VariableDTO;
-import com.example.registers_api.exceptions.AlreadyExistsException;
-import com.example.registers_api.exceptions.DoesntExistsException;
-import com.example.registers_api.exceptions.MaxLengthExceededException;
-import com.example.registers_api.exceptions.NotEmptyFieldException;
+import com.example.registers_api.exceptions.*;
 import com.example.registers_api.mappers.VariableMapper;
 import com.example.registers_api.models.VariableCollection;
-import com.example.registers_api.repository.ResearchLayerRepository;
+import com.example.registers_api.repository.RegisterRepository;
 import com.example.registers_api.repository.VariableRepository;
+import com.example.registers_api.response.VariablesResponse;
 import com.example.registers_api.services.impl.VariableService;
+import com.example.registers_api.services.validations.VariableServiceValidations;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -23,155 +22,152 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class VariableServiceTest {
-//    @Mock
-//    private VariableRepository variableRepository;
-//
-//    @Mock
-//    private ResearchLayerRepository researchLayerRepository;
-//
-//    @Mock
-//    private VariableMapper variableMapper;
-//
-//    @InjectMocks
-//    private VariableService variableService;
-//
-//    private VariableDTO variableDTO;
-//    private VariableCollection variableCollection;
-//
-//    @BeforeEach
-//    void setUp() {
-//        MockitoAnnotations.openMocks(this);
-//        variableDTO = new VariableDTO();
-//        variableDTO.setResearchLayerId("researchLayerId");
-//        variableDTO.setVariableName("variableName");
-//        variableDTO.setDescription("description");
-//        variableDTO.setType("type");
-//
-//        variableCollection = new VariableCollection("researchLayerId", "variableName", "description", "type");
-//
-//    }
-//
-//    @Test
-//    void saveVariable_susccessfully(){
-//        when(variableMapper.toVariableCollection(variableDTO)).thenReturn(variableCollection);
-//        when(variableRepository.existsByNombreVariable(variableDTO.getVariableName())).thenReturn(false);
-//        when(researchLayerRepository.existsById(variableDTO.getResearchLayerId())).thenReturn(true);
-//
-//        variableService.saveVariable(variableDTO);
-//
-//        verify(variableRepository, times(1)).save(variableCollection);
-//    }
-//
-//    @Test
-//    void saveVariable_AlreadyExists(){
-//        when(variableRepository.existsByNombreVariable(variableDTO.getVariableName())).thenReturn(true);
-//        when(researchLayerRepository.existsById(variableDTO.getResearchLayerId())).thenReturn(true);
-//
-//        AlreadyExistsException exception = assertThrows(AlreadyExistsException.class, () -> variableService.saveVariable(variableDTO));
-//
-//        assertEquals("Ya existe una variable con el name 'variableName'", exception.getMessage());
-//        verify(variableRepository, never()).save(variableCollection);
-//    }
-//
-//    @Test
-//    void saveVariable_doesNotExistsResearchLayerId(){
-//        when(variableRepository.existsByNombreVariable(variableDTO.getVariableName())).thenReturn(false);
-//        when(researchLayerRepository.existsById(variableDTO.getResearchLayerId())).thenReturn(false);
-//
-//        DoesntExistsException exception = assertThrows(DoesntExistsException.class, () -> variableService.saveVariable(variableDTO));
-//
-//        assertEquals("El campo researchLayerId no existe", exception.getMessage());
-//        verify(variableRepository, never()).save(variableCollection);
-//    }
-//
-//    @Test
-//    void saveVariable_TooLongFields_description(){
-//        variableDTO.setDescription("a".repeat(201));
-//        maxLengthEsceeded_exception("El campo description no puede exceder los 200 caracteres");
-//    }
-//
-//    @Test
-//    void saveVariable_TooLongFields_name(){
-//        variableDTO.setVariableName("a".repeat(201));
-//        maxLengthEsceeded_exception("El campo name variable no puede exceder los 90 caracteres");
-//    }
-//
-//    @Test
-//    void saveVariable_NotEmptyFields_description(){
-//        variableDTO.setDescription(" ");
-//        emptyFields_exception();
-//    }
-//
-//    @Test
-//    void saveVariable_NotEmptyFields_name(){
-//        variableDTO.setVariableName(" ");
-//        emptyFields_exception();
-//    }
-//
-//    @Test
-//    void saveVariable_NotEmptyFields_researchLayerId(){
-//        variableDTO.setResearchLayerId(" ");
-//        emptyFields_exception();
-//    }
-//
-//    @Test
-//    void saveVariable_NotEmptyFields_type(){
-//        variableDTO.setType(" ");
-//        emptyFields_exception();
-//    }
-//
-//    @Test
-//    void getVariableByResearchLayerId(){
-//        when(variableRepository.findAllByIdCapaInvestigacion(variableDTO.getResearchLayerId())).thenReturn(List.of(variableCollection));
-//        when(researchLayerRepository.existsById(variableDTO.getResearchLayerId())).thenReturn(true);
-//        when(variableMapper.toVariableDTO(variableCollection)).thenReturn(variableDTO);
-//
-//        List<VariableDTO> result = variableService.getAllVariablesById(variableDTO.getResearchLayerId());
-//
-//        assertNotNull(result);
-//        assertEquals(1, result.size());
-//        assertEquals(variableDTO.getVariableName(), result.get(0).getVariableName());
-//        verify(variableRepository, times(1)).findAllByIdCapaInvestigacion(variableDTO.getResearchLayerId());
-//    }
-//
-//    @Test
-//    void getVariableByVariableId(){
-//        when(variableRepository.findById(variableDTO.getId())).thenReturn(Optional.of(variableCollection));
-//        when(variableMapper.toVariableDTO(variableCollection)).thenReturn(variableDTO);
-//
-//        VariableDTO result = variableService.getVariableById(variableDTO.getId());
-//
-//        assertNotNull(result);
-//        assertEquals(variableDTO.getVariableName(), result.getVariableName());
-//        verify(variableRepository, times(1)).findById(variableDTO.getId());
-//    }
-//
-//    @Test
-//    void getAllVariables(){
-//        when(variableRepository.findAll()).thenReturn(List.of(variableCollection));
-//        when(variableMapper.toVariableDTO(variableCollection)).thenReturn(variableDTO);
-//
-//        List<VariableDTO> result = variableService.getAllVariables();
-//
-//        assertNotNull(result);
-//        assertEquals(1, result.size());
-//        assertEquals(variableDTO.getVariableName(), result.get(0).getVariableName());
-//        verify(variableRepository, times(1)).findAll();
-//    }
-//
-//    private void emptyFields_exception(){
-//        NotEmptyFieldException exception = assertThrows(NotEmptyFieldException.class, () -> variableService.saveVariable(variableDTO));
-//
-//        assertEquals("No se pueden ingresar valores vacios", exception.getMessage());
-//        verify(variableRepository, never()).save(variableCollection);
-//    }
-//
-//    private void maxLengthEsceeded_exception(String message){
-//        when(researchLayerRepository.existsById(variableDTO.getResearchLayerId())).thenReturn(true);
-//
-//        MaxLengthExceededException exception = assertThrows(MaxLengthExceededException.class, () -> variableService.saveVariable(variableDTO));
-//
-//        assertEquals(message, exception.getMessage());
-//        verify(variableRepository, never()).save(variableCollection);
-//    }
+    @InjectMocks
+    private VariableService variableService;
+
+    @Mock
+    private VariableRepository variableRepository;
+
+    @Mock
+    private RegisterRepository registerRepository;
+
+    @Mock
+    private VariableMapper variableMapper;
+
+    @Mock
+    private VariableServiceValidations variableServiceValidations;
+
+    private VariableDTO variableDTO;
+    private VariableCollection variableCollection;
+
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+
+        variableDTO = new VariableDTO();
+        variableDTO.setVariableName("Variable name");
+        variableDTO.setDescription("Variable description");
+        variableDTO.setResearchLayerId("Id research layer");
+        variableDTO.setOptions(List.of("Opction 1"));
+
+        variableCollection = new VariableCollection("Id reseach layer", "Variable name", "Variable description");
+        variableCollection.setId("var1");
+        variableCollection.setOptions(List.of("Opction 1"));
+        variableCollection.setIsEnabled(true);
+
+
+    }
+
+    // ✅ Test saveVariable - new variable
+    @Test
+    void testSaveNewVariable() {
+        when(variableRepository.findByVariableName(variableDTO.getVariableName())).thenReturn(Optional.empty());
+        when(variableMapper.toVariableCollection(variableDTO)).thenReturn(variableCollection);
+
+        variableService.saveVariable(variableDTO);
+
+        verify(variableServiceValidations, times(1)).notEmptyValidations(variableDTO);
+        verify(variableServiceValidations , times(1)).lengthValidations(variableDTO);
+        verify(variableServiceValidations, times(1)).validateResearchLayerId(variableDTO.getResearchLayerId());
+        verify(variableRepository, times(1)).save(any(VariableCollection.class));
+    }
+
+    // ✅ Test saveVariable - re-enable disabled variable
+    @Test
+    void testSaveVariable_ReenableDisabled() {
+
+        variableCollection.setIsEnabled(false);
+
+        when(variableRepository.findByVariableName(variableCollection.getVariableName())).thenReturn(Optional.of(variableCollection));
+
+        variableService.saveVariable(variableDTO);
+
+        assertTrue(variableCollection.getIsEnabled());
+        verify(variableRepository, times(1)).save(variableCollection);
+    }
+
+    // ✅ Test saveVariable - already enabled throws exception
+    @Test
+    void testSaveVariable_AlreadyEnabled_ThrowsException() {
+        String varId = "id1";
+        VariableDTO dto = new VariableDTO(varId, "ReseachLayerId", "Variable name", "Variable descripción", "String", List.of("Opt1"));
+        VariableCollection existing = new VariableCollection("ReseachLayerId", "Variable name", "Var descripción");
+        existing.setIsEnabled(true);
+
+        when(variableRepository.findByVariableName(existing.getVariableName())).thenReturn(Optional.of(existing));
+
+        RuntimeException ex = assertThrows(AlreadyExistsException.class, () -> {
+            variableService.saveVariable(dto);
+        });
+
+        assertEquals("La variable ya existe y está habilitada.", ex.getMessage());
+    }
+
+    // ✅ Test updateVariable - happy path
+    @Test
+    void testUpdateVariable_Success() {
+        String varId = "id1";
+        VariableDTO dto = new VariableDTO(varId, "Desc", "layerId", "Variable descripción", "String", List.of("Opt1"));
+        VariableCollection existing = new VariableCollection("ReseachLayerId", "Variable name", "Var descripción");
+        existing.setIsEnabled(true);
+
+        when(variableRepository.findById(varId)).thenReturn(Optional.of(existing));
+
+        variableService.updateVariable(varId, dto);
+
+        verify(variableRepository).save(any(VariableCollection.class));
+    }
+
+    // ✅ Test updateVariable - variable not enabled
+    @Test
+    void testUpdateVariable_NotEnabled_ThrowsException() {
+        String varId = "id1";
+        VariableDTO dto = new VariableDTO(varId, "Desc", "layerId", "Variable descripción", "String", List.of("Opt1"));
+        VariableCollection existing = new VariableCollection("ReseachLayerId", "Variable name", "Var descripción");
+        existing.setIsEnabled(false);
+
+        when(variableRepository.findById(varId)).thenReturn(Optional.of(existing));
+
+        assertThrows(NotEnabledException.class, () -> {
+            variableService.updateVariable(varId, dto);
+        });
+    }
+
+    @Test
+    void testGetVariableById() {
+        String varId = "var1";
+        VariablesResponse response = new VariablesResponse();
+
+        when(variableRepository.findByIdAndIsEnabled(varId, true)).thenReturn(Optional.of(variableCollection));
+        when(variableMapper.toVariableResponse(variableCollection)).thenReturn(response);
+
+        VariablesResponse result = variableService.getVariableById(varId);
+        assertEquals(response, result);
+    }
+
+    @Test
+    void testDeleteVariable_WithRegister() {
+        String varId = "var1";
+        variableCollection.setIsEnabled(true);
+
+        when(registerRepository.existsByVariablesId(varId)).thenReturn(true);
+        when(variableRepository.findById(varId)).thenReturn(Optional.of(variableCollection));
+
+        variableService.deleteVariable(varId);
+        assertFalse( variableCollection.getIsEnabled());
+        verify(variableRepository, times(1)).save(variableCollection);
+    }
+
+    // ✅ Test deleteVariable - no register
+    @Test
+    void testDeleteVariable_WithoutRegister() {
+        String varId = "var2";
+
+        when(registerRepository.existsByVariablesId(varId)).thenReturn(false);
+
+        variableService.deleteVariable(varId);
+
+        verify(variableRepository, times(1)).deleteById(varId);
+    }
 }

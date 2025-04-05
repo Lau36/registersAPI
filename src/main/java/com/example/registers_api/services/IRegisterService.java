@@ -1,5 +1,6 @@
 package com.example.registers_api.services;
 
+import com.example.registers_api.models.FileCollection;
 import com.example.registers_api.request.PaginationRequest;
 import com.example.registers_api.request.RegisterRequest;
 import com.example.registers_api.response.PaginatedResponse;
@@ -18,5 +19,5 @@ public interface IRegisterService {
 
     PaginatedResponse getAllRegistersByResearchLayerPaginated(PaginationRequest paginationRequest, String researchLayerId);
 
-
+    void saveFile(FileCollection file);
 }

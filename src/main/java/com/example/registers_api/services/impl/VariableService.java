@@ -1,6 +1,7 @@
 package com.example.registers_api.services.impl;
 
 import com.example.registers_api.dtos.VariableDTO;
+import com.example.registers_api.exceptions.AlreadyExistsException;
 import com.example.registers_api.exceptions.DoesntExistsException;
 import com.example.registers_api.exceptions.NotEnabledException;
 import com.example.registers_api.mappers.VariableMapper;
@@ -33,7 +34,7 @@ public class VariableService implements IVariableService {
     public void saveVariable(VariableDTO variableDTO) {
         try {
             variableServiceValidations.notEmptyValidations(variableDTO);
-            variableServiceValidations.tooLongValidations(variableDTO);
+            variableServiceValidations.lengthValidations(variableDTO);
             variableServiceValidations.validateResearchLayerId(variableDTO.getResearchLayerId());
             variableServiceValidations.alreadyExistsValidation(variableDTO);
 
@@ -41,12 +42,12 @@ public class VariableService implements IVariableService {
 
             if (existing.isPresent()) {
                 VariableCollection existingVariable = existing.get();
-                if (!existingVariable.getIsEnabled()) {
+                if (Boolean.FALSE.equals(existingVariable.getIsEnabled())) {
                     existingVariable.setIsEnabled(true);
                     existingVariable.setUpdatedAt(LocalDateTime.now());
                     variableRepository.save(existingVariable);
                 } else {
-                    throw new RuntimeException("La variable ya existe y está habilitada.");
+                    throw new AlreadyExistsException("La variable ya existe y está habilitada.");
                 }
             } else {
                 VariableCollection variableCollection = variableMapper.toVariableCollection(variableDTO);

@@ -2,6 +2,7 @@ package com.example.registers_api.services.impl;
 
 import com.example.registers_api.exceptions.DoesntExistsException;
 import com.example.registers_api.models.*;
+import com.example.registers_api.repository.FileRespository;
 import com.example.registers_api.repository.RegisterRepository;
 import com.example.registers_api.repository.ResearchLayerRepository;
 import com.example.registers_api.repository.VariableRepository;
@@ -29,6 +30,7 @@ public class RegisterService implements IRegisterService {
     private final VariableRepository variableRepository;
     private final ResearchLayerRepository researchLayerRepository;
     private final RegistersServiceValidations registersServiceValidations;
+    private final FileRespository fileRespository;
 
     @Override
     public void saveRegister(RegisterRequest register,  String userEmail) {
@@ -145,6 +147,11 @@ public class RegisterService implements IRegisterService {
                 .totalPages(totalPages)
                 .totalElements(totalElements)
                 .build();
+    }
+
+    @Override
+    public void saveFile(FileCollection file) {
+        fileRespository.save(file);
     }
 
     @Override
