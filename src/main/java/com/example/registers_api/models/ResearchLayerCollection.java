@@ -1,15 +1,13 @@
 package com.example.registers_api.models;
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Document(collection = "researchLayerView")

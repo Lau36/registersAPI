@@ -7,13 +7,18 @@ import com.example.registers_api.exceptions.MaxLengthExceededException;
 import com.example.registers_api.mappers.ResearchLayerMapper;
 import com.example.registers_api.models.LayerBoss;
 import com.example.registers_api.models.ResearchLayerCollection;
+import com.example.registers_api.repository.RegisterRepository;
 import com.example.registers_api.repository.ResearchLayerRepository;
+import com.example.registers_api.response.ResearchLayerResponse;
 import com.example.registers_api.services.impl.ResearchLayerService;
+import com.example.registers_api.services.validations.ResearchLayerServiceValidations;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -22,94 +27,122 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class ResearchLayerServiceTest {
-//    @Mock
-//    private ResearchLayerRepository researchLayerRepository;
-//
-//    @Mock
-//    private ResearchLayerMapper researchLayerMapper;
-//
-//    @InjectMocks
-//    private ResearchLayerService researchLayerService;
-//
-//    private ResearchLayerDTO researchLayerDTO;
-//    private ResearchLayerCollection researchLayerCollection;
-//
-//    @BeforeEach
-//    void setUp() {
-//        MockitoAnnotations.openMocks(this);
-//
-//        researchLayerDTO = new ResearchLayerDTO();
-//        researchLayerDTO.setLayerName("Capa 1");
-//        researchLayerDTO.setDescription("Descripción válida");
-//        researchLayerDTO.setLayerBoss(new LayerBossDTO(123, "Juan", "ID123"));
-//
-//        LayerBoss layerBoss = new LayerBoss(123, "Juan", "ID123");
-//        researchLayerCollection = new ResearchLayerCollection("Capa 1", "Descripcion válida", layerBoss);
-//    }
-//
-//    @Test
-//    void saveResearchLayer_ValidInput_Success() {
-//
-//        when(researchLayerMapper.toCollection(researchLayerDTO)).thenReturn(researchLayerCollection);
-//        when(researchLayerRepository.existsByNombreCapa("Capa 1")).thenReturn(false);
-//
-//        assertDoesNotThrow(() -> researchLayerService.saveResearchLayer(researchLayerDTO));
-//
-//        verify(researchLayerRepository, times(1)).save(researchLayerCollection);
-//    }
-//
-//    @Test
-//    void saveResearchLayer_AlreadyExists_ThrowsException() {
-//        when(researchLayerRepository.existsByNombreCapa("Capa 1")).thenReturn(true);
-//
-//        AlreadyExistsException exception = assertThrows(AlreadyExistsException.class,
-//                () -> researchLayerService.saveResearchLayer(researchLayerDTO));
-//
-//        assertEquals("Ya existe una capa de investigación con el name 'Capa 1'", exception.getMessage());
-//        verify(researchLayerRepository, never()).save(any());
-//    }
-//
-//    @Test
-//    void saveResearchLayer_TooLongFields_ThrowsException() {
-//        researchLayerDTO.setDescription("x".repeat(201));
-//
-//        MaxLengthExceededException exception = assertThrows(MaxLengthExceededException.class,
-//                () -> researchLayerService.saveResearchLayer(researchLayerDTO));
-//
-//        assertEquals("El campo description no puede exceder los 200 caracteres", exception.getMessage());
-//    }
-//
-//    @Test
-//    void getResearchLayerById_ValidId_ReturnsDTO() {
-//
-//        when(researchLayerRepository.findById("1")).thenReturn(Optional.of(researchLayerCollection));
-//        when(researchLayerMapper.toDto(researchLayerCollection)).thenReturn(researchLayerDTO);
-//
-//        ResearchLayerDTO result = researchLayerService.getResearchLayerById("1");
-//
-//        assertNotNull(result);
-//        assertEquals("Capa 1", result.getLayerName());
-//    }
-//
-//    @Test
-//    void getResearchLayerById_InvalidId_ThrowsException() {
-//        when(researchLayerRepository.findById("1")).thenReturn(Optional.empty());
-//
-//        assertThrows(NoSuchElementException.class, () -> researchLayerService.getResearchLayerById("1"));
-//    }
-//
-//    @Test
-//    void getAllResearchLayers_ReturnsList() {
-//
-//        when(researchLayerRepository.findAll()).thenReturn(List.of(researchLayerCollection));
-//        when(researchLayerMapper.toDto(researchLayerCollection)).thenReturn(researchLayerDTO);
-//
-//
-//        List<ResearchLayerDTO> result = researchLayerService.getAllResearchLayers();
-//
-//        assertNotNull(result);
-//        assertEquals(1, result.size());
-//        assertEquals("Capa 1", result.get(0).getLayerName());
-//    }
+    @InjectMocks
+    private ResearchLayerService researchLayerService;
+
+    @Mock
+    private ResearchLayerRepository researchLayerRepository;
+
+    @Mock
+    private ResearchLayerMapper researchLayerMapper;
+
+    @Mock
+    private ResearchLayerServiceValidations researchLayerServiceValidations;
+
+    @Mock
+    private RegisterRepository registerRepository;
+
+    private ResearchLayerDTO sampleDTO;
+    private ResearchLayerCollection sampleCollection;
+
+    @BeforeEach
+    void setUp() {
+        LayerBossDTO layerBossDTO = new LayerBossDTO(1109660212, "Juan Pérez", "12345");
+        sampleDTO = new ResearchLayerDTO();
+        sampleDTO.setLayerName("Neurociencia");
+        sampleDTO.setDescription("Investigación cerebral");
+        sampleDTO.setLayerBoss(layerBossDTO);
+
+        LayerBoss layerBoss = LayerBoss.builder()
+                .id(1109660212)
+                .name("Juan Pérez")
+                .identificationNumber("12345")
+                .build();
+
+        sampleCollection = new ResearchLayerCollection();
+        sampleCollection.setId("abc123");
+        sampleCollection.setLayerName("Neurociencia");
+        sampleCollection.setDescription("Investigación cerebral");
+        sampleCollection.setLayerBoss(layerBoss);
+        sampleCollection.setIsEnabled(true);
+    }
+
+    @Test
+    void shouldSaveResearchLayerWhenNotExists() {
+        // Arrange
+        when(researchLayerRepository.findByLayerNameAndIsEnabled("Neurociencia", true))
+                .thenReturn(Optional.empty());
+
+        when(researchLayerMapper.toCollection(sampleDTO)).thenReturn(sampleCollection);
+
+        // Act
+        researchLayerService.saveResearchLayer(sampleDTO);
+
+        // Assert
+        verify(researchLayerRepository).save(any(ResearchLayerCollection.class));
+    }
+
+    @Test
+    void shouldEnableDisabledLayerIfExists() {
+        // Arrange
+        sampleCollection.setIsEnabled(false);
+
+        when(researchLayerRepository.findByLayerNameAndIsEnabled("Neurociencia", true))
+                .thenReturn(Optional.of(sampleCollection));
+
+        // Act
+        researchLayerService.saveResearchLayer(sampleDTO);
+
+        // Assert
+        assertTrue(sampleCollection.getIsEnabled());
+        verify(researchLayerRepository).save(sampleCollection);
+    }
+
+    @Test
+    void shouldGetResearchLayerById() {
+        when(researchLayerRepository.findByIdAndIsEnabled("abc123", true))
+                .thenReturn(Optional.of(sampleCollection));
+
+        ResearchLayerResponse response = new ResearchLayerResponse();
+        when(researchLayerMapper.toResponse(sampleCollection)).thenReturn(response);
+
+        ResearchLayerResponse result = researchLayerService.getResearchLayerById("abc123");
+
+        assertNotNull(result);
+    }
+
+    @Test
+    void shouldDeleteResearchLayerWhenRegisterExists() {
+        when(registerRepository.existsByVariablesResearchLayerId("abc123")).thenReturn(true);
+        when(researchLayerRepository.findById("abc123")).thenReturn(Optional.of(sampleCollection));
+
+        researchLayerService.deleteResearchLayer("abc123");
+
+        verify(researchLayerRepository).save(sampleCollection);
+        assertFalse(sampleCollection.getIsEnabled());
+    }
+
+    @Test
+    void shouldCompletelyDeleteResearchLayerWhenNoRegisterExists() {
+        when(registerRepository.existsByVariablesResearchLayerId("abc123")).thenReturn(false);
+
+        researchLayerService.deleteResearchLayer("abc123");
+
+        verify(researchLayerRepository).deleteById("abc123");
+    }
+
+    @Test
+    void shouldUpdateResearchLayerSuccessfully() {
+        when(researchLayerRepository.findById("abc123")).thenReturn(Optional.of(sampleCollection));
+
+        sampleDTO.setId("abc123");
+        sampleDTO.setDescription("Nueva descripción");
+        sampleDTO.setLayerName("Nueva capa");
+
+        researchLayerService.updateResearchLayer("abc123", sampleDTO);
+
+        verify(researchLayerRepository).save(any(ResearchLayerCollection.class));
+    }
 }

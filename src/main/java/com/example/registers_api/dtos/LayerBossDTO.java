@@ -1,14 +1,14 @@
 package com.example.registers_api.dtos;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@RequiredArgsConstructor
+
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 public class LayerBossDTO {
-    private final int id;
-    private final String name;
-    private final String identificationNumber;
+    private int id;
+    private String name;
+    private String identificationNumber;
 }
