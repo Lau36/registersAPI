@@ -170,4 +170,44 @@ class VariableServiceTest {
 
         verify(variableRepository, times(1)).deleteById(varId);
     }
+
+    @Test
+    void testDeleteVariable_doesntExist_ThrowsException() {
+        String varId = "var2";
+
+        when(registerRepository.existsByVariablesId(varId)).thenReturn(true);
+
+        when(variableRepository.findById(varId)).thenReturn(Optional.empty());
+
+        DoesntExistsException exception = assertThrows(DoesntExistsException.class, () ->
+                variableService.deleteVariable(varId)
+        );
+
+        assertEquals("No se encontró una variable con el id: 'var2'", exception.getMessage());
+
+        verify(variableRepository, times(1)).findById(varId);
+    }
+
+
+    @Test
+    void getAllVariables() {
+        when(variableRepository.findAllByIsEnabled(true)).thenReturn(List.of(variableCollection));
+
+        variableService.getAllVariables();
+
+        verify(variableRepository, times(1)).findAllByIsEnabled(true);
+    }
+
+    @Test
+    void getVariableByIdFailed() {
+        String varId = "var1";
+        when(variableRepository.findByIdAndIsEnabled(varId, true)).thenReturn(Optional.empty());
+
+        DoesntExistsException exception = assertThrows(DoesntExistsException.class, () ->
+                variableService.getVariableById(varId)
+        );
+        assertEquals("No se encontró una variable con el id: 'var1'", exception.getMessage());
+
+        verify(variableRepository, times(1)).findByIdAndIsEnabled(varId, true);
+    }
 }

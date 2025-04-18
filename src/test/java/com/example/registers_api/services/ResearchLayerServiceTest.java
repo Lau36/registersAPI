@@ -3,6 +3,7 @@ package com.example.registers_api.services;
 import com.example.registers_api.dtos.LayerBossDTO;
 import com.example.registers_api.dtos.ResearchLayerDTO;
 import com.example.registers_api.exceptions.AlreadyExistsException;
+import com.example.registers_api.exceptions.DoesntExistsException;
 import com.example.registers_api.exceptions.MaxLengthExceededException;
 import com.example.registers_api.mappers.ResearchLayerMapper;
 import com.example.registers_api.models.LayerBoss;
@@ -144,5 +145,29 @@ class ResearchLayerServiceTest {
         researchLayerService.updateResearchLayer("abc123", sampleDTO);
 
         verify(researchLayerRepository).save(any(ResearchLayerCollection.class));
+    }
+
+    @Test
+    void getAllResearchLayers(){
+        when(researchLayerRepository.findAllByIsEnabled(true)).thenReturn(List.of(sampleCollection));
+        researchLayerService.getAllResearchLayers();
+        verify(researchLayerRepository, times(1)).findAllByIsEnabled(true) ;
+    }
+
+    @Test
+    void testDeleteResearchLayer_doesntExist_ThrowsException() {
+        String researchLayerId = "researchLayerId2";
+
+        when(registerRepository.existsByVariablesResearchLayerId(researchLayerId)).thenReturn(true);
+
+        when(researchLayerRepository.findById(researchLayerId)).thenReturn(Optional.empty());
+
+        DoesntExistsException exception = assertThrows(DoesntExistsException.class, () ->
+                researchLayerService.deleteResearchLayer(researchLayerId)
+        );
+
+        assertEquals("No se encontró una capa de investigación con el id: 'researchLayerId2'", exception.getMessage());
+
+        verify(researchLayerRepository, times(1)).findById(researchLayerId);
     }
 }
