@@ -116,26 +116,4 @@ public class RegisterController {
         PaginatedResponse response = registerService.getAllRegistersByResearchLayerPaginated(request, researchLayerId);
         return ResponseEntity.ok(response);
     }
-
-    @PostMapping
-    public ResponseEntity<?> subirConsentimiento(@RequestParam("patientIdentification") int patientIdentification, @RequestParam("file") MultipartFile archivo) {
-        try {
-            FileCollection consentimiento = new FileCollection();
-            consentimiento.setIdentifyPatient(patientIdentification);
-            consentimiento.setTipoMime(archivo.getContentType());
-            consentimiento.setContenido(new Binary(archivo.getBytes()));
-
-            registerService.saveFile(consentimiento);
-
-            return ResponseEntity.ok("Archivo guardado correctamente");
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error al guardar el archivo");
-        }
-    }
-
-
-
-
-
-
 }
