@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Builder
+@Builder(toBuilder = true)
 public class RegisterRequest {
     @NotNull(message = "Las variables no pueden ser nulas")
     private List<Variable> variables;

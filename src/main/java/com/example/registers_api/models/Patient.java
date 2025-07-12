@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Builder
+@Builder(toBuilder = true)
 public class Patient {
     @NotNull(message = "El name no puede ser nulo")
     private String name;
@@ -53,5 +53,6 @@ public class Patient {
 
     @NotNull(message = "El estado de crisis no puede ser nulo")
     private String crisisStatus;
+
 
 }

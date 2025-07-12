@@ -149,10 +149,7 @@ public class RegisterService implements IRegisterService {
                 .build();
     }
 
-    @Override
-    public void saveFile(FileCollection file) {
-        fileRespository.save(file);
-    }
+
 
     @Override
     public void deleteRegister(String registerId) {
@@ -161,7 +158,6 @@ public class RegisterService implements IRegisterService {
         ));
         registerRepository.deleteById(registerId);
     }
-
 
     public List<RegistersResponse> getRegister(List<RegisterCollection> registerCollection) {
         return registerCollection.stream()
@@ -201,5 +197,10 @@ public class RegisterService implements IRegisterService {
 
         response.setVariablesRegister(variableResponses);
         return response;
+    }
+
+    @Override
+    public void saveFile(FileCollection file) {
+        fileRespository.save(file);
     }
 }
