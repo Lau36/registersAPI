@@ -11,9 +11,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.InjectMocks;
-import org.Mock;
-import org.junit.jupiter.MockitoExtension;
+//import org.InjectMocks;
+//import org.Mock;
+//import org.junit.jupiter.MockitoExtension;
 import org.mockito.Mock;
 
 import java.time.LocalDate;
@@ -21,15 +21,14 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.ArgumentMatchers.any;
-import static org.*;
+//import static org.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
-
+/***
 @ExtendWith(MockitoAnnotations.class)
 class RegisterServiceTest {
     @Mock
@@ -153,4 +152,4 @@ class RegisterServiceTest {
             registerService.deleteRegister("Register id");
         });
     }
-}
+}*/

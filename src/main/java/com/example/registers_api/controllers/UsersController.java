@@ -29,7 +29,7 @@ public class UsersController {
     }
 
     @GetMapping()
-    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.RESEARCHER_ROLE + "')")
+    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.RESEARCHER_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
     public List<UserRepresentation> getUserByEmail(@RequestParam String email){
         return userService.getUserByEmail(email);
     }
@@ -42,7 +42,7 @@ public class UsersController {
     }
 
     @PutMapping("/update")
-    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.RESEARCHER_ROLE + "')")
+    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.RESEARCHER_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
     public ResponseEntity<BasicResponse> updateUser(@RequestParam String userId, @RequestBody UserDTO userDTO){
         userService.updateUser(userId, userDTO);
         BasicResponse response = new BasicResponse(USER_UPDATED);
@@ -50,7 +50,7 @@ public class UsersController {
     }
 
     @DeleteMapping("/delete")
-    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
+    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
     public ResponseEntity<BasicResponse> deleteUser(@RequestParam String userId){
         userService.deleteUser(userId);
         BasicResponse response = new BasicResponse(USER_DELETED);
@@ -58,7 +58,7 @@ public class UsersController {
     }
 
     @PostMapping("/disableUser")
-    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
+    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
     public ResponseEntity<BasicResponse> disableUser(@RequestParam String userId){
         userService.disableOrEnableUser(userId, false);
         BasicResponse response = new BasicResponse(USER_DELETED);
@@ -66,7 +66,7 @@ public class UsersController {
     }
 
     @PostMapping("/enabledUser")
-   @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
+   @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
     public ResponseEntity<BasicResponse> enabledUser(@RequestParam String userId){
         userService.disableOrEnableUser(userId, true);
         BasicResponse response = new BasicResponse(USER_DELETED);
