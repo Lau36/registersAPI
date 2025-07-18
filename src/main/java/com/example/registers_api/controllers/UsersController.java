@@ -22,7 +22,7 @@ public class UsersController {
 
     private final IUserService userService;
 
-    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
+    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
     @GetMapping("/GetAll")
     public List<UserRepresentation> findAllUsers(){
         return userService.getAllUsers();
@@ -35,7 +35,7 @@ public class UsersController {
     }
 
     @PostMapping("/create")
-    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "')")
+    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
     public ResponseEntity<BasicResponse> create(@RequestBody UserDTO user){
         BasicResponse response = new BasicResponse(userService.createUser(user));
         return ResponseEntity.ok(response);
