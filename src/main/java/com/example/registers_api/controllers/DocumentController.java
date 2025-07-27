@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/api/v1/document")
+@RequestMapping("/api/v1/documents")
 @AllArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
 public class DocumentController {
@@ -32,14 +32,14 @@ public class DocumentController {
     private IRegisterService registerService;
 
     @PostMapping("/uploadDocument")
-    public ResponseEntity<?> subirConsentimiento(@RequestParam("patientIdentification") int patientIdentification, @RequestParam("file") MultipartFile archivo) {
+    public ResponseEntity<String> uploadDocument(@RequestParam("patientIdentification") int patientIdentification, @RequestParam("file") MultipartFile archivo) {
         try {
-            FileCollection consentimiento = new FileCollection();
-            consentimiento.setIdentifyPatient(patientIdentification);
-            consentimiento.setTipoMime(archivo.getContentType());
-            consentimiento.setContenido(new Binary(archivo.getBytes()));
+            FileCollection document = new FileCollection();
+            document.setIdentifyPatient(patientIdentification);
+            document.setTipoMime(archivo.getContentType());
+            document.setContenido(new Binary(archivo.getBytes()));
 
-            registerService.saveFile(consentimiento);
+            registerService.saveFile(document);
 
             return ResponseEntity.ok("Archivo guardado correctamente");
         } catch (Exception e) {
@@ -47,29 +47,20 @@ public class DocumentController {
         }
     }
 
-    @GetMapping()
-    @PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.RESEARCHER_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
-    public ResponseEntity<PaginatedResponse> getAllRegisters(@RequestParam int page,
-                                                             @RequestParam int size,
-                                                             @RequestParam String sort,
-                                                             @RequestParam String sortDirection) {
-        PaginationRequest request = PaginationRequest.builder()
-                .page(page)
-                .size(size)
-                .sort(sort)
-                .sortDirection(SortDirection.valueOf(sortDirection.toUpperCase()))
-                .build();
-        PaginatedResponse response = registerService.getAllRegistersPaginated(request);
-        return ResponseEntity.ok(response);
-    }
-
-
-
-
-
-
-
-
-
+//    @GetMapping()
+//    @PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.RESEARCHER_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
+//    public ResponseEntity<PaginatedResponse> getAllRegisters(@RequestParam int page,
+//                                                             @RequestParam int size,
+//                                                             @RequestParam String sort,
+//                                                             @RequestParam String sortDirection) {
+//        PaginationRequest request = PaginationRequest.builder()
+//                .page(page)
+//                .size(size)
+//                .sort(sort)
+//                .sortDirection(SortDirection.valueOf(sortDirection.toUpperCase()))
+//                .build();
+//        PaginatedResponse response = registerService.getAllRegistersPaginated(request);
+//        return ResponseEntity.ok(response);
+//    }
 
 }

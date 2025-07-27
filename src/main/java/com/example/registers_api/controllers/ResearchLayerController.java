@@ -34,8 +34,7 @@ public class ResearchLayerController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = Constants.RESEARCH_LAYER_CREATED, content = @Content),
             @ApiResponse(responseCode = "400", description = SwaggerConstants.EMPTY_FIELDS,
-                    content = @Content),
-            @ApiResponse(responseCode = "400", description = SwaggerConstants.RESEARCH_LAYER_NAME_ALREADY_EXISTS,
+                    content = @Content), @ApiResponse(responseCode = "400", description = SwaggerConstants.RESEARCH_LAYER_NAME_ALREADY_EXISTS,
                     content = @Content),
             @ApiResponse(responseCode = "400", description = SwaggerConstants.RESEARCH_LAYER_NAME_TOO_LONG,
                     content = @Content),

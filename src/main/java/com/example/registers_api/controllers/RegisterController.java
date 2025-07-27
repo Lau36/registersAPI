@@ -23,7 +23,7 @@ public class RegisterController {
 
     private IRegisterService registerService;
 
-    @PostMapping
+    @PostMapping()
     @PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
     public ResponseEntity<BasicResponse> saveRegister(@RequestParam String userEmail, @RequestBody RegisterRequest registerRequest) {
         BasicResponse response = new BasicResponse(Constants.REGISTER_CREATED);
@@ -47,7 +47,7 @@ public class RegisterController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping
+    @PutMapping()
     @PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
     public ResponseEntity<BasicResponse> updateRegister(@RequestParam String registerId, @RequestParam String userEmail, @RequestBody RegisterRequest registerRequest) {
         BasicResponse response = new BasicResponse(Constants.REGISTER_UPDATED);

@@ -3,6 +3,7 @@ package com.example.registers_api.dtos;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 
@@ -20,6 +21,6 @@ public class UserDTO {
     private String identificationType;
     private Integer identificationNumber;
     private LocalDate birthDate;
-    private String researchLayer;
+    private List<String> researchLayer;
     private String role;
 }

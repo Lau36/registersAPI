@@ -20,6 +20,7 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.HashMap;
@@ -65,7 +66,7 @@ public class UsersService implements IUserService {
 
             attributes.put(IDENTIFICATION_TYPE, Collections.singletonList(user.getIdentificationType()));
             attributes.put(IDENTIFICATION_NUMBER, Collections.singletonList(user.getIdentificationNumber().toString()));
-            attributes.put(RESEARCH_LAYER, Collections.singletonList(user.getResearchLayer()));
+            attributes.put(RESEARCH_LAYER, user.getResearchLayer());
             attributes.put(BIRTHDATE, Collections.singletonList(user.getBirthDate().format(formatter)));
             attributes.put(ROLE, Collections.singletonList(user.getRole()));
             newUser.setAttributes(attributes);
@@ -205,17 +206,18 @@ public class UsersService implements IUserService {
         user.setEnabled(true);
         user.setEmailVerified(true);
 
-        if(!isPasswordFieldEmpty){
-            CredentialRepresentation credentials = setUserCredentials(userDTO);
-            user.setCredentials(Collections.singletonList(credentials));
-        }
-
         Map<String, List<String>> attributes = new HashMap<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE);
 
+        if(!isPasswordFieldEmpty){
+            CredentialRepresentation credentials = setUserCredentials(userDTO);
+            user.setCredentials(Collections.singletonList(credentials));
+            attributes.put(LAST_PASSWORD_UPDATE, Collections.singletonList(LocalDateTime.now().toString()));
+        }
+
         attributes.put(IDENTIFICATION_TYPE, Collections.singletonList(userDTO.getIdentificationType()));
         attributes.put(IDENTIFICATION_NUMBER, Collections.singletonList(userDTO.getIdentificationNumber().toString()));
-        attributes.put(RESEARCH_LAYER, Collections.singletonList(userDTO.getResearchLayer()));
+        attributes.put(RESEARCH_LAYER, userDTO.getResearchLayer());
         attributes.put(BIRTHDATE, Collections.singletonList(userDTO.getBirthDate().format(formatter)));
         attributes.put(ROLE, Collections.singletonList(userDTO.getRole()));
         user.setAttributes(attributes);
