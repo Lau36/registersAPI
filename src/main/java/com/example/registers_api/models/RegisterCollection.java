@@ -25,6 +25,7 @@ public class RegisterCollection {
     private String id;
     private LocalDateTime registerDate;
     private LocalDateTime updateRegisterDate;
+    private String updatedBy;
     private String researchLayerIdVariables;
     private List<Variable> variables;
     private Integer patientIdentificationNumber;

@@ -8,9 +8,11 @@ import lombok.*;
 @Builder(toBuilder = true)
 public class Variable{
     private String id;
+    private String variableName;
     private Object value;
     private String type;
     private String researchLayerId;
+    private String researchLayerName;
 
     public void setValue(Object value) {
         if ("number".equals(this.type) && !(value instanceof Integer)) {

@@ -13,14 +13,18 @@ import com.example.registers_api.response.RegistersResponse;
 import com.example.registers_api.response.VariableResponse;
 import com.example.registers_api.services.IRegisterService;
 import com.example.registers_api.services.validations.RegistersServiceValidations;
+import jakarta.ws.rs.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import static com.example.registers_api.utils.Constants.USER_NOT_FOUND_BY_EMAIL;
 import static com.example.registers_api.utils.ExceptionConstants.REGISTER_NOT_FOUND;
 
 @AllArgsConstructor
@@ -35,7 +39,7 @@ public class RegisterService implements IRegisterService {
     @Override
     public void saveRegister(RegisterRequest register,  String userEmail) {
 
-        List<Variable> variables = register.getVariables();
+        List<Variable> variables = addNamesToVariablesAndLayer(register.getVariables());
         Patient patient = register.getPatient();
         Caregiver caregiver = register.getCaregiver();
         HealthProfessional healthProfessional = register.getHealthProfessional();
@@ -91,6 +95,7 @@ public class RegisterService implements IRegisterService {
         existingRegister.setCaregiver(register.getCaregiver());
         existingRegister.setHealthProfessional(register.getHealthProfessional());
         existingRegister.setUpdateRegisterDate(LocalDateTime.now());
+        existingRegister.setUpdatedBy(userEmail);
 
         registerRepository.save(existingRegister);
     }
@@ -170,6 +175,7 @@ public class RegisterService implements IRegisterService {
         response.setRegisterId(register.getId());
         response.setRegisterDate(register.getRegisterDate());
         response.setUpdateRegisterDate(register.getUpdateRegisterDate());
+        response.setUpdatedBy(register.getUpdatedBy());
         response.setPatientIdentificationNumber(register.getPatientIdentificationNumber());
         response.setPatientIdentificationType(register.getPatientIdentificationType());
         response.setPatientBasicInfo(register.getPatientBasicInfo());
@@ -197,6 +203,34 @@ public class RegisterService implements IRegisterService {
 
         response.setVariablesRegister(variableResponses);
         return response;
+    }
+
+    public List<Variable> addNamesToVariablesAndLayer(List<Variable> variables){
+        List<Variable> variablesWithNames = new ArrayList<>();
+
+        for (Variable var : variables) {
+            Optional<VariableCollection> variableFromDb = variableRepository.findById(var.getId());
+            Optional<ResearchLayerCollection> layerFromDb = researchLayerRepository.findById(var.getResearchLayerId());
+
+            if (variableFromDb.isEmpty()) {
+                throw new NotFoundException("Variable con ID " + var.getId() + " no encontrada");
+            }
+            if (layerFromDb.isEmpty()) {
+                throw new NotFoundException("Capa con ID " + var.getResearchLayerId() + " no encontrada");
+            }
+
+            Variable newVariables = Variable.builder()
+                    .id(var.getId())
+                    .type(var.getType())
+                    .value(var.getValue())
+                    .researchLayerId(var.getResearchLayerId())
+                    .variableName(variableFromDb.get().getVariableName())
+                    .researchLayerName(layerFromDb.get().getLayerName())
+                    .build();
+
+            variablesWithNames.add(newVariables);
+        }
+        return variablesWithNames;
     }
 
     @Override
