@@ -59,17 +59,17 @@ public class RegistersServiceValidations {
     }
 
     public void validateResearchLayer(String userEmail, RegisterRequest registerRequest) {
-        String userResearchLayerId = getUserResearchLayer(userEmail);
+        List<String> userResearchLayerIds = getUserResearchLayer(userEmail);
 
         for (Variable variable : registerRequest.getVariables()) {
-            if (!variable.getResearchLayerId().equals(userResearchLayerId)) {
+            if (!userResearchLayerIds.contains(variable.getResearchLayerId())) {
                 throw new DoesntHavePermissions(DOESNT_HAVE_PERMISSIONS);
             }
         }
 
     }
 
-    public String getUserResearchLayer(String userEmail) {
+    public List<String> getUserResearchLayer(String userEmail) {
         UsersResource usersResource = keycloak.realm(REALM_NAME).users();
 
         List<UserRepresentation> users = usersResource.searchByEmail(userEmail, true);
@@ -82,7 +82,7 @@ public class RegistersServiceValidations {
         Map<String, List<String>> atributos = user.getAttributes();
 
         if (atributos != null && atributos.containsKey(RESEARCH_LAYER)) {
-            return atributos.get(RESEARCH_LAYER).get(0);
+            return atributos.get(RESEARCH_LAYER);
         }
         else{
             throw new NotEnabledException("Los atributos del usuario son null");
