@@ -79,7 +79,7 @@ public class ResearchLayerService implements IResearchLayerService {
 
     @Override
     public void deleteResearchLayer(String researchLayerId) {
-        boolean existsRegister = registerRepository.existsByVariablesResearchLayerId(researchLayerId);
+        boolean existsRegister = registerRepository.existsByRegisterResearchLayerId(researchLayerId);
         if(existsRegister){
             ResearchLayerCollection researchLayerCollection = researchLayerRepository.findById(researchLayerId)
                     .orElseThrow( () ->

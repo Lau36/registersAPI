@@ -8,6 +8,7 @@ import com.example.registers_api.models.Variable;
 import com.example.registers_api.repository.ResearchLayerRepository;
 import com.example.registers_api.repository.VariableRepository;
 import com.example.registers_api.request.RegisterRequest;
+import com.example.registers_api.request.VariableRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,7 +37,7 @@ class RegistersServiceValidationsTest {
     private RegisterRequest registerRequest;
 
     @Mock
-    private Variable variable;
+    private VariableRequest variable;
 
     @InjectMocks
     private RegistersServiceValidations registersServiceValidations;
@@ -86,7 +87,7 @@ class RegistersServiceValidationsTest {
     void testValidateRegisterFields_Valid() {
         RegisterRequest validRequest = mock(RegisterRequest.class);
         HealthProfessional healthProfessional = mock(HealthProfessional.class);
-        when(validRequest.getVariables()).thenReturn(List.of(new Variable()));
+        when(validRequest.getVariables()).thenReturn(List.of(new VariableRequest()));
         when(validRequest.getHealthProfessional()).thenReturn(healthProfessional);
 
         assertDoesNotThrow(() -> registersServiceValidations.validateRegisterFields(validRequest));
@@ -106,7 +107,7 @@ class RegistersServiceValidationsTest {
     @Test
     void testValidateRegisterFields_InvalidHealthProfessional() {
         RegisterRequest invalidRequest = mock(RegisterRequest.class);
-        when(invalidRequest.getVariables()).thenReturn(List.of(new Variable()));
+        when(invalidRequest.getVariables()).thenReturn(List.of(new VariableRequest()));
         when(invalidRequest.getHealthProfessional()).thenReturn(null);
 
         NotEmptyFieldException exception = assertThrows(NotEmptyFieldException.class, () ->

@@ -2,9 +2,7 @@ package com.example.registers_api.services;
 
 import com.example.registers_api.dtos.LayerBossDTO;
 import com.example.registers_api.dtos.ResearchLayerDTO;
-import com.example.registers_api.exceptions.AlreadyExistsException;
 import com.example.registers_api.exceptions.DoesntExistsException;
-import com.example.registers_api.exceptions.MaxLengthExceededException;
 import com.example.registers_api.mappers.ResearchLayerMapper;
 import com.example.registers_api.models.LayerBoss;
 import com.example.registers_api.models.ResearchLayerCollection;
@@ -18,11 +16,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -116,7 +112,7 @@ class ResearchLayerServiceTest {
 
     @Test
     void shouldDeleteResearchLayerWhenRegisterExists() {
-        when(registerRepository.existsByVariablesResearchLayerId("abc123")).thenReturn(true);
+        when(registerRepository.existsByRegisterResearchLayerId("abc123")).thenReturn(true);
         when(researchLayerRepository.findById("abc123")).thenReturn(Optional.of(sampleCollection));
 
         researchLayerService.deleteResearchLayer("abc123");
@@ -127,7 +123,7 @@ class ResearchLayerServiceTest {
 
     @Test
     void shouldCompletelyDeleteResearchLayerWhenNoRegisterExists() {
-        when(registerRepository.existsByVariablesResearchLayerId("abc123")).thenReturn(false);
+        when(registerRepository.existsByRegisterResearchLayerId("abc123")).thenReturn(false);
 
         researchLayerService.deleteResearchLayer("abc123");
 
@@ -158,7 +154,7 @@ class ResearchLayerServiceTest {
     void testDeleteResearchLayer_doesntExist_ThrowsException() {
         String researchLayerId = "researchLayerId2";
 
-        when(registerRepository.existsByVariablesResearchLayerId(researchLayerId)).thenReturn(true);
+        when(registerRepository.existsByRegisterResearchLayerId(researchLayerId)).thenReturn(true);
 
         when(researchLayerRepository.findById(researchLayerId)).thenReturn(Optional.empty());
 

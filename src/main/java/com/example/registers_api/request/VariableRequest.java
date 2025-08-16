@@ -1,4 +1,4 @@
-package com.example.registers_api.models;
+package com.example.registers_api.request;
 
 import lombok.*;
 
@@ -6,11 +6,13 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Builder(toBuilder = true)
-public class Variable{
+public class VariableRequest {
     private String id;
     private String variableName;
     private Object value;
     private String type;
+    private String researchLayerId;
+    private String researchLayerName;
 
     public void setValue(Object value) {
         if ("number".equals(this.type) && !(value instanceof Integer)) {
@@ -23,6 +25,6 @@ public class Variable{
     }
 
     public String toString() {
-        return "Variable{id='" + id + "', value=" + value + ", type='" + type +  "}";
+        return "Variable{id='" + id + "', value=" + value + ", type='" + type + ", researchLayerId=' " + researchLayerId + "}";
     }
 }

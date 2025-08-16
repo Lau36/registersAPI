@@ -8,6 +8,7 @@ import com.example.registers_api.repository.ResearchLayerRepository;
 import com.example.registers_api.repository.VariableRepository;
 import com.example.registers_api.request.PaginationRequest;
 import com.example.registers_api.request.RegisterRequest;
+import com.example.registers_api.request.VariableRequest;
 import com.example.registers_api.response.PaginatedResponse;
 import com.example.registers_api.response.RegistersResponse;
 import com.example.registers_api.response.VariableResponse;
@@ -20,11 +21,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-import static com.example.registers_api.utils.Constants.USER_NOT_FOUND_BY_EMAIL;
 import static com.example.registers_api.utils.ExceptionConstants.REGISTER_NOT_FOUND;
 
 @AllArgsConstructor
@@ -39,7 +37,7 @@ public class RegisterService implements IRegisterService {
     @Override
     public void saveRegister(RegisterRequest register,  String userEmail) {
 
-        List<Variable> variables = addNamesToVariablesAndLayer(register.getVariables());
+        List<Variable> variables = addNamesToVariables(register.getVariables());
         Patient patient = register.getPatient();
         Caregiver caregiver = register.getCaregiver();
         HealthProfessional healthProfessional = register.getHealthProfessional();
@@ -48,11 +46,30 @@ public class RegisterService implements IRegisterService {
         registersServiceValidations.validateRegisterFields(register);
         registersServiceValidations.validateVariablesAndResearchLayer(register);
 
+        Map<String, ResearchLayerGroup> grouped = new LinkedHashMap<>();
+
+        register.getVariables().forEach(vReq -> {
+            String layerId = vReq.getResearchLayerId();
+            String layerName = vReq.getResearchLayerName();
+
+            grouped.computeIfAbsent(layerId, id -> ResearchLayerGroup.builder()
+                    .researchLayerId(layerId)
+                    .researchLayerName(layerName)
+                    .variables(new ArrayList<>())
+                    .build()
+            ).getVariables().add(
+                    variables.stream()
+                            .filter(v -> v.getId().equals(vReq.getId()))
+                            .findFirst()
+                            .orElse(null)
+            );
+        });
+
         RegisterCollection registerCollection = RegisterCollection.builder()
                 .registerDate(LocalDateTime.now())
                 .patientIdentificationNumber(register.getPatientIdentificationNumber())
                 .patientIdentificationType(register.getPatientIdentificationType())
-                .variables(variables)
+                .register(new ArrayList<>(grouped.values()))
                 .patientBasicInfo(patient)
                 .caregiver(caregiver)
                 .healthProfessional(healthProfessional)
@@ -90,7 +107,28 @@ public class RegisterService implements IRegisterService {
         registersServiceValidations.validateRegisterFields(register);
         registersServiceValidations.validateVariablesAndResearchLayer(register);
 
-        existingRegister.setVariables(register.getVariables());
+        List<Variable> variables = addNamesToVariables(register.getVariables());
+
+        Map<String, ResearchLayerGroup> grouped = new LinkedHashMap<>();
+
+        register.getVariables().forEach(vReq -> {
+            String layerId = vReq.getResearchLayerId();
+            String layerName = vReq.getResearchLayerName();
+
+            grouped.computeIfAbsent(layerId, id -> ResearchLayerGroup.builder()
+                    .researchLayerId(layerId)
+                    .researchLayerName(layerName)
+                    .variables(new ArrayList<>())
+                    .build()
+            ).getVariables().add(
+                    variables.stream()
+                            .filter(v -> v.getId().equals(vReq.getId()))
+                            .findFirst()
+                            .orElse(null)
+            );
+        });
+
+        existingRegister.setRegister(new ArrayList<>(grouped.values()));
         existingRegister.setPatientBasicInfo(register.getPatient());
         existingRegister.setCaregiver(register.getCaregiver());
         existingRegister.setHealthProfessional(register.getHealthProfessional());
@@ -142,8 +180,8 @@ public class RegisterService implements IRegisterService {
         PageRequest pageable = PageRequest.of(paginationRequest.getPage(), paginationRequest.getSize(), sort);
 
         List<RegistersResponse> registers = getRegister(registerRepository.
-                findAllByVariablesResearchLayerId(researchLayerId, pageable));
-        long totalElements = registerRepository.countByVariablesResearchLayerId(researchLayerId);
+                findAllByRegisterResearchLayerId(researchLayerId, pageable));
+        long totalElements = registerRepository.countByRegisterResearchLayerId(researchLayerId);
         int totalPages = (int) Math.ceil(totalElements / (double) paginationRequest.getSize());
 
         return PaginatedResponse.builder()
@@ -182,50 +220,47 @@ public class RegisterService implements IRegisterService {
         response.setCaregiver(register.getCaregiver());
         response.setHealthProfessional(register.getHealthProfessional());
 
-        List<VariableResponse> variableResponses = register.getVariables().stream().map(variable -> {
-            String variableName = variableRepository.findById(variable.getId())
-                    .map(VariableCollection::getVariableName)
-                    .orElse("Unknown");
+        List<VariableResponse> variableResponses = new ArrayList<>();
 
-            String researchLayerName = researchLayerRepository.findById(variable.getResearchLayerId())
-                    .map(ResearchLayerCollection::getLayerName)
-                    .orElse("Unknown");
+        for (ResearchLayerGroup group : register.getRegister()) {
+            String researchLayerId = group.getResearchLayerId();
+            String researchLayerName = group.getResearchLayerName();
 
-            return new VariableResponse(
-                    variable.getId(),
-                    variableName,
-                    variable.getValue(),
-                    variable.getType(),
-                    variable.getResearchLayerId(),
-                    researchLayerName
-            );
-        }).toList();
+            for (Variable variable : group.getVariables()) {
+                String variableName = variableRepository.findById(variable.getId())
+                        .map(VariableCollection::getVariableName)
+                        .orElse("Unknown");
+
+                variableResponses.add(new VariableResponse(
+                        variable.getId(),
+                        variableName,
+                        variable.getValue(),
+                        variable.getType(),
+                        researchLayerId,
+                        researchLayerName
+                ));
+            }
+        }
 
         response.setVariablesRegister(variableResponses);
         return response;
     }
 
-    public List<Variable> addNamesToVariablesAndLayer(List<Variable> variables){
+    public List<Variable> addNamesToVariables(List<VariableRequest> variables){
         List<Variable> variablesWithNames = new ArrayList<>();
 
-        for (Variable var : variables) {
+        for (VariableRequest var : variables) {
             Optional<VariableCollection> variableFromDb = variableRepository.findById(var.getId());
-            Optional<ResearchLayerCollection> layerFromDb = researchLayerRepository.findById(var.getResearchLayerId());
 
             if (variableFromDb.isEmpty()) {
                 throw new NotFoundException("Variable con ID " + var.getId() + " no encontrada");
-            }
-            if (layerFromDb.isEmpty()) {
-                throw new NotFoundException("Capa con ID " + var.getResearchLayerId() + " no encontrada");
             }
 
             Variable newVariables = Variable.builder()
                     .id(var.getId())
                     .type(var.getType())
                     .value(var.getValue())
-                    .researchLayerId(var.getResearchLayerId())
                     .variableName(variableFromDb.get().getVariableName())
-                    .researchLayerName(layerFromDb.get().getLayerName())
                     .build();
 
             variablesWithNames.add(newVariables);

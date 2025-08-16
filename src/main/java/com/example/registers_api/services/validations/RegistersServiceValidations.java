@@ -10,6 +10,7 @@ import com.example.registers_api.models.Variable;
 import com.example.registers_api.repository.ResearchLayerRepository;
 import com.example.registers_api.repository.VariableRepository;
 import com.example.registers_api.request.RegisterRequest;
+import com.example.registers_api.request.VariableRequest;
 import jakarta.ws.rs.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.keycloak.admin.client.Keycloak;
@@ -33,9 +34,9 @@ public class RegistersServiceValidations {
     private final Keycloak keycloak;
 
     public void validateVariablesAndResearchLayer(RegisterRequest registerRequest) {
-        List<Variable> variables = registerRequest.getVariables();
+        List<VariableRequest> variables = registerRequest.getVariables();
 
-        for (Variable variable : variables) {
+        for (VariableRequest variable : variables) {
             if (!researchLayerRepository.existsById(variable.getResearchLayerId())) {
                 throw (new DoesntExistsException(String.format(RESEARCH_LAYER_ID_NOT_FOUND, variable.getResearchLayerId())));
             }
@@ -46,7 +47,7 @@ public class RegistersServiceValidations {
     }
 
     public void validateRegisterFields(RegisterRequest registerRequest) {
-        List<Variable> variables = registerRequest.getVariables();
+        List<VariableRequest> variables = registerRequest.getVariables();
         HealthProfessional healthProfessional = registerRequest.getHealthProfessional();
 
         if (Objects.isNull(variables)) {
@@ -61,7 +62,7 @@ public class RegistersServiceValidations {
     public void validateResearchLayer(String userEmail, RegisterRequest registerRequest) {
         List<String> userResearchLayerIds = getUserResearchLayer(userEmail);
 
-        for (Variable variable : registerRequest.getVariables()) {
+        for (VariableRequest variable : registerRequest.getVariables()) {
             if (!userResearchLayerIds.contains(variable.getResearchLayerId())) {
                 throw new DoesntHavePermissions(DOESNT_HAVE_PERMISSIONS);
             }
