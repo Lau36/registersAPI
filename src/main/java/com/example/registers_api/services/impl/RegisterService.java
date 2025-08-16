@@ -9,9 +9,7 @@ import com.example.registers_api.repository.VariableRepository;
 import com.example.registers_api.request.PaginationRequest;
 import com.example.registers_api.request.RegisterRequest;
 import com.example.registers_api.request.VariableRequest;
-import com.example.registers_api.response.PaginatedResponse;
-import com.example.registers_api.response.RegistersResponse;
-import com.example.registers_api.response.VariableResponse;
+import com.example.registers_api.response.*;
 import com.example.registers_api.services.IRegisterService;
 import com.example.registers_api.services.validations.RegistersServiceValidations;
 import jakarta.ws.rs.NotFoundException;
@@ -192,8 +190,6 @@ public class RegisterService implements IRegisterService {
                 .build();
     }
 
-
-
     @Override
     public void deleteRegister(String registerId) {
         registerRepository.findById(registerId).orElseThrow(() -> new DoesntExistsException(
@@ -220,29 +216,34 @@ public class RegisterService implements IRegisterService {
         response.setCaregiver(register.getCaregiver());
         response.setHealthProfessional(register.getHealthProfessional());
 
-        List<VariableResponse> variableResponses = new ArrayList<>();
+        List<ResearchLayerGroupResponse> groupResponses = new ArrayList<>();
 
         for (ResearchLayerGroup group : register.getRegister()) {
-            String researchLayerId = group.getResearchLayerId();
-            String researchLayerName = group.getResearchLayerName();
+            ResearchLayerGroupResponse groupResponse = new ResearchLayerGroupResponse();
+            groupResponse.setResearchLayerId(group.getResearchLayerId());
+            groupResponse.setResearchLayerName(group.getResearchLayerName());
+
+            List<VariableInRegisterResponse> variableResponses = new ArrayList<>();
 
             for (Variable variable : group.getVariables()) {
                 String variableName = variableRepository.findById(variable.getId())
                         .map(VariableCollection::getVariableName)
                         .orElse("Unknown");
 
-                variableResponses.add(new VariableResponse(
-                        variable.getId(),
-                        variableName,
-                        variable.getValue(),
-                        variable.getType(),
-                        researchLayerId,
-                        researchLayerName
-                ));
+                VariableInRegisterResponse varResponse = new VariableInRegisterResponse();
+                varResponse.setVariableId(variable.getId());
+                varResponse.setVariableName(variableName);
+                varResponse.setVariableValue(variable.getValue());
+                varResponse.setVariableType(variable.getType());
+
+                variableResponses.add(varResponse);
             }
+
+            groupResponse.setVariablesInfo(variableResponses);
+            groupResponses.add(groupResponse);
         }
 
-        response.setVariablesRegister(variableResponses);
+        response.setRegisterInfo(groupResponses);
         return response;
     }
 
