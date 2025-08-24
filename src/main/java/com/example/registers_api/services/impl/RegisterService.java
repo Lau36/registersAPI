@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -230,11 +231,7 @@ public class RegisterService implements IRegisterService {
                         .map(VariableCollection::getVariableName)
                         .orElse("Unknown");
 
-                VariableInRegisterResponse varResponse = new VariableInRegisterResponse();
-                varResponse.setVariableId(variable.getId());
-                varResponse.setVariableName(variableName);
-                varResponse.setVariableValue(variable.getValue());
-                varResponse.setVariableType(variable.getType());
+                VariableInRegisterResponse varResponse = setVariableValueInVariableResponse(variable, variableName);
 
                 variableResponses.add(varResponse);
             }
@@ -257,16 +254,56 @@ public class RegisterService implements IRegisterService {
                 throw new NotFoundException("Variable con ID " + var.getId() + " no encontrada");
             }
 
-            Variable newVariables = Variable.builder()
-                    .id(var.getId())
-                    .type(var.getType())
-                    .value(var.getValue())
-                    .variableName(variableFromDb.get().getVariableName())
-                    .build();
+            Variable newVariable = setVariableValueInVariable(var, variableFromDb);
 
-            variablesWithNames.add(newVariables);
+            variablesWithNames.add(newVariable);
         }
         return variablesWithNames;
+    }
+
+    public VariableInRegisterResponse  setVariableValueInVariableResponse(Variable variable, String variableName){
+        VariableInRegisterResponse varResponse = new VariableInRegisterResponse();
+        varResponse.setVariableId(variable.getId());
+        varResponse.setVariableName(variableName);
+        varResponse.setVariableType(variable.getType());
+
+        switch (variable.getType()) {
+            case "Numerico":
+                varResponse.setValueAsNumber(variable.getValueAsNumber());
+                break;
+
+            case "Texto":
+                varResponse.setValueAsString(variable.getValueAsString());
+                break;
+        }
+
+        return varResponse;
+    }
+
+    public Variable setVariableValueInVariable(VariableRequest var, Optional<VariableCollection> variableFromDb){
+        Variable variable = new Variable();
+        variable.setId(var.getId());
+        variable.setName(variableFromDb.get().getVariableName());
+        variable.setType(var.getType());
+
+        switch (var.getType()) {
+            case "Numerico":
+                if (!(var.getValue() instanceof Number)) {
+                    throw new IllegalArgumentException("El valor debe ser numérico");
+                }
+                variable.setValueAsNumber(((Number) var.getValue()).doubleValue());
+                break;
+
+            case "Texto":
+                if (!(var.getValue() instanceof String)) {
+                    throw new IllegalArgumentException("El valor debe ser String");
+                }
+                variable.setValueAsString((String) var.getValue());
+                break;
+
+        }
+
+        return variable;
     }
 
     @Override
