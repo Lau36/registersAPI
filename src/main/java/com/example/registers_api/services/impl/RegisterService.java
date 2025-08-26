@@ -22,7 +22,8 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static com.example.registers_api.utils.ExceptionConstants.REGISTER_NOT_FOUND;
+import static com.example.registers_api.utils.Constants.*;
+import static com.example.registers_api.utils.ExceptionConstants.*;
 
 @AllArgsConstructor
 @Service
@@ -68,7 +69,7 @@ public class RegisterService implements IRegisterService {
                 .registerDate(LocalDateTime.now())
                 .patientIdentificationNumber(register.getPatientIdentificationNumber())
                 .patientIdentificationType(register.getPatientIdentificationType())
-                .register(new ArrayList<>(grouped.values()))
+                .registerInfo(new ArrayList<>(grouped.values()))
                 .patientBasicInfo(patient)
                 .caregiver(caregiver)
                 .healthProfessional(healthProfessional)
@@ -127,7 +128,7 @@ public class RegisterService implements IRegisterService {
             );
         });
 
-        existingRegister.setRegister(new ArrayList<>(grouped.values()));
+        existingRegister.setRegisterInfo(new ArrayList<>(grouped.values()));
         existingRegister.setPatientBasicInfo(register.getPatient());
         existingRegister.setCaregiver(register.getCaregiver());
         existingRegister.setHealthProfessional(register.getHealthProfessional());
@@ -219,7 +220,7 @@ public class RegisterService implements IRegisterService {
 
         List<ResearchLayerGroupResponse> groupResponses = new ArrayList<>();
 
-        for (ResearchLayerGroup group : register.getRegister()) {
+        for (ResearchLayerGroup group : register.getRegisterInfo()) {
             ResearchLayerGroupResponse groupResponse = new ResearchLayerGroupResponse();
             groupResponse.setResearchLayerId(group.getResearchLayerId());
             groupResponse.setResearchLayerName(group.getResearchLayerName());
@@ -268,13 +269,19 @@ public class RegisterService implements IRegisterService {
         varResponse.setVariableType(variable.getType());
 
         switch (variable.getType()) {
-            case "Numerico":
+            case NUMBER_TYPE:
                 varResponse.setValueAsNumber(variable.getValueAsNumber());
                 break;
 
-            case "Texto":
+            case STRING_TYPE:
                 varResponse.setValueAsString(variable.getValueAsString());
                 break;
+
+            case DATE_TYPE:
+                varResponse.setValueAsDate(variable.getValueAsDate());
+                break;
+            default:
+                throw new IllegalArgumentException(TYPE_UNDEFINED);
         }
 
         return varResponse;
@@ -287,20 +294,29 @@ public class RegisterService implements IRegisterService {
         variable.setType(var.getType());
 
         switch (var.getType()) {
-            case "Numerico":
+            case NUMBER_TYPE:
                 if (!(var.getValue() instanceof Number)) {
-                    throw new IllegalArgumentException("El valor debe ser numérico");
+                    throw new IllegalArgumentException(VALUE_MUST_BE_NUMBER);
                 }
                 variable.setValueAsNumber(((Number) var.getValue()).doubleValue());
                 break;
 
-            case "Texto":
+            case STRING_TYPE:
                 if (!(var.getValue() instanceof String)) {
-                    throw new IllegalArgumentException("El valor debe ser String");
+                    throw new IllegalArgumentException(VALUE_MUST_BE_STRING);
                 }
                 variable.setValueAsString((String) var.getValue());
                 break;
 
+            case DATE_TYPE:
+                if (!(var.getValue() instanceof LocalDateTime)) {
+                    throw new IllegalArgumentException(VALUE_MUST_BE_DATE);
+                }
+                variable.setValueAsDate((LocalDateTime) var.getValue());
+                break;
+
+            default:
+                throw new IllegalArgumentException(TYPE_UNDEFINED);
         }
 
         return variable;

@@ -1,6 +1,9 @@
 package com.example.registers_api.models;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.TimeSeries;
@@ -13,25 +16,17 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Builder
-@Document(collection = "registers")
-@TimeSeries(
-        timeField = "registerDate",
-        metaField = "patientIdentificationNumber",
-        granularity = Granularity.HOURS
-)
-public class RegisterCollection {
-
+@Document(collection = "registersHistory")
+public class RegistersHistoryCollection {
     @Id
     private String id;
-    private LocalDateTime registerDate;
+    private LocalDateTime registerId;
+    private Integer patientIdentificationNumber;
     private LocalDateTime updateRegisterDate;
     private String updatedBy;
     private List<ResearchLayerGroup> registerInfo;
-    private Integer patientIdentificationNumber;
     private String patientIdentificationType;
     private Patient patientBasicInfo;
     private Caregiver caregiver;
     private HealthProfessional healthProfessional;
-
-
 }

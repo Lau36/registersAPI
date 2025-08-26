@@ -2,7 +2,7 @@ package com.example.registers_api.models;
 
 import lombok.*;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,5 +15,6 @@ public class Variable{
     private String type;
     private String valueAsString;
     private Double valueAsNumber;
+    private LocalDateTime valueAsDate;
 
 }

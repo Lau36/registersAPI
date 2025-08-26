@@ -25,9 +25,9 @@ public class Constants {
     public static final String RESEARCHER_ROLE = "Researcher_client_role";
     public static final String SUPER_ADMIN_ROLE = "SuperAdmin_client_role";
 
-    public static final String ADMIN = "Admin";
-    public static final String DOCTOR = "Doctor";
-    public static final String RESEARCHER = "Researcher";
+    public static final String STRING_TYPE = "String";
+    public static final String NUMBER_TYPE = "Number";
+    public static final String DATE_TYPE = "Date";
 
     public static final String REALM_NAME = "registeUsersApiDev";
 
