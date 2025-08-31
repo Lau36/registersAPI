@@ -108,7 +108,7 @@ public class VariableService implements IVariableService {
     @Override
     public void deleteVariable(String variableId) {
 
-        boolean existsRegister = registerRepository.existsByRegisterVariablesId(variableId);
+        boolean existsRegister = registerRepository.existsByRegisterInfoVariablesId(variableId);
         if(existsRegister){
             VariableCollection variableCollection = variableRepository.findById(variableId).orElseThrow(() ->
                     new DoesntExistsException(String.format(VARIABLE_NOT_FOUND, variableId))

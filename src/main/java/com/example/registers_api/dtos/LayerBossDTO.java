@@ -10,5 +10,6 @@ import lombok.*;
 public class LayerBossDTO {
     private int id;
     private String name;
+    private String email;
     private String identificationNumber;
 }

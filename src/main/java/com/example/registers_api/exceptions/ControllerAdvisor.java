@@ -93,4 +93,14 @@ public class ControllerAdvisor {
                         LocalDateTime.now())
         );
     }
+
+    @ExceptionHandler(UserDoesntExists.class)
+    public ResponseEntity<ExceptionResponse> userDoesntExists(UserDoesntExists e) {
+        return ResponseEntity.badRequest().body(
+                new ExceptionResponse(
+                        e.getMessage(),
+                        HttpStatus.BAD_REQUEST.value(),
+                        LocalDateTime.now())
+        );
+    }
 }

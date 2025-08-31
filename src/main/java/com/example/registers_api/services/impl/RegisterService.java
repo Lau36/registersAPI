@@ -18,7 +18,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -180,8 +179,8 @@ public class RegisterService implements IRegisterService {
         PageRequest pageable = PageRequest.of(paginationRequest.getPage(), paginationRequest.getSize(), sort);
 
         List<RegistersResponse> registers = getRegister(registerRepository.
-                findAllByRegisterResearchLayerId(researchLayerId, pageable));
-        long totalElements = registerRepository.countByRegisterResearchLayerId(researchLayerId);
+                findAllByRegisterInfoResearchLayerId(researchLayerId, pageable));
+        long totalElements = registerRepository.countByRegisterInfoResearchLayerId(researchLayerId);
         int totalPages = (int) Math.ceil(totalElements / (double) paginationRequest.getSize());
 
         return PaginatedResponse.builder()

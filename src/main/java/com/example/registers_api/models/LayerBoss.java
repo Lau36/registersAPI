@@ -10,5 +10,6 @@ public class LayerBoss {
 
     private int id;
     private String name;
+    private String email;
     private String identificationNumber;
 }

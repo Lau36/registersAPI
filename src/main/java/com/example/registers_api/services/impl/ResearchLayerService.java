@@ -36,13 +36,14 @@ public class ResearchLayerService implements IResearchLayerService {
             researchLayerServiceValidations.notEmptyValidations(researchLayerDTO);
             researchLayerServiceValidations.tooLongValidations(researchLayerDTO);
             researchLayerServiceValidations.alreadyExistsResearchLayerValidation(researchLayerDTO);
+            researchLayerServiceValidations.validateLayerBoss(researchLayerDTO.getLayerBoss().getEmail());
 
             Optional<ResearchLayerCollection> existing = researchLayerRepository
                     .findByLayerNameAndIsEnabled(researchLayerDTO.getLayerName(), true);
 
             if (existing.isPresent()) {
                 ResearchLayerCollection existingLayer = existing.get();
-                if (!existingLayer.getIsEnabled()) {
+                if (Boolean.FALSE.equals(existingLayer.getIsEnabled())) {
                     existingLayer.setIsEnabled(true);
                     existingLayer.setUpdatedAt(LocalDateTime.now());
                     researchLayerRepository.save(existingLayer);
@@ -79,7 +80,7 @@ public class ResearchLayerService implements IResearchLayerService {
 
     @Override
     public void deleteResearchLayer(String researchLayerId) {
-        boolean existsRegister = registerRepository.existsByRegisterResearchLayerId(researchLayerId);
+        boolean existsRegister = registerRepository.existsByRegisterInfoResearchLayerId(researchLayerId);
         if(existsRegister){
             ResearchLayerCollection researchLayerCollection = researchLayerRepository.findById(researchLayerId)
                     .orElseThrow( () ->

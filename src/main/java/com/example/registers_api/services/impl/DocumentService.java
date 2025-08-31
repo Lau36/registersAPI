@@ -19,8 +19,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Service
 @AllArgsConstructor
@@ -60,17 +67,46 @@ public class DocumentService implements IDocumentService {
         return new FileDownloadDTO(file.getFilename(), content);
     }
 
-//    @Override
-//    public GridFsResource getConsentimiento(String patientId) throws IOException {
-//        GridFSFile file = gridFsTemplate.findOne(
-//                new Query(Criteria.where("metadata.patientId").is(patientId))
-//                        .with(Sort.by(Sort.Direction.DESC, "uploadDate"))
-//        );
-//
-//        if (file == null) {
-//            throw new FileNotFoundException("Archivo no encontrado con id: " + patientId);
-//        }
-//
-//        return gridFsTemplate.getResource(file);
-//    }
+    @Override
+    public byte[] downloadAll() throws IOException {
+        List<GridFSFile> files = new ArrayList<>();
+        gridFsTemplate.find(new Query()).into(files);
+
+        if (files.isEmpty()) {
+            return null;
+        }
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream);
+
+        Set<String> usedNames = new HashSet<>();
+
+        for (GridFSFile file : files) {
+            GridFsResource resource = gridFsTemplate.getResource(file);
+            String filename = file.getFilename();
+
+            String uniqueName = filename;
+            int counter = 1;
+            while (usedNames.contains(uniqueName)) {
+                int dotIndex = filename.lastIndexOf(".");
+                if (dotIndex > 0) {
+                    uniqueName = filename.substring(0, dotIndex) + "(" + counter + ")" + filename.substring(dotIndex);
+                } else {
+                    uniqueName = filename + "(" + counter + ")";
+                }
+                counter++;
+            }
+            usedNames.add(uniqueName);
+
+            zipOutputStream.putNextEntry(new ZipEntry(uniqueName));
+            IOUtils.copy(resource.getInputStream(), zipOutputStream);
+            zipOutputStream.closeEntry();
+        }
+
+        zipOutputStream.finish();
+        zipOutputStream.close();
+
+        return byteArrayOutputStream.toByteArray();
+    }
+
 }

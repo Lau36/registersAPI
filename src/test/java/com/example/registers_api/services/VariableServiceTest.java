@@ -151,7 +151,7 @@ class VariableServiceTest {
         String varId = "var1";
         variableCollection.setIsEnabled(true);
 
-        when(registerRepository.existsByRegisterVariablesId(varId)).thenReturn(true);
+        when(registerRepository.existsByRegisterInfoVariablesId(varId)).thenReturn(true);
         when(variableRepository.findById(varId)).thenReturn(Optional.of(variableCollection));
 
         variableService.deleteVariable(varId);
@@ -164,7 +164,7 @@ class VariableServiceTest {
     void testDeleteVariable_WithoutRegister() {
         String varId = "var2";
 
-        when(registerRepository.existsByRegisterVariablesId(varId)).thenReturn(false);
+        when(registerRepository.existsByRegisterInfoVariablesId(varId)).thenReturn(false);
 
         variableService.deleteVariable(varId);
 
@@ -175,7 +175,7 @@ class VariableServiceTest {
     void testDeleteVariable_doesntExist_ThrowsException() {
         String varId = "var2";
 
-        when(registerRepository.existsByRegisterVariablesId(varId)).thenReturn(true);
+        when(registerRepository.existsByRegisterInfoVariablesId(varId)).thenReturn(true);
 
         when(variableRepository.findById(varId)).thenReturn(Optional.empty());
 

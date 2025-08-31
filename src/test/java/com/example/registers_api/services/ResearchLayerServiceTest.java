@@ -46,7 +46,7 @@ class ResearchLayerServiceTest {
 
     @BeforeEach
     void setUp() {
-        LayerBossDTO layerBossDTO = new LayerBossDTO(1109660212, "Juan Pérez", "12345");
+        LayerBossDTO layerBossDTO = new LayerBossDTO(1109660212, "Juan Pérez", "juan@gmail.com", "12345");
         sampleDTO = new ResearchLayerDTO();
         sampleDTO.setLayerName("Neurociencia");
         sampleDTO.setDescription("Investigación cerebral");
@@ -112,7 +112,7 @@ class ResearchLayerServiceTest {
 
     @Test
     void shouldDeleteResearchLayerWhenRegisterExists() {
-        when(registerRepository.existsByRegisterResearchLayerId("abc123")).thenReturn(true);
+        when(registerRepository.existsByRegisterInfoResearchLayerId("abc123")).thenReturn(true);
         when(researchLayerRepository.findById("abc123")).thenReturn(Optional.of(sampleCollection));
 
         researchLayerService.deleteResearchLayer("abc123");
@@ -123,7 +123,7 @@ class ResearchLayerServiceTest {
 
     @Test
     void shouldCompletelyDeleteResearchLayerWhenNoRegisterExists() {
-        when(registerRepository.existsByRegisterResearchLayerId("abc123")).thenReturn(false);
+        when(registerRepository.existsByRegisterInfoResearchLayerId("abc123")).thenReturn(false);
 
         researchLayerService.deleteResearchLayer("abc123");
 
@@ -154,7 +154,7 @@ class ResearchLayerServiceTest {
     void testDeleteResearchLayer_doesntExist_ThrowsException() {
         String researchLayerId = "researchLayerId2";
 
-        when(registerRepository.existsByRegisterResearchLayerId(researchLayerId)).thenReturn(true);
+        when(registerRepository.existsByRegisterInfoResearchLayerId(researchLayerId)).thenReturn(true);
 
         when(researchLayerRepository.findById(researchLayerId)).thenReturn(Optional.empty());
 

@@ -24,4 +24,5 @@ public class ExceptionConstants {
     public static final String VALUE_MUST_BE_STRING = "El valor debe ser de tipo string";
     public static final String VALUE_MUST_BE_DATE = "El valor debe ser de tipo fecha";
     public static final String TYPE_UNDEFINED = "El tipo inresado no coincide con niguno";
+    public static final String USER_DOESNT_EXISTS = "El usuario no existe, no se puede asignar a la capa de investigación";
 }

@@ -56,4 +56,18 @@ public class DocumentController {
                 .body(fileData.getContent());
     }
 
+    @GetMapping("/download/all")
+    public ResponseEntity<byte[]> downloadAllDocuments() throws IOException {
+        byte[] zipBytes = documentService.downloadAll();
+
+        if (zipBytes == null || zipBytes.length == 0) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"all_documents.zip\"")
+                .body(zipBytes);
+    }
+
 }
