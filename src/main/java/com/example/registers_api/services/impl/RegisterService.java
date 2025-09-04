@@ -276,9 +276,6 @@ public class RegisterService implements IRegisterService {
                 varResponse.setValueAsString(variable.getValueAsString());
                 break;
 
-            case DATE_TYPE:
-                varResponse.setValueAsDate(variable.getValueAsDate());
-                break;
             default:
                 throw new IllegalArgumentException(TYPE_UNDEFINED);
         }
@@ -307,13 +304,6 @@ public class RegisterService implements IRegisterService {
                 variable.setValueAsString((String) var.getValue());
                 break;
 
-            case DATE_TYPE:
-                if (!(var.getValue() instanceof LocalDateTime)) {
-                    throw new IllegalArgumentException(VALUE_MUST_BE_DATE);
-                }
-                variable.setValueAsDate((LocalDateTime) var.getValue());
-                break;
-
             default:
                 throw new IllegalArgumentException(TYPE_UNDEFINED);
         }
@@ -321,8 +311,4 @@ public class RegisterService implements IRegisterService {
         return variable;
     }
 
-    @Override
-    public void saveFile(FileCollection file) {
-        fileRespository.save(file);
-    }
 }

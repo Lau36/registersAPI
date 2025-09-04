@@ -23,4 +23,5 @@ public class UserDTO {
     private LocalDate birthDate;
     private List<String> researchLayer;
     private String role;
+    private Boolean acceptTermsAndConditions;
 }

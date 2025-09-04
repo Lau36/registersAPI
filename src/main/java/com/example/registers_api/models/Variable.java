@@ -15,6 +15,5 @@ public class Variable{
     private String type;
     private String valueAsString;
     private Double valueAsNumber;
-    private LocalDateTime valueAsDate;
 
 }

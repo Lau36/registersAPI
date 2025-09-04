@@ -66,6 +66,7 @@ public class UsersService implements IUserService {
 
             attributes.put(IDENTIFICATION_TYPE, Collections.singletonList(user.getIdentificationType()));
             attributes.put(IDENTIFICATION_NUMBER, Collections.singletonList(user.getIdentificationNumber().toString()));
+            attributes.put(ACCEPT_TERMS_CONDITION, Collections.singletonList(user.getAcceptTermsAndConditions().toString()));
             attributes.put(RESEARCH_LAYER, user.getResearchLayer());
             attributes.put(BIRTHDATE, Collections.singletonList(user.getBirthDate().format(formatter)));
             attributes.put(ROLE, Collections.singletonList(user.getRole()));
@@ -108,7 +109,7 @@ public class UsersService implements IUserService {
         Pattern pattern = Pattern.compile("\"errorMessage\"\\s*:\\s*\"([^\"]+)\"");
         Matcher matcher = pattern.matcher(jsonError);
         if (matcher.find()) {
-            return matcher.group(1); // Extrae solo el mensaje
+            return matcher.group(1);
         }
         return "Error desconocido";
     }

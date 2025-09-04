@@ -33,6 +33,7 @@ public class Constants {
 
     public static final String IDENTIFICATION_TYPE = "identificationType";
     public static final String IDENTIFICATION_NUMBER = "identificationNumber";
+    public static final String ACCEPT_TERMS_CONDITION = "acceptTermsAndConditions";
     public static final String RESEARCH_LAYER = "researchLayerId";
     public static final String BIRTHDATE = "birthDate";
     public static final String ROLE = "role";

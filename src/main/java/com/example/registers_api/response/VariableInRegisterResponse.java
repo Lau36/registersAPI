@@ -2,8 +2,6 @@ package com.example.registers_api.response;
 
 import lombok.*;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,6 +14,5 @@ public class VariableInRegisterResponse {
     private String variableType;
     private String valueAsString;
     private Double valueAsNumber;
-    private LocalDateTime valueAsDate;
 
 }

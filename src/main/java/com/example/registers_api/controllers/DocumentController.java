@@ -30,7 +30,9 @@ public class DocumentController {
 
     private final IDocumentService documentService;
 
+
     @PostMapping("/upload")
+    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
     public ResponseEntity<String> uploadConsentimiento(
             @RequestParam("patientId") int patientId,
             @RequestParam("file") MultipartFile file) {
@@ -43,6 +45,7 @@ public class DocumentController {
     }
 
     @GetMapping("/download/{patientId}")
+    @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
     public ResponseEntity<byte[]> downloadConsentimiento(@PathVariable Integer patientId) throws IOException {
         FileDownloadDTO fileData = documentService.downloadByPatientId(patientId);
 
@@ -57,6 +60,7 @@ public class DocumentController {
     }
 
     @GetMapping("/download/all")
+    @PreAuthorize("hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
     public ResponseEntity<byte[]> downloadAllDocuments() throws IOException {
         byte[] zipBytes = documentService.downloadAll();
 
