@@ -34,7 +34,7 @@ public class Constants {
     public static final String IDENTIFICATION_TYPE = "identificationType";
     public static final String IDENTIFICATION_NUMBER = "identificationNumber";
     public static final String ACCEPT_TERMS_CONDITION = "acceptTermsAndConditions";
-    public static final String RESEARCH_LAYER = "researchLayerId";
+    public static final String RESEARCH_LAYER_ID = "researchLayerId";
     public static final String BIRTHDATE = "birthDate";
     public static final String ROLE = "role";
     public static final String LAST_PASSWORD_UPDATE = "lastPasswordUpdate";
@@ -63,6 +63,11 @@ public class Constants {
 
     public static final String ERROR_MESSAGE = "errorMessage";
     public static final String ERROR_PROCESING_RESPONSE = "Error al procesar la respuesta del servidor";
+
+    public static final String RESEARCH_LAYER = "RESEARCH_LAYER";
+    public static final String PATIENT_BASIC_INFO = "PATIENT_BASIC_INFO";
+    public static final String CAREGIVER = "CAREGIVER";
+    public static final String HEALTH_PROFESSIONAL = "HEALTH_PROFESSIONAL";
 
 
 

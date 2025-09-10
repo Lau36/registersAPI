@@ -2,6 +2,7 @@ package com.example.registers_api.models;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.TimeSeries;
 import org.springframework.data.mongodb.core.timeseries.Granularity;
@@ -20,9 +21,10 @@ import java.util.List;
         granularity = Granularity.HOURS
 )
 public class RegisterCollection {
-
     @Id
     private String id;
+    @Version
+    private Long version;
     private LocalDateTime registerDate;
     private LocalDateTime updateRegisterDate;
     private String updatedBy;
@@ -32,6 +34,4 @@ public class RegisterCollection {
     private Patient patientBasicInfo;
     private Caregiver caregiver;
     private HealthProfessional healthProfessional;
-
-
 }

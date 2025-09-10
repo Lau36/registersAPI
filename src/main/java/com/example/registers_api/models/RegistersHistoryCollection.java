@@ -7,25 +7,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDateTime;
-import java.util.List;
 
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder
-@Document(collection = "registersHistory")
+@Document(collection = "register_history")
 public class RegistersHistoryCollection {
     @Id
     private String id;
-    private LocalDateTime registerId;
-    private Integer patientIdentificationNumber;
-    private String version;
-    private LocalDateTime updateRegisterDate;
+    private String registerId;
     private String updatedBy;
-    private List<ResearchLayerGroup> registerInfo;
-    private String patientIdentificationType;
-    private Patient patientBasicInfo;
-    private Caregiver caregiver;
-    private HealthProfessional healthProfessional;
+    private String updatedAt;
+    private String operation;
+    private ResearchLayerGroup isResearchLayerGroup;
+    private Patient isPatientBasicInfo;
+    private Caregiver isCaregiverInfo;
+    private HealthProfessional isHealthProfessionalInfo;
 }

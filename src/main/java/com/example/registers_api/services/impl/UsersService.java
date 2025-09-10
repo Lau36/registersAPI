@@ -7,7 +7,6 @@ import com.example.registers_api.services.IUserService;
 import jakarta.ws.rs.core.Response;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.RoleMappingResource;
@@ -67,7 +66,7 @@ public class UsersService implements IUserService {
             attributes.put(IDENTIFICATION_TYPE, Collections.singletonList(user.getIdentificationType()));
             attributes.put(IDENTIFICATION_NUMBER, Collections.singletonList(user.getIdentificationNumber().toString()));
             attributes.put(ACCEPT_TERMS_CONDITION, Collections.singletonList(user.getAcceptTermsAndConditions().toString()));
-            attributes.put(RESEARCH_LAYER, user.getResearchLayer());
+            attributes.put(RESEARCH_LAYER_ID, user.getResearchLayer());
             attributes.put(BIRTHDATE, Collections.singletonList(user.getBirthDate().format(formatter)));
             attributes.put(ROLE, Collections.singletonList(user.getRole()));
             newUser.setAttributes(attributes);
@@ -218,7 +217,7 @@ public class UsersService implements IUserService {
 
         attributes.put(IDENTIFICATION_TYPE, Collections.singletonList(userDTO.getIdentificationType()));
         attributes.put(IDENTIFICATION_NUMBER, Collections.singletonList(userDTO.getIdentificationNumber().toString()));
-        attributes.put(RESEARCH_LAYER, userDTO.getResearchLayer());
+        attributes.put(RESEARCH_LAYER_ID, userDTO.getResearchLayer());
         attributes.put(BIRTHDATE, Collections.singletonList(userDTO.getBirthDate().format(formatter)));
         attributes.put(ROLE, Collections.singletonList(userDTO.getRole()));
         user.setAttributes(attributes);

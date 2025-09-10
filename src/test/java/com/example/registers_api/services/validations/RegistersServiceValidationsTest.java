@@ -147,7 +147,7 @@ class RegistersServiceValidationsTest {
 //        String userEmail = "test@domain.com";
 //        UserRepresentation userRepresentation = mock(UserRepresentation.class);
 //        UsersResource usersResource = mock(UsersResource.class);
-//        Map<String, List<String>> attributes = Map.of("RESEARCH_LAYER", List.of("rl1"));
+//        Map<String, List<String>> attributes = Map.of("RESEARCH_LAYER_ID", List.of("rl1"));
 //        when(keycloak.realm(REALM_NAME).users()).thenReturn(usersResource);
 //        when(usersResource.searchByEmail(userEmail, true)).thenReturn(List.of(userRepresentation));
 //        when(userRepresentation.getAttributes()).thenReturn(attributes);

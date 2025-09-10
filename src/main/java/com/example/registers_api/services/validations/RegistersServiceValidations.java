@@ -5,8 +5,6 @@ import com.example.registers_api.exceptions.DoesntHavePermissions;
 import com.example.registers_api.exceptions.NotEmptyFieldException;
 import com.example.registers_api.exceptions.NotEnabledException;
 import com.example.registers_api.models.HealthProfessional;
-import com.example.registers_api.models.Patient;
-import com.example.registers_api.models.Variable;
 import com.example.registers_api.repository.ResearchLayerRepository;
 import com.example.registers_api.repository.VariableRepository;
 import com.example.registers_api.request.RegisterRequest;
@@ -82,8 +80,8 @@ public class RegistersServiceValidations {
         UserRepresentation user = users.get(0);
         Map<String, List<String>> atributos = user.getAttributes();
 
-        if (atributos != null && atributos.containsKey(RESEARCH_LAYER)) {
-            return atributos.get(RESEARCH_LAYER);
+        if (atributos != null && atributos.containsKey(RESEARCH_LAYER_ID)) {
+            return atributos.get(RESEARCH_LAYER_ID);
         }
         else{
             throw new NotEnabledException("Los atributos del usuario son null");
