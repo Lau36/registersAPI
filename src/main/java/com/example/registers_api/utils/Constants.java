@@ -12,7 +12,7 @@ public class Constants {
     public static final String RESEACH_LAYER_NOT_CREATED = "Ocurrió un error al crear la capa de investigación";
     public static final String VARIABLE_DELETED = "Se eliminó la variable correctamente";
     public static final String RESEARCH_LAYER_DELETED = "Se eliminó la capa de investigación correctamente";
-    public static final String REGISTER_CREATED = "Registro creado con éxito";
+    public static final String REGISTER_CREATED_SUCCESSFULL = "Registro creado con éxito";
     public static final String REGISTER_UPDATED = "Registro actualizado con éxito";
     public static final String REGISTER_DELETED = "Registro eliminado con éxito";
     public static final String VARIABLE_NOT_FOUND = "No se encontró una variable con el id: '%s'";
@@ -64,10 +64,12 @@ public class Constants {
     public static final String ERROR_MESSAGE = "errorMessage";
     public static final String ERROR_PROCESING_RESPONSE = "Error al procesar la respuesta del servidor";
 
-    public static final String RESEARCH_LAYER = "RESEARCH_LAYER";
-    public static final String PATIENT_BASIC_INFO = "PATIENT_BASIC_INFO";
-    public static final String CAREGIVER = "CAREGIVER";
-    public static final String HEALTH_PROFESSIONAL = "HEALTH_PROFESSIONAL";
+    public static final String UPDATE_RESEARCH_LAYER = "UPDATE_RESEARCH_LAYER";
+    public static final String UPDATE_PATIENT_BASIC_INFO = "UPDATE_PATIENT_BASIC_INFO";
+    public static final String UPDATE_CAREGIVER = "UPDATE_CAREGIVER";
+    public static final String UPDATE_HEALTH_PROFESSIONAL = "UPDATE_HEALTH_PROFESSIONAL";
+    public static final String REGISTER_CREATED = "REGISTER_CREATED_SUCCESSFULL";
+
 
 
 

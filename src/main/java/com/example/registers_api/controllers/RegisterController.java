@@ -1,19 +1,19 @@
 package com.example.registers_api.controllers;
 
-import com.example.registers_api.models.FileCollection;
+import com.example.registers_api.models.RegisterCollection;
 import com.example.registers_api.request.PaginationRequest;
 import com.example.registers_api.request.RegisterRequest;
 import com.example.registers_api.request.SortDirection;
 import com.example.registers_api.response.BasicResponse;
 import com.example.registers_api.response.PaginatedResponse;
+import com.example.registers_api.response.RegisterResponse2;
 import com.example.registers_api.services.IRegisterService;
+import com.example.registers_api.services.IRegisterService2;
 import com.example.registers_api.utils.Constants;
 import lombok.AllArgsConstructor;
-import org.bson.types.Binary;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1/registers")
@@ -22,12 +22,13 @@ import org.springframework.web.multipart.MultipartFile;
 public class RegisterController {
 
     private IRegisterService registerService;
+    private IRegisterService2 registerService2;
 
     @PostMapping()
     @PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
     public ResponseEntity<BasicResponse> saveRegister(@RequestParam String userEmail, @RequestBody RegisterRequest registerRequest) {
-        BasicResponse response = new BasicResponse(Constants.REGISTER_CREATED);
-        registerService.saveRegister(registerRequest, userEmail);
+        BasicResponse response = new BasicResponse(Constants.REGISTER_CREATED_SUCCESSFULL);
+        registerService2.saveRegister(registerRequest, userEmail);
         return ResponseEntity.ok(response);
     }
 
@@ -114,6 +115,14 @@ public class RegisterController {
                 .sortDirection(SortDirection.valueOf(sortDirection.toUpperCase()))
                 .build();
         PaginatedResponse response = registerService.getAllRegistersByResearchLayerPaginated(request, researchLayerId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/actualRegisterByPatient")
+    @PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
+    public ResponseEntity<RegisterResponse2> getRegisterByPatient(
+            @RequestParam int patientIdentificationNumber) {
+        RegisterResponse2 response =registerService2.actualPatientRegisterInfo(patientIdentificationNumber);
         return ResponseEntity.ok(response);
     }
 }

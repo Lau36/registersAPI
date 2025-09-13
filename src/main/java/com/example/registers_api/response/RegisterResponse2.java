@@ -1,9 +1,7 @@
-package com.example.registers_api.request;
+package com.example.registers_api.response;
 
 import com.example.registers_api.models.Caregiver;
 import com.example.registers_api.models.Patient;
-import com.example.registers_api.models.ResearchLayerGroup;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,13 +12,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Builder(toBuilder = true)
-public class RegisterRequest {
-    @NotNull(message = "Las variables no pueden ser nulas")
-    private InfoChanged infoChanged;
-    private List<ResearchLayerGroup> registerInfo;
+@Builder
+public class RegisterResponse2 {
+    private String registerId;
     private Integer patientIdentificationNumber;
     private String patientIdentificationType;
-    private Patient patient;
+    private List<ResearchLayerGroupResponse> registerInfo;
+    private Patient patientBasicInfo;
     private Caregiver caregiver;
 }

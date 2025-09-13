@@ -57,8 +57,8 @@ dependencies {
 	// implementation 'org.postgresql:postgresql:22.0.3'
 	implementation 'org.keycloak:keycloak-admin-client:22.0.4'
 	implementation 'org.jboss.resteasy:resteasy-client:6.2.5.Final'
-	implementation 'org.springframework.security:spring-security-oauth2-jose:6.3.0'
-	implementation 'org.springframework.security:spring-security-oauth2-resource-server:6.3.0'
+	implementation 'org.springframework.security:spring-security-oauth2-jose'
+	implementation 'org.springframework.security:spring-security-oauth2-resource-server'
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'

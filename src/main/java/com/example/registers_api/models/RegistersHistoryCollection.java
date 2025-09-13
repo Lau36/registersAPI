@@ -17,11 +17,10 @@ public class RegistersHistoryCollection {
     @Id
     private String id;
     private String registerId;
-    private String updatedBy;
-    private String updatedAt;
+    private String changedBy;
+    private String changedAt;
     private String operation;
     private ResearchLayerGroup isResearchLayerGroup;
     private Patient isPatientBasicInfo;
     private Caregiver isCaregiverInfo;
-    private HealthProfessional isHealthProfessionalInfo;
 }

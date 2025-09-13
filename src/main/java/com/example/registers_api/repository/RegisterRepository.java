@@ -10,6 +10,7 @@ import java.util.Optional;
 public interface RegisterRepository extends MongoRepository<RegisterCollection, String> {
     List<RegisterCollection> findAllBy(PageRequest pageRequest);
     List<RegisterCollection> findAllByPatientIdentificationNumber(Integer patientIdentificationNumber, PageRequest pageable);
+    RegisterCollection findByPatientIdentificationNumber(Integer patientIdentificationNumber);
 
     //@Query("{ 'healthProfessional.identificationNumber': ?0 }")
     List<RegisterCollection> findAllByHealthProfessionalIdentificationNumber(Integer identificationNumber, PageRequest pageable);

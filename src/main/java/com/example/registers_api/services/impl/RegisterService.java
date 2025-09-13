@@ -39,7 +39,6 @@ public class RegisterService implements IRegisterService {
         List<Variable> variables = addNamesToVariables(register.getVariables());
         Patient patient = register.getPatient();
         Caregiver caregiver = register.getCaregiver();
-        HealthProfessional healthProfessional = register.getHealthProfessional();
 
         registersServiceValidations.validateResearchLayer(userEmail, register);
         registersServiceValidations.validateRegisterFields(register);
@@ -65,13 +64,11 @@ public class RegisterService implements IRegisterService {
         });
 
         RegisterCollection registerCollection = RegisterCollection.builder()
-                .registerDate(LocalDateTime.now())
                 .patientIdentificationNumber(register.getPatientIdentificationNumber())
                 .patientIdentificationType(register.getPatientIdentificationType())
                 .registerInfo(new ArrayList<>(grouped.values()))
                 .patientBasicInfo(patient)
                 .caregiver(caregiver)
-                .healthProfessional(healthProfessional)
                 .build();
 
         registerRepository.save(registerCollection);
@@ -97,44 +94,41 @@ public class RegisterService implements IRegisterService {
 
     @Override
     public void updateRegister(String registerId, String userEmail, RegisterRequest register) {
-        RegisterCollection existingRegister = registerRepository.findById(registerId)
-                .orElseThrow(() -> new DoesntExistsException(
-                        String.format(REGISTER_NOT_FOUND, registerId)
-                ));
-
-        registersServiceValidations.validateResearchLayer(userEmail, register);
-        registersServiceValidations.validateRegisterFields(register);
-        registersServiceValidations.validateVariablesAndResearchLayer(register);
-
-        List<Variable> variables = addNamesToVariables(register.getVariables());
-
-        Map<String, ResearchLayerGroup> grouped = new LinkedHashMap<>();
-
-        register.getVariables().forEach(vReq -> {
-            String layerId = vReq.getResearchLayerId();
-            String layerName = vReq.getResearchLayerName();
-
-            grouped.computeIfAbsent(layerId, id -> ResearchLayerGroup.builder()
-                    .researchLayerId(layerId)
-                    .researchLayerName(layerName)
-                    .variables(new ArrayList<>())
-                    .build()
-            ).getVariables().add(
-                    variables.stream()
-                            .filter(v -> v.getId().equals(vReq.getId()))
-                            .findFirst()
-                            .orElse(null)
-            );
-        });
-
-        existingRegister.setRegisterInfo(new ArrayList<>(grouped.values()));
-        existingRegister.setPatientBasicInfo(register.getPatient());
-        existingRegister.setCaregiver(register.getCaregiver());
-        existingRegister.setHealthProfessional(register.getHealthProfessional());
-        existingRegister.setUpdateRegisterDate(LocalDateTime.now());
-        existingRegister.setUpdatedBy(userEmail);
-
-        registerRepository.save(existingRegister);
+//        RegisterCollection existingRegister = registerRepository.findById(registerId)
+//                .orElseThrow(() -> new DoesntExistsException(
+//                        String.format(REGISTER_NOT_FOUND, registerId)
+//                ));
+//
+//        registersServiceValidations.validateResearchLayer(userEmail, register);
+//        registersServiceValidations.validateRegisterFields(register);
+//        registersServiceValidations.validateVariablesAndResearchLayer(register);
+//
+//        List<Variable> variables = addNamesToVariables(register.getVariables());
+//
+//        Map<String, ResearchLayerGroup> grouped = new LinkedHashMap<>();
+//
+//        register.getVariables().forEach(vReq -> {
+//            String layerId = vReq.getResearchLayerId();
+//            String layerName = vReq.getResearchLayerName();
+//
+//            grouped.computeIfAbsent(layerId, id -> ResearchLayerGroup.builder()
+//                    .researchLayerId(layerId)
+//                    .researchLayerName(layerName)
+//                    .variables(new ArrayList<>())
+//                    .build()
+//            ).getVariables().add(
+//                    variables.stream()
+//                            .filter(v -> v.getId().equals(vReq.getId()))
+//                            .findFirst()
+//                            .orElse(null)
+//            );
+//        });
+//
+//        existingRegister.setRegisterInfo(new ArrayList<>(grouped.values()));
+//        existingRegister.setPatientBasicInfo(register.getPatient());
+//        existingRegister.setCaregiver(register.getCaregiver());
+//
+//        registerRepository.save(existingRegister);
     }
 
     @Override
@@ -208,14 +202,10 @@ public class RegisterService implements IRegisterService {
     public RegistersResponse mapToResponse(RegisterCollection register) {
         RegistersResponse response = new RegistersResponse();
         response.setRegisterId(register.getId());
-        response.setRegisterDate(register.getRegisterDate());
-        response.setUpdateRegisterDate(register.getUpdateRegisterDate());
-        response.setUpdatedBy(register.getUpdatedBy());
         response.setPatientIdentificationNumber(register.getPatientIdentificationNumber());
         response.setPatientIdentificationType(register.getPatientIdentificationType());
         response.setPatientBasicInfo(register.getPatientBasicInfo());
         response.setCaregiver(register.getCaregiver());
-        response.setHealthProfessional(register.getHealthProfessional());
 
         List<ResearchLayerGroupResponse> groupResponses = new ArrayList<>();
 

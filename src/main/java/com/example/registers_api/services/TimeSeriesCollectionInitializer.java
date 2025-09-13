@@ -12,7 +12,7 @@ import org.bson.Document;
 @Component
 @RequiredArgsConstructor
 public class TimeSeriesCollectionInitializer {
-//    private final MongoTemplate mongoTemplate;
+//    private final AnalyticsPipelineService mongoTemplate;
 //
 //    @PostConstruct
 //    public void createTimeSeriesCollectionIfNotExists() {

@@ -7,7 +7,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.TimeSeries;
 import org.springframework.data.mongodb.core.timeseries.Granularity;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -25,13 +24,9 @@ public class RegisterCollection {
     private String id;
     @Version
     private Long version;
-    private LocalDateTime registerDate;
-    private LocalDateTime updateRegisterDate;
-    private String updatedBy;
-    private List<ResearchLayerGroup> registerInfo;
     private Integer patientIdentificationNumber;
     private String patientIdentificationType;
+    private List<ResearchLayerGroup> registerInfo;
     private Patient patientBasicInfo;
     private Caregiver caregiver;
-    private HealthProfessional healthProfessional;
 }
