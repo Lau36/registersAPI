@@ -36,60 +36,61 @@ public class RegisterService implements IRegisterService {
     @Override
     public void saveRegister(RegisterRequest register,  String userEmail) {
 
-        List<Variable> variables = addNamesToVariables(register.getVariables());
-        Patient patient = register.getPatient();
-        Caregiver caregiver = register.getCaregiver();
-
-        registersServiceValidations.validateResearchLayer(userEmail, register);
-        registersServiceValidations.validateRegisterFields(register);
-        registersServiceValidations.validateVariablesAndResearchLayer(register);
-
-        Map<String, ResearchLayerGroup> grouped = new LinkedHashMap<>();
-
-        register.getVariables().forEach(vReq -> {
-            String layerId = vReq.getResearchLayerId();
-            String layerName = vReq.getResearchLayerName();
-
-            grouped.computeIfAbsent(layerId, id -> ResearchLayerGroup.builder()
-                    .researchLayerId(layerId)
-                    .researchLayerName(layerName)
-                    .variables(new ArrayList<>())
-                    .build()
-            ).getVariables().add(
-                    variables.stream()
-                            .filter(v -> v.getId().equals(vReq.getId()))
-                            .findFirst()
-                            .orElse(null)
-            );
-        });
-
-        RegisterCollection registerCollection = RegisterCollection.builder()
-                .patientIdentificationNumber(register.getPatientIdentificationNumber())
-                .patientIdentificationType(register.getPatientIdentificationType())
-                .registerInfo(new ArrayList<>(grouped.values()))
-                .patientBasicInfo(patient)
-                .caregiver(caregiver)
-                .build();
-
-        registerRepository.save(registerCollection);
+//        List<Variable> variables = addNamesToVariables(register.getVariables());
+//        Patient patient = register.getPatient();
+//        Caregiver caregiver = register.getCaregiver();
+//
+//        registersServiceValidations.validateResearchLayer(userEmail, register);
+//        registersServiceValidations.validateRegisterFields(register);
+//        registersServiceValidations.validateVariablesAndResearchLayer(register);
+//
+//        Map<String, ResearchLayerGroup> grouped = new LinkedHashMap<>();
+//
+//        register.getVariables().forEach(vReq -> {
+//            String layerId = vReq.getResearchLayerId();
+//            String layerName = vReq.getResearchLayerName();
+//
+//            grouped.computeIfAbsent(layerId, id -> ResearchLayerGroup.builder()
+//                    .researchLayerId(layerId)
+//                    .researchLayerName(layerName)
+//                    .variables(new ArrayList<>())
+//                    .build()
+//            ).getVariables().add(
+//                    variables.stream()
+//                            .filter(v -> v.getId().equals(vReq.getId()))
+//                            .findFirst()
+//                            .orElse(null)
+//            );
+//        });
+//
+//        RegisterCollection registerCollection = RegisterCollection.builder()
+//                .patientIdentificationNumber(register.getPatientIdentificationNumber())
+//                .patientIdentificationType(register.getPatientIdentificationType())
+//                .registerInfo(new ArrayList<>(grouped.values()))
+//                .patientBasicInfo(patient)
+//                .caregiver(caregiver)
+//                .build();
+//
+//        registerRepository.save(registerCollection);
     }
 
     @Override
     public PaginatedResponse getAllRegistersPaginated(PaginationRequest paginationRequest) {
-        Sort sort = Sort.by(Sort.Direction.fromString(paginationRequest.getSortDirection().name()), paginationRequest.getSort());
-        PageRequest pageable = PageRequest.of(paginationRequest.getPage(), paginationRequest.getSize(), sort);
-
-        long totalElements = registerRepository.count();
-        int totalPages = (int) Math.ceil(totalElements / (double) paginationRequest.getSize());
-
-        List<RegistersResponse> registers = getRegister(registerRepository.findAllBy(pageable));
-
-        return PaginatedResponse.builder()
-                .registers(registers)
-                .currentPage(paginationRequest.getPage())
-                .totalPages(totalPages)
-                .totalElements(totalElements)
-                .build();
+//        Sort sort = Sort.by(Sort.Direction.fromString(paginationRequest.getSortDirection().name()), paginationRequest.getSort());
+//        PageRequest pageable = PageRequest.of(paginationRequest.getPage(), paginationRequest.getSize(), sort);
+//
+//        long totalElements = registerRepository.count();
+//        int totalPages = (int) Math.ceil(totalElements / (double) paginationRequest.getSize());
+//
+//        List<RegistersResponse> registers = getRegister(registerRepository.findAllBy(pageable));
+//
+//        return PaginatedResponse.builder()
+//                .registers(registers)
+//                .currentPage(paginationRequest.getPage())
+//                .totalPages(totalPages)
+//                .totalElements(totalElements)
+//                .build();
+        return null;
     }
 
     @Override
@@ -133,56 +134,46 @@ public class RegisterService implements IRegisterService {
 
     @Override
     public PaginatedResponse getAllRegistersByPatientPaginated(PaginationRequest paginationRequest, Integer patientIdentificationNumber) {
-        Sort sort = Sort.by(Sort.Direction.fromString(paginationRequest.getSortDirection().name()), paginationRequest.getSort());
-        PageRequest pageable = PageRequest.of(paginationRequest.getPage(), paginationRequest.getSize(), sort);
-
-        List<RegistersResponse> registers = getRegister(registerRepository
-                .findAllByPatientIdentificationNumber(patientIdentificationNumber, pageable));
-        long totalElements = registerRepository.countByPatientIdentificationNumber(patientIdentificationNumber);
-        int totalPages = (int) Math.ceil(totalElements / (double) paginationRequest.getSize());
-
-        return PaginatedResponse.builder()
-                .registers(registers)
-                .currentPage(paginationRequest.getPage())
-                .totalPages(totalPages)
-                .totalElements(totalElements)
-                .build();
+//        Sort sort = Sort.by(Sort.Direction.fromString(paginationRequest.getSortDirection().name()), paginationRequest.getSort());
+//        PageRequest pageable = PageRequest.of(paginationRequest.getPage(), paginationRequest.getSize(), sort);
+//
+//        List<RegistersResponse> registers = getRegister(registerRepository
+//                .findAllByPatientIdentificationNumber(patientIdentificationNumber, pageable));
+//        long totalElements = registerRepository.countByPatientIdentificationNumber(patientIdentificationNumber);
+//        int totalPages = (int) Math.ceil(totalElements / (double) paginationRequest.getSize());
+//
+//        return PaginatedResponse.builder()
+//                .registers(registers)
+//                .currentPage(paginationRequest.getPage())
+//                .totalPages(totalPages)
+//                .totalElements(totalElements)
+//                .build();
+        return null;
     }
 
     @Override
     public PaginatedResponse getAllRegistersByHealthProfesionalPaginated(PaginationRequest paginationRequest, Integer healthProfesionalIdentificationNumber) {
-        Sort sort = Sort.by(Sort.Direction.fromString(paginationRequest.getSortDirection().name()), paginationRequest.getSort());
-        PageRequest pageable = PageRequest.of(paginationRequest.getPage(), paginationRequest.getSize(), sort);
-
-        List<RegistersResponse> registers = getRegister(registerRepository.
-                findAllByHealthProfessionalIdentificationNumber(healthProfesionalIdentificationNumber, pageable));
-        long totalElements = registerRepository.countByHealthProfessionalIdentificationNumber(healthProfesionalIdentificationNumber);
-        int totalPages = (int) Math.ceil(totalElements / (double) paginationRequest.getSize());
-
-        return PaginatedResponse.builder()
-                .registers(registers)
-                .currentPage(paginationRequest.getPage())
-                .totalPages(totalPages)
-                .totalElements(totalElements)
-                .build();
+        return null;
     }
+
 
     @Override
     public PaginatedResponse getAllRegistersByResearchLayerPaginated(PaginationRequest paginationRequest, String researchLayerId) {
-        Sort sort = Sort.by(Sort.Direction.fromString(paginationRequest.getSortDirection().name()), paginationRequest.getSort());
-        PageRequest pageable = PageRequest.of(paginationRequest.getPage(), paginationRequest.getSize(), sort);
-
-        List<RegistersResponse> registers = getRegister(registerRepository.
-                findAllByRegisterInfoResearchLayerId(researchLayerId, pageable));
-        long totalElements = registerRepository.countByRegisterInfoResearchLayerId(researchLayerId);
-        int totalPages = (int) Math.ceil(totalElements / (double) paginationRequest.getSize());
-
-        return PaginatedResponse.builder()
-                .registers(registers)
-                .currentPage(paginationRequest.getPage())
-                .totalPages(totalPages)
-                .totalElements(totalElements)
-                .build();
+//        Sort sort = Sort.by(Sort.Direction.fromString(paginationRequest.getSortDirection().name()), paginationRequest.getSort());
+//        PageRequest pageable = PageRequest.of(paginationRequest.getPage(), paginationRequest.getSize(), sort);
+//
+//        List<RegistersResponse> registers = getRegister(registerRepository.
+//                findAllByRegisterInfoResearchLayerId(researchLayerId, pageable));
+//        long totalElements = registerRepository.countByRegisterInfoResearchLayerId(researchLayerId);
+//        int totalPages = (int) Math.ceil(totalElements / (double) paginationRequest.getSize());
+//
+//        return PaginatedResponse.builder()
+//                .registers(registers)
+//                .currentPage(paginationRequest.getPage())
+//                .totalPages(totalPages)
+//                .totalElements(totalElements)
+//                .build();
+        return null;
     }
 
     @Override
@@ -193,62 +184,63 @@ public class RegisterService implements IRegisterService {
         registerRepository.deleteById(registerId);
     }
 
-    public List<RegistersResponse> getRegister(List<RegisterCollection> registerCollection) {
-        return registerCollection.stream()
-                .map(this::mapToResponse)
-                .toList();
+    public void getRegister(List<RegisterCollection> registerCollection) {
+//        return registerCollection.stream()
+//                .map(this::mapToResponse)
+//                .toList();
     }
 
-    public RegistersResponse mapToResponse(RegisterCollection register) {
-        RegistersResponse response = new RegistersResponse();
-        response.setRegisterId(register.getId());
-        response.setPatientIdentificationNumber(register.getPatientIdentificationNumber());
-        response.setPatientIdentificationType(register.getPatientIdentificationType());
-        response.setPatientBasicInfo(register.getPatientBasicInfo());
-        response.setCaregiver(register.getCaregiver());
-
-        List<ResearchLayerGroupResponse> groupResponses = new ArrayList<>();
-
-        for (ResearchLayerGroup group : register.getRegisterInfo()) {
-            ResearchLayerGroupResponse groupResponse = new ResearchLayerGroupResponse();
-            groupResponse.setResearchLayerId(group.getResearchLayerId());
-            groupResponse.setResearchLayerName(group.getResearchLayerName());
-
-            List<VariableInRegisterResponse> variableResponses = new ArrayList<>();
-
-            for (Variable variable : group.getVariables()) {
-                String variableName = variableRepository.findById(variable.getId())
-                        .map(VariableCollection::getVariableName)
-                        .orElse("Unknown");
-
-                VariableInRegisterResponse varResponse = setVariableValueInVariableResponse(variable, variableName);
-
-                variableResponses.add(varResponse);
-            }
-
-            groupResponse.setVariablesInfo(variableResponses);
-            groupResponses.add(groupResponse);
-        }
-
-        response.setRegisterInfo(groupResponses);
-        return response;
+    public void mapToResponse(RegisterCollection register) {
+//        RegistersResponse response = new RegistersResponse();
+//        response.setRegisterId(register.getId());
+//        response.setPatientIdentificationNumber(register.getPatientIdentificationNumber());
+//        response.setPatientIdentificationType(register.getPatientIdentificationType());
+//        response.setPatientBasicInfo(register.getPatientBasicInfo());
+//        response.setCaregiver(register.getCaregiver());
+//
+//        List<ResearchLayerGroupResponse> groupResponses = new ArrayList<>();
+//
+//        for (ResearchLayerGroup group : register.getRegisterInfo()) {
+//            ResearchLayerGroupResponse groupResponse = new ResearchLayerGroupResponse();
+//            groupResponse.setResearchLayerId(group.getResearchLayerId());
+//            groupResponse.setResearchLayerName(group.getResearchLayerName());
+//
+//            List<VariableInRegisterResponse> variableResponses = new ArrayList<>();
+//
+//            for (Variable variable : group.getVariables()) {
+//                String variableName = variableRepository.findById(variable.getId())
+//                        .map(VariableCollection::getVariableName)
+//                        .orElse("Unknown");
+//
+//                VariableInRegisterResponse varResponse = setVariableValueInVariableResponse(variable, variableName);
+//
+//                variableResponses.add(varResponse);
+//            }
+//
+//            groupResponse.setVariablesInfo(variableResponses);
+//            groupResponses.add(groupResponse);
+//        }
+//
+//        response.setRegisterInfo(groupResponses);
+//        return response;
     }
 
     public List<Variable> addNamesToVariables(List<VariableRequest> variables){
-        List<Variable> variablesWithNames = new ArrayList<>();
-
-        for (VariableRequest var : variables) {
-            Optional<VariableCollection> variableFromDb = variableRepository.findById(var.getId());
-
-            if (variableFromDb.isEmpty()) {
-                throw new NotFoundException("Variable con ID " + var.getId() + " no encontrada");
-            }
-
-            Variable newVariable = setVariableValueInVariable(var, variableFromDb);
-
-            variablesWithNames.add(newVariable);
-        }
-        return variablesWithNames;
+//        List<Variable> variablesWithNames = new ArrayList<>();
+//
+//        for (VariableRequest var : variables) {
+//            Optional<VariableCollection> variableFromDb = variableRepository.findById(var.getId());
+//
+//            if (variableFromDb.isEmpty()) {
+//                throw new NotFoundException("Variable con ID " + var.getId() + " no encontrada");
+//            }
+//
+//            Variable newVariable = setVariableValueInVariable(var, variableFromDb);
+//
+//            variablesWithNames.add(newVariable);
+//        }
+//        return variablesWithNames;
+        return null;
     }
 
     public VariableInRegisterResponse  setVariableValueInVariableResponse(Variable variable, String variableName){

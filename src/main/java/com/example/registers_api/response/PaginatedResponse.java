@@ -1,6 +1,5 @@
 package com.example.registers_api.response;
 
-import com.example.registers_api.models.RegisterCollection;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,8 +11,8 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Builder
-public class PaginatedResponse {
-    private List<RegistersResponse> registers;
+public class PaginatedResponse<T> {
+    private List<T> data;
     private int currentPage;
     private int totalPages;
     private long totalElements;

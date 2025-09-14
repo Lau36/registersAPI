@@ -2,21 +2,22 @@ package com.example.registers_api.services.impl;
 
 import com.example.registers_api.exceptions.DoesntExistsException;
 import com.example.registers_api.mappers.RegisterMapper;
+import com.example.registers_api.mappers.ResearchLayerMapper2;
 import com.example.registers_api.models.*;
 import com.example.registers_api.repository.RegisterHistoryRepository;
 import com.example.registers_api.repository.RegisterRepository;
 import com.example.registers_api.repository.VariableRepository;
-import com.example.registers_api.request.InfoChanged;
+import com.example.registers_api.request.PaginationRequest;
 import com.example.registers_api.request.RegisterRequest;
-import com.example.registers_api.request.VariableRequest;
-import com.example.registers_api.response.RegisterResponse2;
-import com.example.registers_api.response.ResearchLayerGroupResponse;
-import com.example.registers_api.response.VariableInRegisterResponse;
+import com.example.registers_api.response.*;
 import com.example.registers_api.services.AnalyticsPipelineService;
 import com.example.registers_api.services.IRegisterService2;
 import com.example.registers_api.services.validations.RegistersServiceValidations;
-import jakarta.ws.rs.NotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -37,21 +38,27 @@ public class RegisterService2 implements IRegisterService2 {
     private RegisterMapper registerMapper;
 
     @Override
-    public void saveRegister(RegisterRequest register, String userEmail) {
+    public void saveRegister(RegisterRequest registerRequest, String userEmail) {
 
-        registersServiceValidations.validateResearchLayer(userEmail, register);
-        registersServiceValidations.validateRegisterFields(register);
-        registersServiceValidations.validateVariablesAndResearchLayer(register);
+        registersServiceValidations.validateResearchLayer(userEmail, registerRequest);
+        registersServiceValidations.validateRegisterFields(registerRequest);
+        registersServiceValidations.validateVariablesAndResearchLayer(registerRequest);
+
+        Map<String, VariableCollection> catalog = variableRepository.findAll()
+                .stream().collect(Collectors.toMap(VariableCollection::getId, v -> v));
+
+        ResearchLayerMapper2 mapper = new ResearchLayerMapper2();
+        ResearchLayerGroup registerInfo = mapper.toResearchLayerGroup(registerRequest.getRegisterInfo(), catalog);
 
         RegisterCollection registerCollection = RegisterCollection.builder()
-                .patientIdentificationNumber(register.getPatientIdentificationNumber())
-                .patientIdentificationType(register.getPatientIdentificationType())
-                .registerInfo(register.getRegisterInfo())
-                .patientBasicInfo(register.getPatient())
-                .caregiver(register.getCaregiver())
+                .patientIdentificationNumber(registerRequest.getPatientIdentificationNumber())
+                .patientIdentificationType(registerRequest.getPatientIdentificationType())
+                .registerInfo(Collections.singletonList(registerInfo))
+                .patientBasicInfo(registerRequest.getPatient())
+                .caregiver(registerRequest.getCaregiver())
                 .build();
 
-        registerRepository.save(registerCollection);
+        System.out.println("REGISTER COLLECTION"+ registerCollection);
 
         RegisterCollection saved = registerRepository.save(registerCollection);
         saveFirstRegisterInRegisterHistory(saved, userEmail);
@@ -75,64 +82,160 @@ public class RegisterService2 implements IRegisterService2 {
 
     @Override
     public RegisterResponse2 actualPatientRegisterInfo(Integer patientIdentificationNumber) {
-        RegisterCollection collection = registerRepository.findByPatientIdentificationNumber(patientIdentificationNumber);
-        return registerMapper.toRegisterResponse(collection);
+//        RegisterCollection collection = registerRepository.findByPatientIdentificationNumber(patientIdentificationNumber);
+//        return registerMapper.toRegisterResponse(collection);
+        return null;
     }
 
+    @Override
+    public PaginatedResponse getAllRegistersByResearchLayerPaginated(PaginationRequest paginationRequest, String researchLayerId, Integer patientIdentificationNumber) {
 
+        Pageable pageable = PageRequest.of(
+                paginationRequest.getPage(),
+                paginationRequest.getSize(),
+                Sort.by(Sort.Direction.fromString(paginationRequest.getSortDirection().name()),
+                        paginationRequest.getSort())
+        );
 
-    public Variable setVariableValueInVariable(VariableRequest var, Optional<VariableCollection> variableFromDb){
-        Variable variable = new Variable();
-        variable.setId(var.getId());
-        variable.setName(variableFromDb.get().getVariableName());
-        variable.setType(var.getType());
+        Page<RegistersHistoryCollection> page = registerHistoryRepository
+                .findAllByPatientIdentificationNumberAndOperationAndIsResearchLayerGroup_ResearchLayerId(
+                        patientIdentificationNumber,
+                        UPDATE_RESEARCH_LAYER,
+                        researchLayerId,
+                        pageable
+                );
 
-        switch (var.getType()) {
-            case NUMBER_TYPE:
-                if (!(var.getValue() instanceof Number)) {
-                    throw new IllegalArgumentException(VALUE_MUST_BE_NUMBER);
-                }
-                variable.setValueAsNumber(((Number) var.getValue()).doubleValue());
-                break;
+        List<ResearchLayerGroup> data = new ArrayList<>(page.getContent().stream()
+                .map(RegistersHistoryCollection::getIsResearchLayerGroup)
+                .filter(Objects::nonNull)
+                .toList());
 
-            case STRING_TYPE:
-                if (!(var.getValue() instanceof String)) {
-                    throw new IllegalArgumentException(VALUE_MUST_BE_STRING);
-                }
-                variable.setValueAsString((String) var.getValue());
-                break;
-
-            default:
-                throw new IllegalArgumentException(TYPE_UNDEFINED);
+        if(getFirstRegisterByResearchLayerId(patientIdentificationNumber, researchLayerId) != null){
+            data.add(0, getFirstRegisterByResearchLayerId(patientIdentificationNumber, researchLayerId));
         }
 
-        return variable;
+        return new PaginatedResponse<>(data,
+                page.getNumber(),
+                page.getTotalPages(),
+                page.getTotalElements());
+
+    }
+
+    @Override
+    public PaginatedResponse getAllCaregiverRegistersPaginated(PaginationRequest paginationRequest, Integer patientIdentificationNumber) {
+        Pageable pageable = PageRequest.of(
+                paginationRequest.getPage(),
+                paginationRequest.getSize(),
+                Sort.by(Sort.Direction.fromString(paginationRequest.getSortDirection().name()),
+                        paginationRequest.getSort())
+        );
+
+        Page<RegistersHistoryCollection> page = registerHistoryRepository
+                .findAllByPatientIdentificationNumberAndOperation(
+                        patientIdentificationNumber,
+                        UPDATE_CAREGIVER,
+                        pageable
+                );
+
+        List<Caregiver> data = new ArrayList<>(page.getContent().stream()
+                .map(RegistersHistoryCollection::getIsCaregiverInfo)
+                .filter(Objects::nonNull)
+                .toList());
+
+        RegistersHistoryCollection firstRegister = getFirstRegisterInRegisterHistory(patientIdentificationNumber);
+
+        data.add(0, firstRegister.getIsCaregiverInfo());
+
+        return new PaginatedResponse<>(data,
+                page.getNumber(),
+                page.getTotalPages(),
+                page.getTotalElements());
+    }
+
+    @Override
+    public PaginatedResponse getAllPatientBasicInfoRegistersPaginated(PaginationRequest paginationRequest, Integer patientIdentificationNumber) {
+        Pageable pageable = PageRequest.of(
+                paginationRequest.getPage(),
+                paginationRequest.getSize(),
+                Sort.by(Sort.Direction.fromString(paginationRequest.getSortDirection().name()),
+                        paginationRequest.getSort())
+        );
+
+        Page<RegistersHistoryCollection> page = registerHistoryRepository
+                .findAllByPatientIdentificationNumberAndOperation(
+                        patientIdentificationNumber,
+                        UPDATE_PATIENT_BASIC_INFO,
+                        pageable
+                );
+
+        List<Patient> data = new ArrayList<>(page.getContent().stream()
+                .map(RegistersHistoryCollection::getIsPatientBasicInfo)
+                .filter(Objects::nonNull)
+                .toList());
+
+        RegistersHistoryCollection firstRegister = getFirstRegisterInRegisterHistory(patientIdentificationNumber);
+
+        data.add(0, firstRegister.getIsPatientBasicInfo());
+
+        return new PaginatedResponse<>(data,
+                page.getNumber(),
+                page.getTotalPages(),
+                page.getTotalElements());
     }
 
     public void updateAndSaveHistory(RegisterRequest registerRequest,
                                      String userEmail,
                                      RegisterCollection existingRegister) {
 
-        if(Boolean.TRUE.equals(registerRequest.getInfoChanged().getPatientBasicInfo())){
+        Map<String, VariableCollection> catalog = variableRepository.findAll()
+                .stream().collect(Collectors.toMap(VariableCollection::getId, v -> v));
+
+        ResearchLayerMapper2 mapper = new ResearchLayerMapper2();
+        ResearchLayerGroup registerInfo = mapper.toResearchLayerGroup(registerRequest.getRegisterInfo(), catalog);
+
+        if(!Objects.equals(registerRequest.getPatient(), existingRegister.getPatientBasicInfo())){
             existingRegister.setPatientBasicInfo(registerRequest.getPatient());
             addInRegisterHistory(existingRegister.getId(),
-                    userEmail, UPDATE_PATIENT_BASIC_INFO, registerRequest);
+                    userEmail, UPDATE_PATIENT_BASIC_INFO, registerRequest, registerInfo);
         }
-        if(Boolean.TRUE.equals(registerRequest.getInfoChanged().getCaregiver())){
+        if(!Objects.equals(registerRequest.getCaregiver(), existingRegister.getCaregiver())){
             existingRegister.setCaregiver(registerRequest.getCaregiver());
             addInRegisterHistory(existingRegister.getId(),
-                    userEmail, UPDATE_CAREGIVER, registerRequest);
+                    userEmail, UPDATE_CAREGIVER, registerRequest, registerInfo);
         }
-        if(Boolean.TRUE.equals(registerRequest.getInfoChanged().getRegisterInfo())){
-            //Iniciar por acá para terminar el update de registers
-            //Para tener en cuenta -> que si la capa de investigación no existe en la lista de registersInfo,
-            // añadirla y si existe reemplazarla por la que viene en el reques
+        else{
+            List<ResearchLayerGroup> newRegisterInfo = updateLayers(existingRegister.getRegisterInfo(),
+                    registerInfo);
+
+            existingRegister.setRegisterInfo(newRegisterInfo);
             addInRegisterHistory(existingRegister.getId(),
-                    userEmail, UPDATE_RESEARCH_LAYER, registerRequest);
+                    userEmail, UPDATE_RESEARCH_LAYER, registerRequest,registerInfo);
 
         }
+        registerRepository.save(existingRegister);
+    }
 
+    public List<ResearchLayerGroup> updateLayers(List<ResearchLayerGroup> existingLayers,
+                                                 ResearchLayerGroup layerRequest) {
+        if (existingLayers == null) {
+            existingLayers = new ArrayList<>();
+        }
 
+        int index = -1;
+        for (int i = 0; i < existingLayers.size(); i++) {
+            if (Objects.equals(existingLayers.get(i).getResearchLayerId(), layerRequest.getResearchLayerId())) {
+                index = i;
+                break;
+            }
+        }
+
+        if (index >= 0) {
+            existingLayers.set(index, layerRequest);
+        } else {
+            existingLayers.add(layerRequest);
+        }
+
+        return existingLayers;
     }
 
     public void saveFirstRegisterInRegisterHistory(RegisterCollection registerSaved, String userEmail) {
@@ -142,6 +245,7 @@ public class RegisterService2 implements IRegisterService2 {
                 .changedBy(userEmail)
                 .changedAt(LocalDateTime.now().toString())
                 .operation(REGISTER_CREATED)
+                .patientIdentificationNumber(registerSaved.getPatientIdentificationNumber())
                 .isResearchLayerGroup(registerSaved.getRegisterInfo().get(0))
                 .isPatientBasicInfo(registerSaved.getPatientBasicInfo())
                 .isCaregiverInfo(registerSaved.getCaregiver())
@@ -151,17 +255,19 @@ public class RegisterService2 implements IRegisterService2 {
     }
 
     public void addInRegisterHistory(String registerId, String userEmail, String operation,
-                                                   RegisterRequest registerRequest) {
+                                                   RegisterRequest registerRequest,
+                                                    ResearchLayerGroup researchLayerGroup) {
         RegistersHistoryCollection register = RegistersHistoryCollection.builder()
                 .registerId(registerId)
                 .changedBy(userEmail)
+                .patientIdentificationNumber(registerRequest.getPatientIdentificationNumber())
                 .operation(operation)
                 .changedAt(LocalDateTime.now().toString())
                 .build();
 
         switch (operation) {
             case UPDATE_RESEARCH_LAYER:
-                register.setIsResearchLayerGroup(registerRequest.getRegisterInfo().get(0));
+                register.setIsResearchLayerGroup(researchLayerGroup);
                 break;
 
             case UPDATE_PATIENT_BASIC_INFO:
@@ -176,6 +282,24 @@ public class RegisterService2 implements IRegisterService2 {
                 throw new IllegalArgumentException(TYPE_UNDEFINED);
         }
         registerHistoryRepository.save(register);
+    }
+
+    public ResearchLayerGroup getFirstRegisterByResearchLayerId(Integer patientIdentificationNumber, String researchLayerId) {
+        RegistersHistoryCollection firstRegister = registerHistoryRepository.findByPatientIdentificationNumberAndOperation
+                (patientIdentificationNumber, REGISTER_CREATED);
+
+        if(firstRegister.getIsResearchLayerGroup().getResearchLayerId().equals(researchLayerId)){
+            return firstRegister.getIsResearchLayerGroup();
+        }
+        else{
+            return null;
+        }
+    }
+
+    public RegistersHistoryCollection getFirstRegisterInRegisterHistory(Integer patientIdentificationNumber) {
+
+        return registerHistoryRepository.findByPatientIdentificationNumberAndOperation
+                (patientIdentificationNumber, REGISTER_CREATED);
     }
 
 }

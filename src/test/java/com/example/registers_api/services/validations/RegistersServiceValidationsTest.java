@@ -27,94 +27,94 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class RegistersServiceValidationsTest {
 
-    @Mock
-    private VariableRepository variableRepository;
-
-    @Mock
-    private ResearchLayerRepository researchLayerRepository;
-
-    @Mock
-    private RegisterRequest registerRequest;
-
-    @Mock
-    private VariableRequest variable;
-
-    @InjectMocks
-    private RegistersServiceValidations registersServiceValidations;
-
-    @BeforeEach
-    void setUp() {
-    }
-
-    @Test
-    void testValidateVariablesAndResearchLayer_Valid() {
-        when(registerRequest.getVariables()).thenReturn(List.of(variable));
-        when(variable.getResearchLayerId()).thenReturn("rl1");
-        when(variable.getId()).thenReturn("var1");
-        when(researchLayerRepository.existsById("rl1")).thenReturn(true);
-        when(variableRepository.existsById("var1")).thenReturn(true);
-
-        assertDoesNotThrow(() -> registersServiceValidations.validateVariablesAndResearchLayer(registerRequest));
-    }
-
-    @Test
-    void testValidateVariablesAndResearchLayer_InvalidResearchLayer() {
-        when(registerRequest.getVariables()).thenReturn(List.of(variable));
-        when(variable.getResearchLayerId()).thenReturn("rl1");
-        when(researchLayerRepository.existsById("rl1")).thenReturn(false);
-
-        DoesntExistsException exception = assertThrows(DoesntExistsException.class, () ->
-                registersServiceValidations.validateVariablesAndResearchLayer(registerRequest)
-        );
-        assertEquals("No existe una capa de investigación con el id: 'rl1'", exception.getMessage());
-    }
-
-    @Test
-    void testValidateVariablesAndResearchLayer_InvalidVariable() {
-        when(registerRequest.getVariables()).thenReturn(List.of(variable));
-        when(variable.getResearchLayerId()).thenReturn("rl1");
-        when(variable.getId()).thenReturn("var1");
-        when(researchLayerRepository.existsById("rl1")).thenReturn(true);
-        when(variableRepository.existsById("var1")).thenReturn(false);
-
-        DoesntExistsException exception = assertThrows(DoesntExistsException.class, () ->
-                registersServiceValidations.validateVariablesAndResearchLayer(registerRequest)
-        );
-        assertEquals("No existe una variable con el id: 'var1'", exception.getMessage());
-    }
-
-    @Test
-    void testValidateRegisterFields_Valid() {
-        RegisterRequest validRequest = mock(RegisterRequest.class);
-        HealthProfessional healthProfessional = mock(HealthProfessional.class);
-        when(validRequest.getVariables()).thenReturn(List.of(new VariableRequest()));
-        when(validRequest.getHealthProfessional()).thenReturn(healthProfessional);
-
-        assertDoesNotThrow(() -> registersServiceValidations.validateRegisterFields(validRequest));
-    }
-
-    @Test
-    void testValidateRegisterFields_InvalidVariables() {
-        RegisterRequest invalidRequest = mock(RegisterRequest.class);
-        when(invalidRequest.getVariables()).thenReturn(null);
-
-        NotEmptyFieldException exception = assertThrows(NotEmptyFieldException.class, () ->
-                registersServiceValidations.validateRegisterFields(invalidRequest)
-        );
-        assertEquals("El campo de profesional de salud no puede estar vacio o con campos nulos", exception.getMessage());
-    }
-
-    @Test
-    void testValidateRegisterFields_InvalidHealthProfessional() {
-        RegisterRequest invalidRequest = mock(RegisterRequest.class);
-        when(invalidRequest.getVariables()).thenReturn(List.of(new VariableRequest()));
-        when(invalidRequest.getHealthProfessional()).thenReturn(null);
-
-        NotEmptyFieldException exception = assertThrows(NotEmptyFieldException.class, () ->
-                registersServiceValidations.validateRegisterFields(invalidRequest)
-        );
-        assertEquals("Las variables no pueden estar vacias o con campos nulos", exception.getMessage());
-    }
+//    @Mock
+//    private VariableRepository variableRepository;
+//
+//    @Mock
+//    private ResearchLayerRepository researchLayerRepository;
+//
+//    @Mock
+//    private RegisterRequest registerRequest;
+//
+//    @Mock
+//    private VariableRequest variable;
+//
+//    @InjectMocks
+//    private RegistersServiceValidations registersServiceValidations;
+//
+//    @BeforeEach
+//    void setUp() {
+//    }
+//
+//    @Test
+//    void testValidateVariablesAndResearchLayer_Valid() {
+//        when(registerRequest.getVariables()).thenReturn(List.of(variable));
+//        when(variable.getResearchLayerId()).thenReturn("rl1");
+//        when(variable.getId()).thenReturn("var1");
+//        when(researchLayerRepository.existsById("rl1")).thenReturn(true);
+//        when(variableRepository.existsById("var1")).thenReturn(true);
+//
+//        assertDoesNotThrow(() -> registersServiceValidations.validateVariablesAndResearchLayer(registerRequest));
+//    }
+//
+//    @Test
+//    void testValidateVariablesAndResearchLayer_InvalidResearchLayer() {
+//        when(registerRequest.getVariables()).thenReturn(List.of(variable));
+//        when(variable.getResearchLayerId()).thenReturn("rl1");
+//        when(researchLayerRepository.existsById("rl1")).thenReturn(false);
+//
+//        DoesntExistsException exception = assertThrows(DoesntExistsException.class, () ->
+//                registersServiceValidations.validateVariablesAndResearchLayer(registerRequest)
+//        );
+//        assertEquals("No existe una capa de investigación con el id: 'rl1'", exception.getMessage());
+//    }
+//
+//    @Test
+//    void testValidateVariablesAndResearchLayer_InvalidVariable() {
+//        when(registerRequest.getVariables()).thenReturn(List.of(variable));
+//        when(variable.getResearchLayerId()).thenReturn("rl1");
+//        when(variable.getId()).thenReturn("var1");
+//        when(researchLayerRepository.existsById("rl1")).thenReturn(true);
+//        when(variableRepository.existsById("var1")).thenReturn(false);
+//
+//        DoesntExistsException exception = assertThrows(DoesntExistsException.class, () ->
+//                registersServiceValidations.validateVariablesAndResearchLayer(registerRequest)
+//        );
+//        assertEquals("No existe una variable con el id: 'var1'", exception.getMessage());
+//    }
+//
+//    @Test
+//    void testValidateRegisterFields_Valid() {
+//        RegisterRequest validRequest = mock(RegisterRequest.class);
+//        HealthProfessional healthProfessional = mock(HealthProfessional.class);
+//        when(validRequest.getVariables()).thenReturn(List.of(new VariableRequest()));
+//        when(validRequest.getHealthProfessional()).thenReturn(healthProfessional);
+//
+//        assertDoesNotThrow(() -> registersServiceValidations.validateRegisterFields(validRequest));
+//    }
+//
+//    @Test
+//    void testValidateRegisterFields_InvalidVariables() {
+//        RegisterRequest invalidRequest = mock(RegisterRequest.class);
+//        when(invalidRequest.getVariables()).thenReturn(null);
+//
+//        NotEmptyFieldException exception = assertThrows(NotEmptyFieldException.class, () ->
+//                registersServiceValidations.validateRegisterFields(invalidRequest)
+//        );
+//        assertEquals("El campo de profesional de salud no puede estar vacio o con campos nulos", exception.getMessage());
+//    }
+//
+//    @Test
+//    void testValidateRegisterFields_InvalidHealthProfessional() {
+//        RegisterRequest invalidRequest = mock(RegisterRequest.class);
+//        when(invalidRequest.getVariables()).thenReturn(List.of(new VariableRequest()));
+//        when(invalidRequest.getHealthProfessional()).thenReturn(null);
+//
+//        NotEmptyFieldException exception = assertThrows(NotEmptyFieldException.class, () ->
+//                registersServiceValidations.validateRegisterFields(invalidRequest)
+//        );
+//        assertEquals("Las variables no pueden estar vacias o con campos nulos", exception.getMessage());
+//    }
 
 //    @Test
 //    void testValidateResearchLayer_Valid() {

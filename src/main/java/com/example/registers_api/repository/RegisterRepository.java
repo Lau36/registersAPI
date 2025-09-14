@@ -12,16 +12,11 @@ public interface RegisterRepository extends MongoRepository<RegisterCollection, 
     List<RegisterCollection> findAllByPatientIdentificationNumber(Integer patientIdentificationNumber, PageRequest pageable);
     RegisterCollection findByPatientIdentificationNumber(Integer patientIdentificationNumber);
 
-    //@Query("{ 'healthProfessional.identificationNumber': ?0 }")
-    List<RegisterCollection> findAllByHealthProfessionalIdentificationNumber(Integer identificationNumber, PageRequest pageable);
-
     List<RegisterCollection> findAllByRegisterInfoResearchLayerId(String researchLayerId, PageRequest pageable); //a
 
     Optional<RegisterCollection> findById(String id);
-    Integer countByPatientIdentificationNumber(Integer patientIdentificationNumber);
-    Integer countByHealthProfessionalIdentificationNumber(Integer identificationNumber);
+    Integer countByPatientIdentificationNumber(Integer patientIdentificationNumber);;
     Integer countByRegisterInfoResearchLayerId(String researchLayerId); //a
-
 
 //    @Query("{ 'variables.id': ?0 }")
     boolean existsByRegisterInfoVariablesId(String variableId);

@@ -20,6 +20,7 @@ public class RegistersHistoryCollection {
     private String changedBy;
     private String changedAt;
     private String operation;
+    private Integer patientIdentificationNumber;
     private ResearchLayerGroup isResearchLayerGroup;
     private Patient isPatientBasicInfo;
     private Caregiver isCaregiverInfo;

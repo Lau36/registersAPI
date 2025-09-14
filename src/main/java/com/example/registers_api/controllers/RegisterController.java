@@ -52,7 +52,7 @@ public class RegisterController {
     @PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
     public ResponseEntity<BasicResponse> updateRegister(@RequestParam String registerId, @RequestParam String userEmail, @RequestBody RegisterRequest registerRequest) {
         BasicResponse response = new BasicResponse(Constants.REGISTER_UPDATED);
-        registerService.updateRegister(registerId, userEmail, registerRequest);
+        registerService2.updateRegister(registerId, registerRequest, userEmail);
         return ResponseEntity.ok(response);
     }
 
@@ -82,28 +82,11 @@ public class RegisterController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/allByHealtProfessional")
-    @PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
-    public ResponseEntity<PaginatedResponse> getAllRegistersByHealthProfesional(
-            @RequestParam int healthProfesionalIdentificationNumber,
-            @RequestParam int page,
-            @RequestParam int size,
-            @RequestParam String sort,
-            @RequestParam String sortDirection) {
-        PaginationRequest request = PaginationRequest.builder()
-                .page(page)
-                .size(size)
-                .sort(sort)
-                .sortDirection(SortDirection.valueOf(sortDirection.toUpperCase()))
-                .build();
-        PaginatedResponse response = registerService.getAllRegistersByHealthProfesionalPaginated(request, healthProfesionalIdentificationNumber);
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/allByResearchLayer")
+    @GetMapping("/allResearchLayerRegisters")
     @PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.RESEARCHER_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
     public ResponseEntity<PaginatedResponse> getAllRegistersByResearchLayer(
             @RequestParam String researchLayerId,
+            @RequestParam Integer patientIdentificationNumber,
             @RequestParam int page,
             @RequestParam int size,
             @RequestParam String sort,
@@ -114,7 +97,44 @@ public class RegisterController {
                 .sort(sort)
                 .sortDirection(SortDirection.valueOf(sortDirection.toUpperCase()))
                 .build();
-        PaginatedResponse response = registerService.getAllRegistersByResearchLayerPaginated(request, researchLayerId);
+        PaginatedResponse response = registerService2.getAllRegistersByResearchLayerPaginated(request,
+                researchLayerId, patientIdentificationNumber);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/allCarevigerRegisters")
+    @PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.RESEARCHER_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
+    public ResponseEntity<PaginatedResponse> getAllCaregiverRegisters(
+            @RequestParam Integer patientIdentificationNumber,
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam String sort,
+            @RequestParam String sortDirection) {
+        PaginationRequest request = PaginationRequest.builder()
+                .page(page)
+                .size(size)
+                .sort(sort)
+                .sortDirection(SortDirection.valueOf(sortDirection.toUpperCase()))
+                .build();
+        PaginatedResponse response = registerService2.getAllCaregiverRegistersPaginated(request, patientIdentificationNumber);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/allPatientBasicInfoRegisters")
+    @PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.RESEARCHER_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
+    public ResponseEntity<PaginatedResponse> getAllPatientBasicInfoRegisters(
+            @RequestParam Integer patientIdentificationNumber,
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam String sort,
+            @RequestParam String sortDirection) {
+        PaginationRequest request = PaginationRequest.builder()
+                .page(page)
+                .size(size)
+                .sort(sort)
+                .sortDirection(SortDirection.valueOf(sortDirection.toUpperCase()))
+                .build();
+        PaginatedResponse response = registerService2.getAllPatientBasicInfoRegistersPaginated(request, patientIdentificationNumber);
         return ResponseEntity.ok(response);
     }
 

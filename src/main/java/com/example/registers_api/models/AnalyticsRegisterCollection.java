@@ -49,7 +49,4 @@ public class AnalyticsRegisterCollection {
     private Integer caregiverIdentificationNumber;
     private String caregiverOccupation;
 
-    // Health professional info
-    private String healthProfessionalName;
-    private Integer healthProfessionalIdentificationNumber;
 }

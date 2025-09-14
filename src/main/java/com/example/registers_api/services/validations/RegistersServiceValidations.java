@@ -4,11 +4,10 @@ import com.example.registers_api.exceptions.DoesntExistsException;
 import com.example.registers_api.exceptions.DoesntHavePermissions;
 import com.example.registers_api.exceptions.NotEmptyFieldException;
 import com.example.registers_api.exceptions.NotEnabledException;
-import com.example.registers_api.models.HealthProfessional;
 import com.example.registers_api.repository.ResearchLayerRepository;
 import com.example.registers_api.repository.VariableRepository;
 import com.example.registers_api.request.RegisterRequest;
-import com.example.registers_api.request.VariableRequest;
+import com.example.registers_api.request.VariablesGroupRequest;
 import jakarta.ws.rs.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.keycloak.admin.client.Keycloak;
@@ -28,16 +27,20 @@ import static com.example.registers_api.utils.ExceptionConstants.*;
 public class RegistersServiceValidations {
 
     private final VariableRepository variableRepository;
-    private final ResearchLayerRepository researchLayerRepository;
+    private final ResearchLayerRepository layerRepository;
     private final Keycloak keycloak;
 
     public void validateVariablesAndResearchLayer(RegisterRequest registerRequest) {
-        List<VariableRequest> variables = registerRequest.getVariables();
+        List<VariablesGroupRequest> variables = registerRequest.getRegisterInfo().getVariablesInfo();
+        String idString = registerRequest.getRegisterInfo().getResearchLayerId();
+        boolean exists = layerRepository.existsById(registerRequest.getRegisterInfo().getResearchLayerId());
+        if (!exists) {
+            throw new DoesntExistsException(String.format(
+                    RESEARCH_LAYER_ID_NOT_FOUND, idString
+            ));
+        }
 
-        for (VariableRequest variable : variables) {
-            if (!researchLayerRepository.existsById(variable.getResearchLayerId())) {
-                throw (new DoesntExistsException(String.format(RESEARCH_LAYER_ID_NOT_FOUND, variable.getResearchLayerId())));
-            }
+        for (VariablesGroupRequest variable : variables) {
             if (!variableRepository.existsById(variable.getId())) {
                 throw (new DoesntExistsException(String.format(VARIABLE_ID_NOT_FOUND, variable.getId())));
             }
@@ -45,13 +48,9 @@ public class RegistersServiceValidations {
     }
 
     public void validateRegisterFields(RegisterRequest registerRequest) {
-        List<VariableRequest> variables = registerRequest.getVariables();
-        HealthProfessional healthProfessional = registerRequest.getHealthProfessional();
+        List<VariablesGroupRequest> variables = registerRequest.getRegisterInfo().getVariablesInfo();
 
         if (Objects.isNull(variables)) {
-            throw new NotEmptyFieldException(NOT_EMPTY_HEALTH_PROFESIONAL_FIELD);
-        }
-        if (Objects.isNull(healthProfessional)) {
             throw new NotEmptyFieldException(NOT_EMPTY_VARIABLES);
         }
 
@@ -59,13 +58,9 @@ public class RegistersServiceValidations {
 
     public void validateResearchLayer(String userEmail, RegisterRequest registerRequest) {
         List<String> userResearchLayerIds = getUserResearchLayer(userEmail);
-
-        for (VariableRequest variable : registerRequest.getVariables()) {
-            if (!userResearchLayerIds.contains(variable.getResearchLayerId())) {
-                throw new DoesntHavePermissions(DOESNT_HAVE_PERMISSIONS);
-            }
+        if (!userResearchLayerIds.contains(registerRequest.getRegisterInfo().getResearchLayerId())) {
+            throw new DoesntHavePermissions(DOESNT_HAVE_PERMISSIONS);
         }
-
     }
 
     public List<String> getUserResearchLayer(String userEmail) {
@@ -86,8 +81,6 @@ public class RegistersServiceValidations {
         else{
             throw new NotEnabledException("Los atributos del usuario son null");
         }
-
-
     }
 
 }

@@ -20,6 +20,7 @@ public class VariableServiceValidations {
     private final VariableRepository variableRepository;
 
     public void validateResearchLayerId(String researchLayerId) {
+
         boolean exists = layerRepository.existsById(researchLayerId);
         if (!exists) {
             throw new DoesntExistsException(String.format(ExceptionConstants.DOESNT_EXIST, researchLayerId));

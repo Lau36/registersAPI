@@ -1,5 +1,6 @@
 package com.example.registers_api.models;
 
+import com.mongodb.lang.NonNullApi;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
