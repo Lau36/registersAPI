@@ -56,9 +56,9 @@ public class RegistersServiceValidations {
 
     }
 
-    public void validateResearchLayer(String userEmail, RegisterRequest registerRequest) {
+    public void validateResearchLayer(String userEmail, String researchLayerId) {
         List<String> userResearchLayerIds = getUserResearchLayer(userEmail);
-        if (!userResearchLayerIds.contains(registerRequest.getRegisterInfo().getResearchLayerId())) {
+        if (!userResearchLayerIds.contains(researchLayerId)) {
             throw new DoesntHavePermissions(DOESNT_HAVE_PERMISSIONS);
         }
     }

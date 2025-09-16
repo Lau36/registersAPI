@@ -18,7 +18,7 @@ public class ExceptionConstants {
     public static final String RESEARCH_LAYER_NAME_NOT_FOUND = "No existe una capa de investigación con el name: '%s'";
     public static final String NOT_EMPTY_HEALTH_PROFESIONAL_FIELD = "El campo de profesional de salud no puede estar vacio o con campos nulos";
     public static final String NOT_EMPTY_VARIABLES = "Las variables no pueden estar vacias o con campos nulos";
-    public static final String DOESNT_HAVE_PERMISSIONS = "No se puede realizar el registro porque no pertenece a esa capa de investigación";
+    public static final String DOESNT_HAVE_PERMISSIONS = "El usuario no está asociado a la capa de investigación ingresada";
 
     public static final String VALUE_MUST_BE_NUMBER = "El valor debe ser numérico";
     public static final String VALUE_MUST_BE_STRING = "El valor debe ser de tipo string";

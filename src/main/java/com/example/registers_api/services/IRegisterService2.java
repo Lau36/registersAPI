@@ -8,9 +8,9 @@ import com.example.registers_api.response.RegisterResponse2;
 public interface IRegisterService2 {
     void saveRegister(RegisterRequest register, String userEmail);
     void updateRegister(String registerId, RegisterRequest register, String userEmail);
-    RegisterResponse2 actualPatientRegisterInfo(Integer patientIdentificationNumber);
+    RegisterResponse2 actualPatientRegisterInfo(Integer patientIdentificationNumber, String researchLayerId);
 
-    PaginatedResponse getAllRegistersByResearchLayerPaginated(PaginationRequest paginationRequest, String researchLayerId
+    PaginatedResponse getAllRegistersByResearchLayerPaginated(PaginationRequest paginationRequest, String researchLayerId, String userEmail
             , Integer patientIdentificationNumber);
     PaginatedResponse getAllCaregiverRegistersPaginated(PaginationRequest paginationRequest, Integer patientIdentificationNumber);
     PaginatedResponse getAllPatientBasicInfoRegistersPaginated(PaginationRequest paginationRequest, Integer patientIdentificationNumber);

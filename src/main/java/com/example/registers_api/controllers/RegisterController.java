@@ -86,6 +86,7 @@ public class RegisterController {
     @PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.RESEARCHER_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
     public ResponseEntity<PaginatedResponse> getAllRegistersByResearchLayer(
             @RequestParam String researchLayerId,
+            @RequestParam String userEmail,
             @RequestParam Integer patientIdentificationNumber,
             @RequestParam int page,
             @RequestParam int size,
@@ -98,7 +99,7 @@ public class RegisterController {
                 .sortDirection(SortDirection.valueOf(sortDirection.toUpperCase()))
                 .build();
         PaginatedResponse response = registerService2.getAllRegistersByResearchLayerPaginated(request,
-                researchLayerId, patientIdentificationNumber);
+                researchLayerId, userEmail, patientIdentificationNumber);
         return ResponseEntity.ok(response);
     }
 
@@ -141,8 +142,8 @@ public class RegisterController {
     @GetMapping("/actualRegisterByPatient")
     @PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
     public ResponseEntity<RegisterResponse2> getRegisterByPatient(
-            @RequestParam int patientIdentificationNumber) {
-        RegisterResponse2 response =registerService2.actualPatientRegisterInfo(patientIdentificationNumber);
+            @RequestParam int patientIdentificationNumber, @RequestParam String researchLayerId) {
+        RegisterResponse2 response =registerService2.actualPatientRegisterInfo(patientIdentificationNumber, researchLayerId);
         return ResponseEntity.ok(response);
     }
 }
