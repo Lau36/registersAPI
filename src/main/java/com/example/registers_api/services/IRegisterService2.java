@@ -14,4 +14,6 @@ public interface IRegisterService2 {
             , Integer patientIdentificationNumber);
     PaginatedResponse getAllCaregiverRegistersPaginated(PaginationRequest paginationRequest, Integer patientIdentificationNumber);
     PaginatedResponse getAllPatientBasicInfoRegistersPaginated(PaginationRequest paginationRequest, Integer patientIdentificationNumber);
+    PaginatedResponse getAllRegisterInfoByResearchLayerPaginated(PaginationRequest paginationRequest, String researchLayerId, String userEmail);
+
 }

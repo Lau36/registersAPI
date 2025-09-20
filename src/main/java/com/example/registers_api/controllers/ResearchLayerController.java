@@ -77,6 +77,7 @@ public class ResearchLayerController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResearchLayerDTO.class))),
     })
+
     @GetMapping("/GetAll")
     @PreAuthorize("hasRole('" + Constants.ADMIN_ROLE + "') or hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.RESEARCHER_ROLE + "')or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
     public ResponseEntity<List<ResearchLayerResponse>> getAllResearchLayers() {

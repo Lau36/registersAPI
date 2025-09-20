@@ -20,7 +20,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.net.CacheResponse;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -105,21 +104,24 @@ public class RegisterService2 implements IRegisterService2 {
 
         List<String> opcionesLayerGroup = new ArrayList<>(List.of(UPDATE_RESEARCH_LAYER));
 
-        if(getFirstRegisterByResearchLayerId(patientIdentificationNumber, researchLayerId) != null){
+        RegistersHistoryCollection firstRegister = registerHistoryRepository.findByPatientIdentificationNumberAndOperation
+                (patientIdentificationNumber, REGISTER_CREATED);
+
+        if(getFirstRegisterByResearchLayerId(firstRegister, researchLayerId) != null){
             opcionesLayerGroup.add(0, REGISTER_CREATED);
         }
 
         Page<RegistersHistoryCollection> page = registerHistoryRepository
-                .findAllByPatientIdentificationNumberAndOperationInAndIsResearchLayerGroup_ResearchLayerId(
+                .findResearchLayerHistoryByPatientAndOps(
                         patientIdentificationNumber,
                         opcionesLayerGroup,
                         researchLayerId,
                         pageable);
 
-        List<ResearchLayerGroup> data = new ArrayList<>(page.getContent().stream()
-                .map(RegistersHistoryCollection::getIsResearchLayerGroup)
-                .filter(Objects::nonNull)
-                .toList());
+        List<RegistersHistoryItemResponse> data = page.getContent()
+                .stream()
+                .map(this::toResponse)
+                .toList();
 
         return new PaginatedResponse<>(
                 data,
@@ -141,11 +143,11 @@ public class RegisterService2 implements IRegisterService2 {
         List<String> ops = List.of(REGISTER_CREATED, UPDATE_CAREGIVER);
 
         Page<RegistersHistoryCollection> page = registerHistoryRepository
-                .findAllByPatientIdentificationNumberAndOperationIn(patientIdentificationNumber, ops, pageable);
+                .findCaregiverHistoryByPatientAndOps(patientIdentificationNumber, ops, pageable);
 
-        List<Caregiver> data = page.getContent().stream()
-                .map(RegistersHistoryCollection::getIsCaregiverInfo)
-                .filter(Objects::nonNull)
+        List<RegistersHistoryItemResponse> data = page.getContent()
+                .stream()
+                .map(this::toResponse)
                 .toList();
 
         return new PaginatedResponse<>(
@@ -168,11 +170,11 @@ public class RegisterService2 implements IRegisterService2 {
         List<String> ops = List.of(REGISTER_CREATED, UPDATE_PATIENT_BASIC_INFO);
 
         Page<RegistersHistoryCollection> page = registerHistoryRepository
-                .findAllByPatientIdentificationNumberAndOperationIn(patientIdentificationNumber, ops, pageable);
+                .findPatientHistoryByPatientAndOps(patientIdentificationNumber, ops, pageable);
 
-        List<Caregiver> data = page.getContent().stream()
-                .map(RegistersHistoryCollection::getIsCaregiverInfo)
-                .filter(Objects::nonNull)
+        List<RegistersHistoryItemResponse> data = page.getContent()
+                .stream()
+                .map(this::toResponse)
                 .toList();
 
         return new PaginatedResponse<>(
@@ -182,6 +184,40 @@ public class RegisterService2 implements IRegisterService2 {
                 page.getTotalElements()
         );
 
+    }
+
+    @Override
+    public PaginatedResponse getAllRegisterInfoByResearchLayerPaginated(
+            PaginationRequest paginationRequest, String researchLayerId, String userEmail) {
+
+        registersServiceValidations.validateResearchLayer(userEmail, researchLayerId);
+
+        Pageable pageable = PageRequest.of(
+                paginationRequest.getPage(),
+                paginationRequest.getSize(),
+                Sort.by(paginationRequest.getSort(), "changedAt")
+        );
+
+        List<String> ops = List.of(REGISTER_CREATED, REGISTER_CREATED_SUCCESSFULL, UPDATE_RESEARCH_LAYER);
+
+        Page<RegistersHistoryCollection> page = registerHistoryRepository
+                .findResearchLayerHistoryByResearchLayerIdAndOps(
+                        researchLayerId,
+                        ops,
+                        pageable
+                );
+
+        List<RegistersHistoryItemResponse> data = page.getContent()
+                .stream()
+                .map(this::toResponse)
+                .toList();
+
+        return new PaginatedResponse<>(
+                data,
+                page.getNumber(),
+                page.getTotalPages(),
+                page.getTotalElements()
+        );
     }
 
     public void updateAndSaveHistory(RegisterRequest registerRequest,
@@ -285,11 +321,9 @@ public class RegisterService2 implements IRegisterService2 {
         registerHistoryRepository.save(register);
     }
 
-    public ResearchLayerGroup getFirstRegisterByResearchLayerId(Integer patientIdentificationNumber, String researchLayerId) {
-        RegistersHistoryCollection firstRegister = registerHistoryRepository.findByPatientIdentificationNumberAndOperation
-                (patientIdentificationNumber, REGISTER_CREATED);
+    public ResearchLayerGroup getFirstRegisterByResearchLayerId(RegistersHistoryCollection firstRegister, String researchLayerId) {
 
-        if(firstRegister.getIsResearchLayerGroup().getResearchLayerId().equals(researchLayerId)){
+        if(firstRegister != null && firstRegister.getIsResearchLayerGroup().getResearchLayerId().equals(researchLayerId)){
             return firstRegister.getIsResearchLayerGroup();
         }
         else{
@@ -297,10 +331,19 @@ public class RegisterService2 implements IRegisterService2 {
         }
     }
 
-    public RegistersHistoryCollection getFirstRegisterInRegisterHistory(Integer patientIdentificationNumber) {
+    private RegistersHistoryItemResponse toResponse(RegistersHistoryCollection src) {
+        RegistersHistoryItemResponse r = new RegistersHistoryItemResponse();
+        r.setId(src.getId());
+        r.setRegisterId(src.getRegisterId());
+        r.setChangedBy(src.getChangedBy());
+        r.setChangedAt(src.getChangedAt());
+        r.setOperation(src.getOperation());
+        r.setPatientIdentificationNumber(src.getPatientIdentificationNumber());
+        r.setIsResearchLayerGroup(src.getIsResearchLayerGroup());
+        r.setIsPatientBasicInfo(src.getIsPatientBasicInfo());
+        r.setIsCaregiverInfo(src.getIsCaregiverInfo());
 
-        return registerHistoryRepository.findByPatientIdentificationNumberAndOperation
-                (patientIdentificationNumber, REGISTER_CREATED);
+        return r;
     }
 
 }

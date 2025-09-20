@@ -146,4 +146,23 @@ public class RegisterController {
         RegisterResponse2 response =registerService2.actualPatientRegisterInfo(patientIdentificationNumber, researchLayerId);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/allResearchLayerHistoryById")
+    @PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
+    public ResponseEntity<PaginatedResponse> getAllResearchLayerHistoryById(
+            @RequestParam String researchLayerId,
+            @RequestParam String userEmail,
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam String sort,
+            @RequestParam String sortDirection) {
+        PaginationRequest request = PaginationRequest.builder()
+                .page(page)
+                .size(size)
+                .sort(sort)
+                .sortDirection(SortDirection.valueOf(sortDirection.toUpperCase()))
+                .build();
+        PaginatedResponse response = registerService2.getAllRegisterInfoByResearchLayerPaginated(request, researchLayerId, userEmail);
+        return ResponseEntity.ok(response);
+    }
 }
