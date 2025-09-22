@@ -19,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -38,6 +39,7 @@ public class RegisterService2 implements IRegisterService2 {
     private RegisterMapper registerMapper;
 
     @Override
+    @Transactional
     public void saveRegister(RegisterRequest registerRequest, String userEmail) {
 
         registersServiceValidations.validateResearchLayer(userEmail, registerRequest.getRegisterInfo().getResearchLayerId());
@@ -58,14 +60,13 @@ public class RegisterService2 implements IRegisterService2 {
                 .caregiver(registerRequest.getCaregiver())
                 .build();
 
-        System.out.println("REGISTER COLLECTION"+ registerCollection);
-
         RegisterCollection saved = registerRepository.save(registerCollection);
         saveFirstRegisterInRegisterHistory(saved, userEmail);
-        //analyticsPipelineService.CreateCollection();
+        analyticsPipelineService.insertInitialSnapshot(saved.getId());
     }
 
     @Override
+    @Transactional
     public void updateRegister(String registerId, RegisterRequest registerRequest, String userEmail) {
         RegisterCollection existingRegister = registerRepository.findById(registerId)
                 .orElseThrow(() -> new DoesntExistsException(
@@ -230,15 +231,21 @@ public class RegisterService2 implements IRegisterService2 {
         ResearchLayerMapper2 mapper = new ResearchLayerMapper2();
         ResearchLayerGroup registerInfo = mapper.toResearchLayerGroup(registerRequest.getRegisterInfo(), catalog);
 
-        if(!Objects.equals(registerRequest.getPatient(), existingRegister.getPatientBasicInfo())){
+        boolean patientChanged   = !Objects.equals(registerRequest.getPatient(), existingRegister.getPatientBasicInfo());
+        boolean caregiverChanged = !Objects.equals(registerRequest.getCaregiver(), existingRegister.getCaregiver());
+        //boolean needAllLayersSnapshot = false;
+
+        if(patientChanged){
             existingRegister.setPatientBasicInfo(registerRequest.getPatient());
             addInRegisterHistory(existingRegister.getId(),
                     userEmail, UPDATE_PATIENT_BASIC_INFO, registerRequest, registerInfo);
+            //needAllLayersSnapshot = true;
         }
-        if(!Objects.equals(registerRequest.getCaregiver(), existingRegister.getCaregiver())){
+        if(caregiverChanged){
             existingRegister.setCaregiver(registerRequest.getCaregiver());
             addInRegisterHistory(existingRegister.getId(),
                     userEmail, UPDATE_CAREGIVER, registerRequest, registerInfo);
+            //needAllLayersSnapshot = true;
         }
         else{
             List<ResearchLayerGroup> newRegisterInfo = updateLayers(existingRegister.getRegisterInfo(),
@@ -247,9 +254,19 @@ public class RegisterService2 implements IRegisterService2 {
             existingRegister.setRegisterInfo(newRegisterInfo);
             addInRegisterHistory(existingRegister.getId(),
                     userEmail, UPDATE_RESEARCH_LAYER, registerRequest,registerInfo);
-
+            //analyticsPipelineService.insertLayerSnapshot(existingRegister.getId(), registerRequest.getRegisterInfo().getResearchLayerId());
         }
+
         registerRepository.save(existingRegister);
+
+//        if (needAllLayersSnapshot) {
+//            analyticsPipelineService.insertAllLayersSnapshot(existingRegister.getId());
+//        } else {
+//            analyticsPipelineService.insertLayerSnapshot(
+//                    existingRegister.getId(),
+//                    registerRequest.getRegisterInfo().getResearchLayerId()
+//            );
+//        }
     }
 
     public List<ResearchLayerGroup> updateLayers(List<ResearchLayerGroup> existingLayers,
