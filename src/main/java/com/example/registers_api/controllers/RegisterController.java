@@ -140,7 +140,7 @@ public class RegisterController {
     }
 
     @GetMapping("/actualRegisterByPatient")
-    @PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
+    @PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.RESEARCHER_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
     public ResponseEntity<RegisterResponse2> getRegisterByPatient(
             @RequestParam int patientIdentificationNumber, @RequestParam String researchLayerId) {
         RegisterResponse2 response =registerService2.actualPatientRegisterInfo(patientIdentificationNumber, researchLayerId);
