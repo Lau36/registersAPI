@@ -1,9 +1,12 @@
 package com.example.registers_api.services.impl;
 
+import com.example.registers_api.dtos.ResearchLayerInfoDTO;
 import com.example.registers_api.exceptions.DoesntExistsException;
 import com.example.registers_api.mappers.RegisterMapper;
 import com.example.registers_api.mappers.ResearchLayerMapper2;
+import com.example.registers_api.mappers.VariablesMapper;
 import com.example.registers_api.models.*;
+import com.example.registers_api.repository.AnalitycsRegister;
 import com.example.registers_api.repository.RegisterHistoryRepository;
 import com.example.registers_api.repository.RegisterRepository;
 import com.example.registers_api.repository.VariableRepository;
@@ -33,6 +36,7 @@ import static com.example.registers_api.utils.ExceptionConstants.*;
 public class RegisterService2 implements IRegisterService2 {
     private RegisterRepository registerRepository;
     private RegisterHistoryRepository registerHistoryRepository;
+    private AnalitycsRegister analitycsRegisterRepository;
     private VariableRepository variableRepository;
     private RegistersServiceValidations registersServiceValidations;
     private AnalyticsPipelineService analyticsPipelineService;
@@ -62,7 +66,7 @@ public class RegisterService2 implements IRegisterService2 {
 
         RegisterCollection saved = registerRepository.save(registerCollection);
         saveFirstRegisterInRegisterHistory(saved, userEmail);
-        analyticsPipelineService.insertInitialSnapshot(saved.getId());
+        //analyticsPipelineService.insertInitialSnapshot(saved.getId());
     }
 
     @Override
@@ -221,6 +225,74 @@ public class RegisterService2 implements IRegisterService2 {
         );
     }
 
+    @Override
+    public ValidationResponse validateUserAndGetCurrent(String userEmail, String researchLayerId, Integer patientIdentificationNumber) {
+
+        registersServiceValidations.validateResearchLayer(userEmail, researchLayerId);
+
+        Optional<RegisterCollection> opt = registerRepository
+                .findFirstByPatientIdentificationNumberOrderByVersionDesc(patientIdentificationNumber);
+
+        if (opt.isEmpty()) {
+            return ValidationResponse.builder()
+                    .action("patient_doesnt_exist")
+                    .build();
+        }
+
+        RegisterCollection reg = opt.get();
+
+        ResearchLayerGroup layer = null;
+        if (reg.getRegisterInfo() != null) {
+            layer = reg.getRegisterInfo()
+                    .stream()
+                    .filter(r -> researchLayerId.equals(r.getResearchLayerId()))
+                    .findFirst()
+                    .orElse(null);
+        }
+
+        if (layer != null) {
+            ResearchLayerInfoDTO layerDto = ResearchLayerInfoDTO.builder()
+                    .researchLayerId(layer.getResearchLayerId())
+                    .researchLayerName(layer.getResearchLayerName())
+                    .variablesInfo(VariablesMapper.toVariablesInfo(layer.getVariables()))
+                    .build();
+
+            return ValidationResponse.builder()
+                    .action("patient_already_exist_in_layer")
+                    .registerId(reg.getId())
+                    .patientIdentificationNumber(reg.getPatientIdentificationNumber())
+                    .patientIdentificationType(reg.getPatientIdentificationType())
+                    .registerInfo(List.of(layerDto))
+                    .patientBasicInfo(reg.getPatientBasicInfo())
+                    .caregiver(reg.getCaregiver())
+                    .build();
+        } else {
+            return ValidationResponse.builder()
+                    .action("patient_doesnt_exist_in_layer")
+                    .registerId(reg.getId())
+                    .patientIdentificationNumber(reg.getPatientIdentificationNumber())
+                    .patientIdentificationType(reg.getPatientIdentificationType())
+                    .registerInfo(List.of())
+                    .patientBasicInfo(reg.getPatientBasicInfo())
+                    .caregiver(reg.getCaregiver())
+                    .build();
+        }
+    }
+
+    @Override
+    public void deleteRegister(String registerId) {
+        registerRepository.findById(registerId).orElseThrow(() -> new DoesntExistsException(
+                String.format(REGISTER_NOT_FOUND, registerId)
+        ));
+
+        registerRepository.deleteById(registerId);
+
+        registerHistoryRepository.deleteByRegisterId(registerId);
+
+        //analitycsRegisterRepository.deleteByRegisterId(registerId);
+
+    }
+
     public void updateAndSaveHistory(RegisterRequest registerRequest,
                                      String userEmail,
                                      RegisterCollection existingRegister) {
@@ -233,19 +305,19 @@ public class RegisterService2 implements IRegisterService2 {
 
         boolean patientChanged   = !Objects.equals(registerRequest.getPatient(), existingRegister.getPatientBasicInfo());
         boolean caregiverChanged = !Objects.equals(registerRequest.getCaregiver(), existingRegister.getCaregiver());
-        //boolean needAllLayersSnapshot = false;
+        boolean needAllLayersSnapshot = false;
 
         if(patientChanged){
             existingRegister.setPatientBasicInfo(registerRequest.getPatient());
             addInRegisterHistory(existingRegister.getId(),
                     userEmail, UPDATE_PATIENT_BASIC_INFO, registerRequest, registerInfo);
-            //needAllLayersSnapshot = true;
+            needAllLayersSnapshot = true;
         }
         if(caregiverChanged){
             existingRegister.setCaregiver(registerRequest.getCaregiver());
             addInRegisterHistory(existingRegister.getId(),
                     userEmail, UPDATE_CAREGIVER, registerRequest, registerInfo);
-            //needAllLayersSnapshot = true;
+            needAllLayersSnapshot = true;
         }
         else{
             List<ResearchLayerGroup> newRegisterInfo = updateLayers(existingRegister.getRegisterInfo(),
@@ -254,7 +326,7 @@ public class RegisterService2 implements IRegisterService2 {
             existingRegister.setRegisterInfo(newRegisterInfo);
             addInRegisterHistory(existingRegister.getId(),
                     userEmail, UPDATE_RESEARCH_LAYER, registerRequest,registerInfo);
-            //analyticsPipelineService.insertLayerSnapshot(existingRegister.getId(), registerRequest.getRegisterInfo().getResearchLayerId());
+            needAllLayersSnapshot = false;
         }
 
         registerRepository.save(existingRegister);

@@ -81,4 +81,6 @@ public interface RegisterHistoryRepository extends MongoRepository<RegistersHist
             Collection<String> operations,
             Pageable pageable
     );
+
+    long deleteByRegisterId(String registerId);
 }

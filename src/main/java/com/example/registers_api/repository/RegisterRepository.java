@@ -3,6 +3,7 @@ package com.example.registers_api.repository;
 import com.example.registers_api.models.RegisterCollection;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,4 +24,10 @@ public interface RegisterRepository extends MongoRepository<RegisterCollection, 
 
 //    @Query("{ 'variables.researchLayerId': ?0 }")
     boolean existsByRegisterInfoResearchLayerId(String researchLayerId);
+
+    Optional<RegisterCollection> findFirstByPatientIdentificationNumberOrderByVersionDesc(Integer patientIdentificationNumber);
+
+    // (Opcional) si quieres forzar index scan mínimo:
+    @Query(value = "{ 'patientIdentificationNumber': ?0 }", sort = "{ 'version': -1 }")
+    Optional<RegisterCollection> findCurrentByPIN(Integer patientIdentificationNumber);
 }

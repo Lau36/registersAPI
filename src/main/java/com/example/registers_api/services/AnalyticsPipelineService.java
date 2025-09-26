@@ -29,7 +29,7 @@ public class AnalyticsPipelineService {
     // ---------- Índice único acorde a la clave del $merge ----------
     @PostConstruct
     public void ensureIndexes() {
-        IndexOperations ops = mongoTemplate.indexOps(DST);
+        IndexOperations ops = mongoTemplate.indexOps("analytics_register");
         ops.ensureIndex(new Index()
                 .on("patientIdentificationNumber", Sort.Direction.ASC)
                 .on("researchLayerId", Sort.Direction.ASC)
@@ -58,44 +58,46 @@ public class AnalyticsPipelineService {
     private void runAggregation(String registerId, String researchLayerId) {
         List<Document> pipeline = new ArrayList<>();
 
-        // 1) Match por registro
         boolean idEsObjectId = ObjectId.isValid(registerId);
         Document idMatch = new Document("_id", idEsObjectId ? new ObjectId(registerId) : registerId);
         pipeline.add(new Document("$match", idMatch));
 
-        // 2) Flatten de capas
         pipeline.add(new Document("$unwind", "$registerInfo"));
 
-        // 2b) Si se indicó capa, filtrar de nuevo tras el unwind
         if (researchLayerId != null) {
             pipeline.add(new Document("$match", new Document("registerInfo.researchLayerId", researchLayerId)));
         }
 
-        // 3) Flatten de variables
         pipeline.add(new Document("$unwind", "$registerInfo.variables"));
 
-        // 4) Proyección PLANA + sellado de tiempo (versionador)
-        Document project = new Document("$project", new Document()
-                // Versionador para que NUNCA haya conflicto (cada corrida inserta nuevas filas)
-                .append("snapshotAt", new Date())
+        // ✅ timestamps del servidor
+        pipeline.add(new Document("$addFields", new Document()
+                .append("snapshotAt", "$$NOW")
+                .append("createdAt",  "$$NOW")
+        ));
 
-                // Identificadores base
+        final String variablePath = "$registerInfo.variables._id"; // usa "._id" si tu doc realmente lo guarda así
+
+        Document project = new Document("$project", new Document()
+                .append("_id", 0) // evita colisiones del _id original
+
+                // base
                 .append("registerId", "$_id")
                 .append("patientIdentificationNumber", "$patientIdentificationNumber")
                 .append("patientIdentificationType", "$patientIdentificationType")
 
-                // Capa
+                // capa
                 .append("researchLayerId", "$registerInfo.researchLayerId")
                 .append("researchLayerName", "$registerInfo.researchLayerName")
 
-                // Variable
-                .append("variableId", "$registerInfo.variables._id") // si en tu mapper usas 'id' cambia a ".id"
+                // variable
+                .append("variableId",   variablePath)
                 .append("variableName", "$registerInfo.variables.name")
                 .append("variableType", "$registerInfo.variables.type")
-                .append("valueAsString", "$registerInfo.variables.valueAsString")
-                .append("valueAsNumber", "$registerInfo.variables.valueAsNumber")
+                .append("valueAsString","$registerInfo.variables.valueAsString")
+                .append("valueAsNumber","$registerInfo.variables.valueAsNumber")
 
-                // PatientBasicInfo (plano)
+                // patient plano
                 .append("patientName", "$patientBasicInfo.name")
                 .append("patientSex", "$patientBasicInfo.sex")
                 .append("patientBirthDate", "$patientBasicInfo.birthDate")
@@ -111,7 +113,7 @@ public class AnalyticsPipelineService {
                 .append("patientFirstCrisisDate", "$patientBasicInfo.firstCrisisDate")
                 .append("patientCrisisStatus", "$patientBasicInfo.crisisStatus")
 
-                // Caregiver (plano)
+                // caregiver plano
                 .append("caregiverName", "$caregiver.name")
                 .append("caregiverIdentificationType", "$caregiver.identificationType")
                 .append("caregiverIdentificationNumber", "$caregiver.identificationNumber")
@@ -119,26 +121,23 @@ public class AnalyticsPipelineService {
                 .append("caregiverEducationLevel", "$caregiver.educationLevel")
                 .append("caregiverOccupation", "$caregiver.occupation")
 
-                // Marcas de tiempo útiles para BI
-                .append("createdAt", new Date())
+                // timestamps ya añadidos
+                .append("snapshotAt", "$snapshotAt")
+                .append("createdAt",  "$createdAt")
         );
         pipeline.add(project);
 
-        // 5) MERGE: clave incluye snapshotAt para garantizar unicidad SIEMPRE
+        // robustez: descartar sin variableId
+        pipeline.add(new Document("$match", new Document("variableId", new Document("$ne", null))));
+
         Document merge = new Document("$merge", new Document()
                 .append("into", DST)
-                .append("on", Arrays.asList(
-                        "patientIdentificationNumber",
-                        "researchLayerId",
-                        "variableId",
-                        "snapshotAt" // <-- clave versionadora
-                ))
-                .append("whenMatched", "keepExisting") // nunca tocar versiones previas
+                .append("on", Arrays.asList("patientIdentificationNumber","researchLayerId","variableId","snapshotAt"))
+                .append("whenMatched", "keepExisting")
                 .append("whenNotMatched", "insert")
         );
         pipeline.add(merge);
 
-        // 6) Ejecutar
         mongoTemplate.getDb().getCollection(SRC).aggregate(pipeline).toCollection();
     }
 }

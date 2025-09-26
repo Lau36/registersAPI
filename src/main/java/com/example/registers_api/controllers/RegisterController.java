@@ -7,6 +7,7 @@ import com.example.registers_api.request.SortDirection;
 import com.example.registers_api.response.BasicResponse;
 import com.example.registers_api.response.PaginatedResponse;
 import com.example.registers_api.response.RegisterResponse2;
+import com.example.registers_api.response.ValidationResponse;
 import com.example.registers_api.services.IRegisterService;
 import com.example.registers_api.services.IRegisterService2;
 import com.example.registers_api.utils.Constants;
@@ -60,7 +61,7 @@ public class RegisterController {
     @PreAuthorize("hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
     public ResponseEntity<BasicResponse> deleteRegisterById(@RequestParam String registerId) {
         BasicResponse response = new BasicResponse(Constants.REGISTER_DELETED);
-        registerService.deleteRegister(registerId);
+        registerService2.deleteRegister(registerId);
         return ResponseEntity.ok(response);
     }
 
@@ -164,5 +165,17 @@ public class RegisterController {
                 .build();
         PaginatedResponse response = registerService2.getAllRegisterInfoByResearchLayerPaginated(request, researchLayerId, userEmail);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/validatePatient")
+    @PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
+    public ResponseEntity<ValidationResponse> validateUserGet(
+            @RequestParam String researchLayerId,
+            @RequestParam String userEmail,
+            @RequestParam Integer patientIdentificationNumber
+    ) {
+        ValidationResponse resp = registerService2
+                .validateUserAndGetCurrent(userEmail, researchLayerId, patientIdentificationNumber);
+        return ResponseEntity.ok(resp);
     }
 }
