@@ -66,7 +66,7 @@ public class RegisterService2 implements IRegisterService2 {
 
         RegisterCollection saved = registerRepository.save(registerCollection);
         saveFirstRegisterInRegisterHistory(saved, userEmail);
-        //analyticsPipelineService.insertInitialSnapshot(saved.getId());
+        analyticsPipelineService.insertInitialSnapshot(saved.getId());
     }
 
     @Override
@@ -331,14 +331,14 @@ public class RegisterService2 implements IRegisterService2 {
 
         registerRepository.save(existingRegister);
 
-//        if (needAllLayersSnapshot) {
-//            analyticsPipelineService.insertAllLayersSnapshot(existingRegister.getId());
-//        } else {
-//            analyticsPipelineService.insertLayerSnapshot(
-//                    existingRegister.getId(),
-//                    registerRequest.getRegisterInfo().getResearchLayerId()
-//            );
-//        }
+        if (needAllLayersSnapshot) {
+            analyticsPipelineService.insertAllLayersSnapshot(existingRegister.getId());
+        } else {
+            analyticsPipelineService.insertLayerSnapshot(
+                    existingRegister.getId(),
+                    registerRequest.getRegisterInfo().getResearchLayerId()
+            );
+        }
     }
 
     public List<ResearchLayerGroup> updateLayers(List<ResearchLayerGroup> existingLayers,
