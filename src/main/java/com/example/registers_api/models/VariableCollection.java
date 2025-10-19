@@ -9,20 +9,19 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
+@AllArgsConstructor
 @Data
+@Builder
 @Document(collection = "variablesView")
 public class VariableCollection {
 
     @Id
     private String id;
 
-    @NonNull
     private String researchLayerId;
 
-    @NonNull
     private String variableName;
 
-    @NonNull
     private String description;
 
     private String type;

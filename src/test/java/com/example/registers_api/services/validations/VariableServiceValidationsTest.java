@@ -16,6 +16,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -81,10 +83,18 @@ class VariableServiceValidationsTest {
 
     @Test
     void alreadyExistsValidationUpdate_SameId_NoException() {
-        VariableCollection existing = new VariableCollection("ReseachLayerId", "Nombre", "Var descripción");
+        VariableCollection existing = new VariableCollection("12",
+                "ReseachLayerId",
+                "Nombre",
+                "Var descripción",
+                "type", true, true, List.of(), LocalDateTime.now(), LocalDateTime.now());
         existing.setId("123");
 
-        VariableCollection found = new VariableCollection("ReseachLayerId", "Nombre", "Var descripción");
+        VariableCollection found = new VariableCollection("12",
+                "ReseachLayerId",
+                "Nombre",
+                "Var descripción",
+                "type", true, true, List.of(), LocalDateTime.now(), LocalDateTime.now());
         found.setId("123");
 
         when(variableRepository.findByVariableName("Nombre")).thenReturn(Optional.of(found));
@@ -95,10 +105,18 @@ class VariableServiceValidationsTest {
 
     @Test
     void alreadyExistsValidationUpdate_DifferentId_ThrowsException() {
-        VariableCollection existing = new VariableCollection("ReseachLayerId", "Nombre", "Var descripción");
+        VariableCollection existing = new VariableCollection("12",
+                "ReseachLayerId",
+                "Nombre",
+                "Var descripción",
+                "type", true, true, List.of(), LocalDateTime.now(), LocalDateTime.now());
         existing.setId("123");
 
-        VariableCollection found = new VariableCollection("ReseachLayerId", "Nombre", "Var descripción");
+        VariableCollection found = new VariableCollection("12",
+                "ReseachLayerId",
+                "Nombre",
+                "Var descripción",
+                "type", true, true, List.of(), LocalDateTime.now(), LocalDateTime.now());
         found.setId("456");
 
         when(variableRepository.findByVariableName("Nombre")).thenReturn(Optional.of(found));
@@ -108,7 +126,6 @@ class VariableServiceValidationsTest {
         assertThrows(AlreadyExistsException.class, () -> validations.alreadyExistsValidationUpdate(variableDTO, existing));
     }
 
-    // ✅ tooLongValidations - OK
     @Test
     void lengthValidations_ValidLength_NoException() {
         variableDTO.setVariableName("a".repeat(90));

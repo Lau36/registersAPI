@@ -178,9 +178,7 @@ public class RegisterService implements IRegisterService {
 
     @Override
     public void deleteRegister(String registerId) {
-        registerRepository.findById(registerId).orElseThrow(() -> new DoesntExistsException(
-                String.format(REGISTER_NOT_FOUND, registerId)
-        ));
+          
         registerRepository.deleteById(registerId);
     }
 

@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,7 +52,11 @@ class VariableServiceTest {
         variableDTO.setResearchLayerId("Id research layer");
         variableDTO.setOptions(List.of("Opction 1"));
 
-        variableCollection = new VariableCollection("Id reseach layer", "Variable name", "Variable description");
+        variableCollection = new VariableCollection("12",
+                "ReseachLayerId",
+                "Nombre",
+                "Var descripción",
+                "type", true, true, List.of(), LocalDateTime.now(), LocalDateTime.now());
         variableCollection.setId("var1");
         variableCollection.setOptions(List.of("Opction 1"));
         variableCollection.setIsEnabled(true);
@@ -92,7 +97,11 @@ class VariableServiceTest {
     void testSaveVariable_AlreadyEnabled_ThrowsException() {
         String varId = "id1";
         VariableDTO dto = new VariableDTO(varId, "ReseachLayerId", "Variable name", "Variable descripción", "String", List.of("Opt1"));
-        VariableCollection existing = new VariableCollection("ReseachLayerId", "Variable name", "Var descripción");
+        VariableCollection existing = new VariableCollection("12",
+                "ReseachLayerId",
+                "Nombre",
+                "Var descripción",
+                "type", true, true, List.of(), LocalDateTime.now(), LocalDateTime.now());
         existing.setIsEnabled(true);
 
         when(variableRepository.findByVariableName(existing.getVariableName())).thenReturn(Optional.of(existing));
@@ -109,7 +118,11 @@ class VariableServiceTest {
     void testUpdateVariable_Success() {
         String varId = "id1";
         VariableDTO dto = new VariableDTO(varId, "Desc", "layerId", "Variable descripción", "String", List.of("Opt1"));
-        VariableCollection existing = new VariableCollection("ReseachLayerId", "Variable name", "Var descripción");
+        VariableCollection existing = new VariableCollection("12",
+                "ReseachLayerId",
+                "Nombre",
+                "Var descripción",
+                "type", true, true, List.of(), LocalDateTime.now(), LocalDateTime.now());
         existing.setIsEnabled(true);
 
         when(variableRepository.findById(varId)).thenReturn(Optional.of(existing));
@@ -124,7 +137,11 @@ class VariableServiceTest {
     void testUpdateVariable_NotEnabled_ThrowsException() {
         String varId = "id1";
         VariableDTO dto = new VariableDTO(varId, "Desc", "layerId", "Variable descripción", "String", List.of("Opt1"));
-        VariableCollection existing = new VariableCollection("ReseachLayerId", "Variable name", "Var descripción");
+        VariableCollection existing = new VariableCollection("12",
+                "ReseachLayerId",
+                "Nombre",
+                "Var descripción",
+                "type", true, true, List.of(), LocalDateTime.now(), LocalDateTime.now());
         existing.setIsEnabled(false);
 
         when(variableRepository.findById(varId)).thenReturn(Optional.of(existing));
