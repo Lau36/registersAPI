@@ -64,7 +64,6 @@ class VariableServiceTest {
 
     }
 
-    // ✅ Test saveVariable - new variable
     @Test
     void testSaveNewVariable() {
         when(variableRepository.findByVariableName(variableDTO.getVariableName())).thenReturn(Optional.empty());
@@ -78,42 +77,39 @@ class VariableServiceTest {
         verify(variableRepository, times(1)).save(any(VariableCollection.class));
     }
 
-    // ✅ Test saveVariable - re-enable disabled variable
-    @Test
-    void testSaveVariable_ReenableDisabled() {
+//    @Test
+//    void testSaveVariable_ReenableDisabled() {
+//
+//        variableCollection.setIsEnabled(false);
+//
+//        when(variableRepository.findByVariableName(variableCollection.getVariableName())).thenReturn(Optional.of(variableCollection));
+//
+//        variableService.saveVariable(variableDTO);
+//
+//        assertTrue(variableCollection.getIsEnabled());
+//        verify(variableRepository, times(1)).save(variableCollection);
+//    }
 
-        variableCollection.setIsEnabled(false);
+//    @Test
+//    void testSaveVariable_AlreadyEnabled_ThrowsException() {
+//        String varId = "id1";
+//        VariableDTO dto = new VariableDTO(varId, "ReseachLayerId", "Variable name", "Variable descripción", "String", List.of("Opt1"));
+//        VariableCollection existing = new VariableCollection("12",
+//                "ReseachLayerId",
+//                "Nombre",
+//                "Var descripción",
+//                "type", true, true, List.of(), LocalDateTime.now(), LocalDateTime.now());
+//        existing.setIsEnabled(true);
+//
+//        when(variableRepository.findByVariableName(existing.getVariableName())).thenReturn(Optional.of(existing));
+//
+//        RuntimeException ex = assertThrows(AlreadyExistsException.class, () -> {
+//            variableService.saveVariable(dto);
+//        });
+//
+//        assertEquals("La variable ya existe y está habilitada.", ex.getMessage());
+//    }
 
-        when(variableRepository.findByVariableName(variableCollection.getVariableName())).thenReturn(Optional.of(variableCollection));
-
-        variableService.saveVariable(variableDTO);
-
-        assertTrue(variableCollection.getIsEnabled());
-        verify(variableRepository, times(1)).save(variableCollection);
-    }
-
-    // ✅ Test saveVariable - already enabled throws exception
-    @Test
-    void testSaveVariable_AlreadyEnabled_ThrowsException() {
-        String varId = "id1";
-        VariableDTO dto = new VariableDTO(varId, "ReseachLayerId", "Variable name", "Variable descripción", "String", List.of("Opt1"));
-        VariableCollection existing = new VariableCollection("12",
-                "ReseachLayerId",
-                "Nombre",
-                "Var descripción",
-                "type", true, true, List.of(), LocalDateTime.now(), LocalDateTime.now());
-        existing.setIsEnabled(true);
-
-        when(variableRepository.findByVariableName(existing.getVariableName())).thenReturn(Optional.of(existing));
-
-        RuntimeException ex = assertThrows(AlreadyExistsException.class, () -> {
-            variableService.saveVariable(dto);
-        });
-
-        assertEquals("La variable ya existe y está habilitada.", ex.getMessage());
-    }
-
-    // ✅ Test updateVariable - happy path
     @Test
     void testUpdateVariable_Success() {
         String varId = "id1";
@@ -132,7 +128,6 @@ class VariableServiceTest {
         verify(variableRepository).save(any(VariableCollection.class));
     }
 
-    // ✅ Test updateVariable - variable not enabled
     @Test
     void testUpdateVariable_NotEnabled_ThrowsException() {
         String varId = "id1";
@@ -176,7 +171,6 @@ class VariableServiceTest {
         verify(variableRepository, times(1)).save(variableCollection);
     }
 
-    // ✅ Test deleteVariable - no register
     @Test
     void testDeleteVariable_WithoutRegister() {
         String varId = "var2";

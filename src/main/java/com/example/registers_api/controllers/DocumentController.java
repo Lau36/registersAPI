@@ -25,7 +25,7 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/api/v1/documents")
 @AllArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "https://rpe-topaz.vercel.app/")
 public class DocumentController {
 
     private final IDocumentService documentService;

@@ -17,7 +17,7 @@ import static com.example.registers_api.utils.Constants.*;
 @RestController
 @RequestMapping("/api/v1/users")
 @AllArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "https://rpe-topaz.vercel.app/")
 public class UsersController {
 
     private final IUserService userService;

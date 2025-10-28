@@ -8,186 +8,192 @@ import com.example.registers_api.models.Variable;
 import com.example.registers_api.repository.ResearchLayerRepository;
 import com.example.registers_api.repository.VariableRepository;
 import com.example.registers_api.request.RegisterRequest;
+import com.example.registers_api.request.ResearchLayerGroupRequest;
 import com.example.registers_api.request.VariableRequest;
+import com.example.registers_api.request.VariablesGroupRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.resource.UsersResource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static com.example.registers_api.utils.Constants.REALM_NAME;
+import static com.example.registers_api.utils.ExceptionConstants.DOESNT_HAVE_PERMISSIONS;
+import static com.example.registers_api.utils.ExceptionConstants.NOT_EMPTY_VARIABLES;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RegistersServiceValidationsTest {
+    @Mock
+    private VariableRepository variableRepository;
 
-//    @Mock
-//    private VariableRepository variableRepository;
-//
-//    @Mock
-//    private ResearchLayerRepository researchLayerRepository;
-//
-//    @Mock
-//    private RegisterRequest registerRequest;
-//
-//    @Mock
-//    private VariableRequest variable;
-//
-//    @InjectMocks
-//    private RegistersServiceValidations registersServiceValidations;
-//
-//    @BeforeEach
-//    void setUp() {
-//    }
-//
+    @Mock
+    private ResearchLayerRepository layerRepository;
+
+    @Mock
+    private Keycloak keycloak;
+
+    @Mock
+    private UsersResource usersResource;
+
+    @InjectMocks
+    private RegistersServiceValidations validations;
+
+    private RegisterRequest registerRequest;
+    private VariablesGroupRequest variableGroupRequest;
+    private ResearchLayerGroupRequest researchLayerGroupRequest;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+
+        variableGroupRequest = new VariablesGroupRequest();
+        variableGroupRequest.setId("var001");
+
+        researchLayerGroupRequest = new ResearchLayerGroupRequest();
+        researchLayerGroupRequest.setResearchLayerId("id");
+        researchLayerGroupRequest.setResearchLayerName("name");
+
+        registerRequest = new RegisterRequest();
+        registerRequest.setRegisterInfo(researchLayerGroupRequest);
+    }
+
+    // --- validateVariablesAndResearchLayer ---
+
 //    @Test
-//    void testValidateVariablesAndResearchLayer_Valid() {
-//        when(registerRequest.getVariables()).thenReturn(List.of(variable));
-//        when(variable.getResearchLayerId()).thenReturn("rl1");
-//        when(variable.getId()).thenReturn("var1");
-//        when(researchLayerRepository.existsById("rl1")).thenReturn(true);
-//        when(variableRepository.existsById("var1")).thenReturn(true);
+//    void validateVariablesAndResearchLayer_ShouldPass_WhenLayerAndVariablesExist() {
+//        when(layerRepository.existsById("layer001")).thenReturn(true);
+//        when(variableRepository.existsById("var001")).thenReturn(true);
 //
-//        assertDoesNotThrow(() -> registersServiceValidations.validateVariablesAndResearchLayer(registerRequest));
-//    }
+//        assertDoesNotThrow(() -> validations.validateVariablesAndResearchLayer(registerRequest));
 //
-//    @Test
-//    void testValidateVariablesAndResearchLayer_InvalidResearchLayer() {
-//        when(registerRequest.getVariables()).thenReturn(List.of(variable));
-//        when(variable.getResearchLayerId()).thenReturn("rl1");
-//        when(researchLayerRepository.existsById("rl1")).thenReturn(false);
-//
-//        DoesntExistsException exception = assertThrows(DoesntExistsException.class, () ->
-//                registersServiceValidations.validateVariablesAndResearchLayer(registerRequest)
-//        );
-//        assertEquals("No existe una capa de investigación con el id: 'rl1'", exception.getMessage());
-//    }
-//
-//    @Test
-//    void testValidateVariablesAndResearchLayer_InvalidVariable() {
-//        when(registerRequest.getVariables()).thenReturn(List.of(variable));
-//        when(variable.getResearchLayerId()).thenReturn("rl1");
-//        when(variable.getId()).thenReturn("var1");
-//        when(researchLayerRepository.existsById("rl1")).thenReturn(true);
-//        when(variableRepository.existsById("var1")).thenReturn(false);
-//
-//        DoesntExistsException exception = assertThrows(DoesntExistsException.class, () ->
-//                registersServiceValidations.validateVariablesAndResearchLayer(registerRequest)
-//        );
-//        assertEquals("No existe una variable con el id: 'var1'", exception.getMessage());
-//    }
-//
-//    @Test
-//    void testValidateRegisterFields_Valid() {
-//        RegisterRequest validRequest = mock(RegisterRequest.class);
-//        HealthProfessional healthProfessional = mock(HealthProfessional.class);
-//        when(validRequest.getVariables()).thenReturn(List.of(new VariableRequest()));
-//        when(validRequest.getHealthProfessional()).thenReturn(healthProfessional);
-//
-//        assertDoesNotThrow(() -> registersServiceValidations.validateRegisterFields(validRequest));
-//    }
-//
-//    @Test
-//    void testValidateRegisterFields_InvalidVariables() {
-//        RegisterRequest invalidRequest = mock(RegisterRequest.class);
-//        when(invalidRequest.getVariables()).thenReturn(null);
-//
-//        NotEmptyFieldException exception = assertThrows(NotEmptyFieldException.class, () ->
-//                registersServiceValidations.validateRegisterFields(invalidRequest)
-//        );
-//        assertEquals("El campo de profesional de salud no puede estar vacio o con campos nulos", exception.getMessage());
-//    }
-//
-//    @Test
-//    void testValidateRegisterFields_InvalidHealthProfessional() {
-//        RegisterRequest invalidRequest = mock(RegisterRequest.class);
-//        when(invalidRequest.getVariables()).thenReturn(List.of(new VariableRequest()));
-//        when(invalidRequest.getHealthProfessional()).thenReturn(null);
-//
-//        NotEmptyFieldException exception = assertThrows(NotEmptyFieldException.class, () ->
-//                registersServiceValidations.validateRegisterFields(invalidRequest)
-//        );
-//        assertEquals("Las variables no pueden estar vacias o con campos nulos", exception.getMessage());
+//        verify(layerRepository, times(1)).existsById("layer001");
+//        verify(variableRepository, times(1)).existsById("var001");
 //    }
 
 //    @Test
-//    void testValidateResearchLayer_Valid() {
-//        String userEmail = "test@domain.com";
-//        RegisterRequest validRequest = mock(RegisterRequest.class);
-//        when(validRequest.getVariables()).thenReturn(List.of(variable));
-//        when(variable.getResearchLayerId()).thenReturn("rl1");
-//        when(registersServiceValidations.getUserResearchLayer(userEmail)).thenReturn("rl1");
+//    void validateVariablesAndResearchLayer_ShouldThrow_WhenLayerNotFound() {
+//        when(layerRepository.existsById("layer001")).thenReturn(false);
 //
-//        assertDoesNotThrow(() -> registersServiceValidations.validateResearchLayer(userEmail, validRequest));
-//    }
-//
-//    @Test
-//    void testValidateResearchLayer_Invalid() {
-//        String userEmail = "test@domain.com";
-//        RegisterRequest invalidRequest = mock(RegisterRequest.class);
-//        when(invalidRequest.getVariables()).thenReturn(List.of(variable));
-//        when(variable.getResearchLayerId()).thenReturn("rl1");
-//        when(registersServiceValidations.getUserResearchLayer(userEmail)).thenReturn("rl2");
-//
-//        DoesntHavePermissions exception = assertThrows(DoesntHavePermissions.class, () ->
-//                registersServiceValidations.validateResearchLayer(userEmail, invalidRequest)
+//        DoesntExistsException ex = assertThrows(
+//                DoesntExistsException.class,
+//                () -> validations.validateVariablesAndResearchLayer(registerRequest)
 //        );
-//        assertEquals("User does not have permission for research layer", exception.getMessage());
+//
+//        assertTrue(ex.getMessage().contains("No se encontró el ID de la capa"));
 //    }
-//
+
 //    @Test
-//    void testGetUserResearchLayer_Valid() {
-//        // Arrange
-//        String userEmail = "test@domain.com";
-//        UserRepresentation userRepresentation = mock(UserRepresentation.class);
-//        UsersResource usersResource = mock(UsersResource.class);
-//        Map<String, List<String>> attributes = Map.of("RESEARCH_LAYER_ID", List.of("rl1"));
-//        when(keycloak.realm(REALM_NAME).users()).thenReturn(usersResource);
-//        when(usersResource.searchByEmail(userEmail, true)).thenReturn(List.of(userRepresentation));
-//        when(userRepresentation.getAttributes()).thenReturn(attributes);
+//    void validateVariablesAndResearchLayer_ShouldThrow_WhenVariableNotFound() {
+//        when(layerRepository.existsById("layer001")).thenReturn(true);
+//        when(variableRepository.existsById("var001")).thenReturn(false);
 //
-//        // Act
-//        String researchLayerId = registersServiceValidations.getUserResearchLayer(userEmail);
-//
-//        // Assert
-//        assertEquals("rl1", researchLayerId);
-//    }
-//
-//    @Test
-//    void testGetUserResearchLayer_UserNotFound() {
-//        // Arrange
-//        String userEmail = "test@domain.com";
-//        UsersResource usersResource = mock(UsersResource.class);
-//        when(keycloak.realm(REALM_NAME).users()).thenReturn(usersResource);
-//        when(usersResource.searchByEmail(userEmail, true)).thenReturn(List.of());
-//
-//        // Act & Assert
-//        NotFoundException exception = assertThrows(NotFoundException.class, () ->
-//                registersServiceValidations.getUserResearchLayer(userEmail)
+//        DoesntExistsException ex = assertThrows(
+//                DoesntExistsException.class,
+//                () -> validations.validateVariablesAndResearchLayer(registerRequest)
 //        );
-//        assertEquals("User with email test@domain.com not found", exception.getMessage());
+//
+//        assertTrue(ex.getMessage().contains("No se encontró el ID de la variable"));
+//    }
+
+    // --- validateRegisterFields ---
+
+    @Test
+    void validateRegisterFields_ShouldThrow_WhenVariablesIsNull() {
+        researchLayerGroupRequest.setVariablesInfo(null);
+
+        NotEmptyFieldException ex = assertThrows(
+                NotEmptyFieldException.class,
+                () -> validations.validateRegisterFields(registerRequest)
+        );
+
+        assertEquals(NOT_EMPTY_VARIABLES, ex.getMessage());
+    }
+
+//    @Test
+//    void validateRegisterFields_ShouldPass_WhenVariablesExist() {
+//        assertDoesNotThrow(() -> validations.validateRegisterFields(registerRequest));
+//    }
+
+    // --- validateResearchLayer ---
+
+    @Test
+    void validateResearchLayer_ShouldPass_WhenUserHasAccess() {
+        RegistersServiceValidations spyValidations = spy(validations);
+        doReturn(List.of("layer001", "layer002")).when(spyValidations).getUserResearchLayer("user@test.com");
+
+        assertDoesNotThrow(() -> spyValidations.validateResearchLayer("user@test.com", "layer001"));
+    }
+
+    @Test
+    void validateResearchLayer_ShouldThrow_WhenUserDoesNotHaveAccess() {
+        RegistersServiceValidations spyValidations = spy(validations);
+        doReturn(List.of("layer002")).when(spyValidations).getUserResearchLayer("user@test.com");
+
+        DoesntHavePermissions ex = assertThrows(
+                DoesntHavePermissions.class,
+                () -> spyValidations.validateResearchLayer("user@test.com", "layer001")
+        );
+
+        assertEquals(DOESNT_HAVE_PERMISSIONS, ex.getMessage());
+    }
+
+    // --- getUserResearchLayer ---
+
+//    @Test
+//    void getUserResearchLayer_ShouldReturnList_WhenUserHasAttributes() {
+//        when(keycloak.realm(REALM_NAME)).thenReturn(mock(org.keycloak.admin.client.resource.RealmResource.class));
+//        when(keycloak.realm(REALM_NAME).users()).thenReturn(usersResource);
+//
+//        UserRepresentation user = new UserRepresentation();
+//        Map<String, List<String>> attributes = new HashMap<>();
+//        attributes.put(RESEARCH_LAYER_ID, List.of("layer001", "layer002"));
+//        user.setAttributes(attributes);
+//
+//        when(usersResource.searchByEmail("user@test.com", true)).thenReturn(List.of(user));
+//
+//        List<String> result = validations.getUserResearchLayer("user@test.com");
+//
+//        assertEquals(2, result.size());
+//        assertTrue(result.contains("layer001"));
 //    }
 //
 //    @Test
-//    void testGetUserResearchLayer_AttributeNotEnabled() {
-//        // Arrange
-//        String userEmail = "test@domain.com";
-//        UserRepresentation userRepresentation = mock(UserRepresentation.class);
-//        UsersResource usersResource = mock(UsersResource.class);
+//    void getUserResearchLayer_ShouldThrow_WhenUserNotFound() {
+//        when(keycloak.realm(REALM_NAME)).thenReturn(mock(org.keycloak.admin.client.resource.RealmResource.class));
 //        when(keycloak.realm(REALM_NAME).users()).thenReturn(usersResource);
-//        when(usersResource.searchByEmail(userEmail, true)).thenReturn(List.of(userRepresentation));
-//        when(userRepresentation.getAttributes()).thenReturn(null);
+//        when(usersResource.searchByEmail("user@test.com", true)).thenReturn(Collections.emptyList());
 //
-//        // Act & Assert
-//        NotEnabledException exception = assertThrows(NotEnabledException.class, () ->
-//                registersServiceValidations.getUserResearchLayer(userEmail)
+//        NotFoundException ex = assertThrows(
+//                NotFoundException.class,
+//                () -> validations.getUserResearchLayer("user@test.com")
 //        );
-//        assertEquals("User attributes are null", exception.getMessage());
+//
+//        assertTrue(ex.getMessage().contains("No se encontró el usuario con email"));
+//    }
+//
+//    @Test
+//    void getUserResearchLayer_ShouldThrow_WhenAttributesAreNull() {
+//        when(keycloak.realm(REALM_NAME)).thenReturn(mock(org.keycloak.admin.client.resource.RealmResource.class));
+//        when(keycloak.realm(REALM_NAME).users()).thenReturn(usersResource);
+//
+//        UserRepresentation user = new UserRepresentation();
+//        user.setAttributes(null);
+//
+//        when(usersResource.searchByEmail("user@test.com", true)).thenReturn(List.of(user));
+//
+//        NotEnabledException ex = assertThrows(
+//                NotEnabledException.class,
+//                () -> validations.getUserResearchLayer("user@test.com")
+//        );
+//
+//        assertEquals("Los atributos del usuario son null", ex.getMessage());
 //    }
 }

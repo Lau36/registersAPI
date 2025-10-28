@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/Variable")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "https://rpe-topaz.vercel.app/")
 @RequiredArgsConstructor
 
 

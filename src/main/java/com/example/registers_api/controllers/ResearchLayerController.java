@@ -22,7 +22,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/ResearchLayer")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "https://rpe-topaz.vercel.app/")
 public class ResearchLayerController {
 
     private final IResearchLayerService researchLayerService;

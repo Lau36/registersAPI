@@ -19,10 +19,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/registers")
 @AllArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "https://rpe-topaz.vercel.app/")
 public class RegisterController {
 
-    private IRegisterService registerService;
     private IRegisterService2 registerService2;
 
     @PostMapping()
@@ -30,22 +29,6 @@ public class RegisterController {
     public ResponseEntity<BasicResponse> saveRegister(@RequestParam String userEmail, @RequestBody RegisterRequest registerRequest) {
         BasicResponse response = new BasicResponse(Constants.REGISTER_CREATED_SUCCESSFULL);
         registerService2.saveRegister(registerRequest, userEmail);
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping()
-    @PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.RESEARCHER_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
-    public ResponseEntity<PaginatedResponse> getAllRegisters(@RequestParam int page,
-                                                             @RequestParam int size,
-                                                             @RequestParam String sort,
-                                                             @RequestParam String sortDirection) {
-        PaginationRequest request = PaginationRequest.builder()
-                .page(page)
-                .size(size)
-                .sort(sort)
-                .sortDirection(SortDirection.valueOf(sortDirection.toUpperCase()))
-                .build();
-        PaginatedResponse response = registerService.getAllRegistersPaginated(request);
         return ResponseEntity.ok(response);
     }
 
@@ -62,24 +45,6 @@ public class RegisterController {
     public ResponseEntity<BasicResponse> deleteRegisterById(@RequestParam String registerId) {
         BasicResponse response = new BasicResponse(Constants.REGISTER_DELETED);
         registerService2.deleteRegister(registerId);
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/allByPatient")
-    @PreAuthorize("hasRole('" + Constants.DOCTOR_ROLE + "') or hasRole('" + Constants.SUPER_ADMIN_ROLE + "')")
-    public ResponseEntity<PaginatedResponse> getAllRegistersByPatient(
-              @RequestParam int patientIdentificationNumber,
-              @RequestParam int page,
-              @RequestParam int size,
-              @RequestParam String sort,
-              @RequestParam String sortDirection) {
-        PaginationRequest request = PaginationRequest.builder()
-                .page(page)
-                .size(size)
-                .sort(sort)
-                .sortDirection(SortDirection.valueOf(sortDirection.toUpperCase()))
-                .build();
-        PaginatedResponse response = registerService.getAllRegistersByPatientPaginated(request, patientIdentificationNumber);
         return ResponseEntity.ok(response);
     }
 
