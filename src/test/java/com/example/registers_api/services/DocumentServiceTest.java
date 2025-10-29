@@ -100,9 +100,20 @@ public class DocumentServiceTest {
         when(file1.getFilename()).thenReturn("test1.pdf");
         when(file2.getFilename()).thenReturn("test2.pdf");
 
-        List<GridFSFile> files = List.of(file1, file2);
-        when(gridFsTemplate.find(any(Query.class))).thenReturn((GridFSFindIterable) files);
+        // ✅ Creamos un mock de GridFSFindIterable
+        GridFSFindIterable mockIterable = mock(GridFSFindIterable.class);
 
+        // Simulamos el comportamiento del método 'into'
+        when(mockIterable.into(anyList())).thenAnswer(invocation -> {
+            List<GridFSFile> list = invocation.getArgument(0);
+            list.add(file1);
+            list.add(file2);
+            return list;
+        });
+
+        when(gridFsTemplate.find(any(Query.class))).thenReturn(mockIterable);
+
+        // ✅ Simulamos recursos asociados a los archivos
         GridFsResource resource1 = mock(GridFsResource.class);
         GridFsResource resource2 = mock(GridFsResource.class);
 
@@ -112,12 +123,13 @@ public class DocumentServiceTest {
         when(resource1.getInputStream()).thenReturn(new ByteArrayInputStream("file1-content".getBytes()));
         when(resource2.getInputStream()).thenReturn(new ByteArrayInputStream("file2-content".getBytes()));
 
+        // Ejecutamos el método
         byte[] zipBytes = documentService.downloadAll();
 
         assertNotNull(zipBytes);
         assertTrue(zipBytes.length > 0);
 
-        // Validamos que el ZIP contenga los dos archivos
+        // ✅ Validamos que el ZIP contenga ambos archivos
         try (ZipInputStream zipInputStream = new ZipInputStream(new ByteArrayInputStream(zipBytes))) {
             ZipEntry entry1 = zipInputStream.getNextEntry();
             assertNotNull(entry1);
@@ -125,6 +137,7 @@ public class DocumentServiceTest {
 
             ZipEntry entry2 = zipInputStream.getNextEntry();
             assertNotNull(entry2);
+            assertTrue(entry2.getName().contains("test1.pdf") || entry2.getName().contains("test2.pdf"));
         }
 
         verify(gridFsTemplate, times(2)).getResource(any(GridFSFile.class));

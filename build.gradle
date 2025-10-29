@@ -32,6 +32,24 @@ jacocoTestReport {
 		xml.required = true
 		csv.required = false
 	}
+	afterEvaluate {
+		classDirectories.setFrom(
+				files(classDirectories.files.collect {
+					fileTree(dir: it, exclude: [
+							// Paquetes a excluir
+							'com/example/registers_api/config/**',
+							'com/example/registers_api/utils/**',
+							'com/example/registers_api/security/**',
+							'com/example/registers_api/dtos/**',
+							'com/example/registers_api/mappers/**',
+							'com/example/registers_api/request/**',
+							'com/example/registers_api/response/**',
+							'com/example/registers_api/models/**',
+							'com/example/registers_api/exceptions/**'
+					])
+				})
+		)
+	}
 }
 
 
