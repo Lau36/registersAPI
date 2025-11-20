@@ -1,6 +1,5 @@
 package com.example.registers_api.services;
 
-import com.example.registers_api.dtos.ResearchLayerInfoDTO;
 import com.example.registers_api.exceptions.DoesntExistsException;
 import com.example.registers_api.mappers.RegisterMapper;
 import com.example.registers_api.models.*;
@@ -15,7 +14,7 @@ import com.example.registers_api.response.PaginatedResponse;
 import com.example.registers_api.response.RegisterResponse2;
 import com.example.registers_api.response.ResearchLayerGroupResponse;
 import com.example.registers_api.response.ValidationResponse;
-import com.example.registers_api.services.impl.RegisterService2;
+import com.example.registers_api.services.impl.RegisterService;
 import com.example.registers_api.services.validations.RegistersServiceValidations;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class RegisterService2Test {
+class RegisterServiceTest {
 
     @Mock
     RegisterRepository registerRepository;
@@ -53,8 +52,9 @@ class RegisterService2Test {
     @Mock
     RegisterMapper registerMapper;
 
+    @Spy
     @InjectMocks
-    RegisterService2 service;
+    RegisterService service;
 
     final String userEmail = "tester@acme.com";
     final String researchLayerId = "RL-001";
@@ -108,34 +108,34 @@ class RegisterService2Test {
         verify(analyticsPipelineService).insertInitialSnapshot("REG-1");
     }
 
-//    @Test
-//    @DisplayName("updateRegister: cuando existe, valida y delega a updateAndSaveHistory")
-//    void updateRegister_ok() {
-//        // Arrange
-//        RegisterRequest req = buildRegisterRequest(123, researchLayerId);
-//
-//        RegisterCollection existing = RegisterCollection.builder()
-//                .id("REG-2")
-//                .patientIdentificationNumber(123)
-//                .patientIdentificationType("CC")
-//                .registerInfo(List.of(researchLayerGroup))
-//                .patientBasicInfo(Patient.builder().name("Old").build())
-//                .caregiver(Caregiver.builder().name("OldC").build())
-//                .build();
-//
-//        when(registerRepository.findById("REG-2")).thenReturn(Optional.of(existing));
-//
-//        doNothing().when(service).updateAndSaveHistory(any(), anyString(), any());
-//
-//        // Act
-//        service.updateRegister("REG-2", req, userEmail);
-//
-//        // Assert
-//        verify(registersServiceValidations).validateResearchLayer(userEmail, researchLayerId);
-//        verify(registersServiceValidations).validateRegisterFields(req);
-//        verify(registersServiceValidations).validateVariablesAndResearchLayer(req);
-//        verify(service).updateAndSaveHistory(eq(req), eq(userEmail), eq(existing));
-//    }
+    @Test
+    @DisplayName("updateRegister: cuando existe, valida y delega a updateAndSaveHistory")
+    void updateRegister_ok() {
+        // Arrange
+        RegisterRequest req = buildRegisterRequest(123, researchLayerId);
+
+        RegisterCollection existing = RegisterCollection.builder()
+                .id("REG-2")
+                .patientIdentificationNumber(123)
+                .patientIdentificationType("CC")
+                .registerInfo(List.of(researchLayerGroup))
+                .patientBasicInfo(Patient.builder().name("Old").build())
+                .caregiver(Caregiver.builder().name("OldC").build())
+                .build();
+
+        when(registerRepository.findById("REG-2")).thenReturn(Optional.of(existing));
+
+        doNothing().when(service).updateAndSaveHistory(any(), anyString(), any());
+
+        // Act
+        service.updateRegister("REG-2", req, userEmail);
+
+        // Assert
+        verify(registersServiceValidations).validateResearchLayer(userEmail, researchLayerId);
+        verify(registersServiceValidations).validateRegisterFields(req);
+        verify(registersServiceValidations).validateVariablesAndResearchLayer(req);
+        verify(service).updateAndSaveHistory(eq(req), eq(userEmail), eq(existing));
+    }
 
     @Test
     @DisplayName("updateRegister: lanza DoesntExistsException si no existe")

@@ -33,7 +33,7 @@ import static com.example.registers_api.utils.ExceptionConstants.*;
 
 @Component
 @AllArgsConstructor
-public class RegisterService2 implements IRegisterService2 {
+public class RegisterService implements IRegisterService2 {
     private RegisterRepository registerRepository;
     private RegisterHistoryRepository registerHistoryRepository;
     private AnalitycsRegister analitycsRegisterRepository;
@@ -289,7 +289,7 @@ public class RegisterService2 implements IRegisterService2 {
 
         registerHistoryRepository.deleteByRegisterId(registerId);
 
-        //analitycsRegisterRepository.deleteByRegisterId(registerId);
+        analitycsRegisterRepository.deleteByRegisterId(registerId);
 
     }
 

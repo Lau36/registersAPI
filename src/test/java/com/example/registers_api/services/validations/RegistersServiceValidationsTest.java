@@ -52,13 +52,12 @@ class RegistersServiceValidationsTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
 
         variableGroupRequest = new VariablesGroupRequest();
         variableGroupRequest.setId("var001");
 
         researchLayerGroupRequest = new ResearchLayerGroupRequest();
-        researchLayerGroupRequest.setResearchLayerId("id");
+        researchLayerGroupRequest.setResearchLayerId("layer001");
         researchLayerGroupRequest.setResearchLayerName("name");
 
         registerRequest = new RegisterRequest();
@@ -67,41 +66,64 @@ class RegistersServiceValidationsTest {
 
     // --- validateVariablesAndResearchLayer ---
 
-//    @Test
-//    void validateVariablesAndResearchLayer_ShouldPass_WhenLayerAndVariablesExist() {
-//        when(layerRepository.existsById("layer001")).thenReturn(true);
-//        when(variableRepository.existsById("var001")).thenReturn(true);
-//
-//        assertDoesNotThrow(() -> validations.validateVariablesAndResearchLayer(registerRequest));
-//
-//        verify(layerRepository, times(1)).existsById("layer001");
-//        verify(variableRepository, times(1)).existsById("var001");
-//    }
+    @Test
+    void validateVariablesAndResearchLayer_ShouldPass_WhenLayerAndVariablesExist() {
 
-//    @Test
-//    void validateVariablesAndResearchLayer_ShouldThrow_WhenLayerNotFound() {
-//        when(layerRepository.existsById("layer001")).thenReturn(false);
-//
-//        DoesntExistsException ex = assertThrows(
-//                DoesntExistsException.class,
-//                () -> validations.validateVariablesAndResearchLayer(registerRequest)
-//        );
-//
-//        assertTrue(ex.getMessage().contains("No se encontró el ID de la capa"));
-//    }
+        VariablesGroupRequest variableGroupRequest2 = new VariablesGroupRequest();
+        variableGroupRequest2.setId("var001");
 
-//    @Test
-//    void validateVariablesAndResearchLayer_ShouldThrow_WhenVariableNotFound() {
-//        when(layerRepository.existsById("layer001")).thenReturn(true);
-//        when(variableRepository.existsById("var001")).thenReturn(false);
-//
-//        DoesntExistsException ex = assertThrows(
-//                DoesntExistsException.class,
-//                () -> validations.validateVariablesAndResearchLayer(registerRequest)
-//        );
-//
-//        assertTrue(ex.getMessage().contains("No se encontró el ID de la variable"));
-//    }
+        ResearchLayerGroupRequest researchLayerGroupRequest2 = new ResearchLayerGroupRequest();
+        researchLayerGroupRequest2.setResearchLayerId("layer001");
+        researchLayerGroupRequest2.setResearchLayerName("name");
+        researchLayerGroupRequest2.setVariablesInfo(List.of(variableGroupRequest2));
+
+        RegisterRequest registerRequest2 = new RegisterRequest();
+        registerRequest2.setRegisterInfo(researchLayerGroupRequest2);
+
+        when(layerRepository.existsById(registerRequest2.getRegisterInfo().getResearchLayerId())).thenReturn(true);
+        when(variableRepository.existsById(registerRequest2.getRegisterInfo().getVariablesInfo().get(0).getId())).thenReturn(true);
+
+        validations.validateVariablesAndResearchLayer(registerRequest2);
+
+        verify(layerRepository, times(1)).existsById("layer001");
+        verify(variableRepository, times(1)).existsById("var001");
+    }
+
+    @Test
+    void validateVariablesAndResearchLayer_ShouldThrow_WhenLayerNotFound() {
+        when(layerRepository.existsById("layer001")).thenReturn(false);
+
+        DoesntExistsException ex = assertThrows(
+                DoesntExistsException.class,
+                () -> validations.validateVariablesAndResearchLayer(registerRequest)
+        );
+
+        assertTrue(ex.getMessage().contains("No existe una capa de investigación"));
+    }
+
+    @Test
+    void validateVariablesAndResearchLayer_ShouldThrow_WhenVariableNotFound() {
+        VariablesGroupRequest variableGroupRequest2 = new VariablesGroupRequest();
+        variableGroupRequest2.setId("var001");
+
+        ResearchLayerGroupRequest researchLayerGroupRequest2 = new ResearchLayerGroupRequest();
+        researchLayerGroupRequest2.setResearchLayerId("layer001");
+        researchLayerGroupRequest2.setResearchLayerName("name");
+        researchLayerGroupRequest2.setVariablesInfo(List.of(variableGroupRequest2));
+
+        RegisterRequest registerRequest2 = new RegisterRequest();
+        registerRequest2.setRegisterInfo(researchLayerGroupRequest2);
+
+        when(layerRepository.existsById("layer001")).thenReturn(true);
+        when(variableRepository.existsById("var001")).thenReturn(false);
+
+        DoesntExistsException ex = assertThrows(
+                DoesntExistsException.class,
+                () -> validations.validateVariablesAndResearchLayer(registerRequest2)
+        );
+
+        assertTrue(ex.getMessage().contains("No existe una variable con el id"));
+    }
 
     // --- validateRegisterFields ---
 
@@ -117,10 +139,21 @@ class RegistersServiceValidationsTest {
         assertEquals(NOT_EMPTY_VARIABLES, ex.getMessage());
     }
 
-//    @Test
-//    void validateRegisterFields_ShouldPass_WhenVariablesExist() {
-//        assertDoesNotThrow(() -> validations.validateRegisterFields(registerRequest));
-//    }
+    @Test
+    void validateRegisterFields_ShouldPass_WhenVariablesExist() {
+        VariablesGroupRequest variableGroupRequest2 = new VariablesGroupRequest();
+        variableGroupRequest2.setId("var001");
+
+        ResearchLayerGroupRequest researchLayerGroupRequest2 = new ResearchLayerGroupRequest();
+        researchLayerGroupRequest2.setResearchLayerId("layer001");
+        researchLayerGroupRequest2.setResearchLayerName("name");
+        researchLayerGroupRequest2.setVariablesInfo(List.of(variableGroupRequest2));
+
+        RegisterRequest registerRequest2 = new RegisterRequest();
+        registerRequest2.setRegisterInfo(researchLayerGroupRequest2);
+
+        assertDoesNotThrow(() -> validations.validateRegisterFields(registerRequest2));
+    }
 
     // --- validateResearchLayer ---
 

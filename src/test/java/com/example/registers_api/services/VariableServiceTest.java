@@ -101,6 +101,11 @@ class VariableServiceTest {
 //                "type", true, true, List.of(), LocalDateTime.now(), LocalDateTime.now());
 //        existing.setIsEnabled(true);
 //
+//        doNothing().when(variableServiceValidations).notEmptyValidations(any());
+//        doNothing().when(variableServiceValidations).lengthValidations(any());
+//        doNothing().when(variableServiceValidations).validateResearchLayerId(any());
+//        doNothing().when(variableServiceValidations).alreadyExistsValidation(any());
+//
 //        when(variableRepository.findByVariableName(existing.getVariableName())).thenReturn(Optional.of(existing));
 //
 //        RuntimeException ex = assertThrows(AlreadyExistsException.class, () -> {
